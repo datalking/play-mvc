@@ -5,8 +5,9 @@
     <artifactId>play-mvc</artifactId>
     <groupId>com.github.datalking</groupId>
     <packaging>jar</packaging>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
     <name>play-mvc</name>
+    <description>simple mvc framework based on java servlet.</description>
     <url>https://github.com/uptonking/play-mvc</url>
 
     <dependencies>

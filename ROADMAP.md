@@ -2,6 +2,22 @@
 
 ## todo  
 
+- [ ] cglib实现aop 
+- [ ] @Order 注解控制配置类的加载顺序
+- [ ] aop织入顺序 @Order  注解支持
+- [ ] getBean By class   
+- [ ] 支持别名   
+- [ ] xml新增支持constructor-args元素   
+- [ ] 处理嵌套bean的问题   
+- [ ] xml中同名bean抛出异常   
+- [ ] 处理AOP中的循环依赖   
+
+- [x] jdk动态代理实现aop 
+- [x] 支持BeanPostProcessor   
+- [x] 支持@ComponentScan配置basePackages
+- [x] 手动通过注解注册bean生成BeanDefinition: @Configuration  @Bean   
+- [x] 各种BeanDefinition转换成RootBeanDefinition   
+- [x] ApplicationContext支持开启与关闭懒加载  
 - [x] 扫描指定包带有@Component注解的bean   
 - [x] xml bean元素支持id   
 - [x] 属性默认为字符串，实现基本类型自动转换   
