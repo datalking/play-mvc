@@ -4,10 +4,11 @@
 ## target
 - 简单rest服务
 - 基于mvc的web开发
+- 使用方式与spring mvc相同
 
 ## overview
-- 支持 xx  
-- ...   
+- 默认返回json  
+- 视图模板仅支持jsp，不支持velocity、freemarker   
 - 源码参考了 [spring-framework](https://github.com/spring-projects/spring-framework) 
   
 

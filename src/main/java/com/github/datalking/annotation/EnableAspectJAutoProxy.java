@@ -9,6 +9,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * 启用基于注解来创建aop
+ *
  * @author yaoo on 4/16/18
  */
 @Target(ElementType.TYPE)
