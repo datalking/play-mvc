@@ -9,23 +9,30 @@ spring笔记
 
 
 - DispatcherServlet
-    - 是一个标准的Servlet，它的作用是接受和转发web请求到内部框架处理单元
+    - 是一个标准的Servlet，它的作用是接收和转发web请求到内部框架处理单元
     - HandlerAdapter是扩展点，可以提供自己的实现类来处理handler对象
 
 - HandlerMapping接口
     - 扩展点
+    - `HandlerExecutionChain getHandler(HttpServletRequest request)`   
     - HandlerMapping的实现类可以利用HttpServletRequest中的 所有信息来做出这个HandlerExecutionChain对象的生成
     - 可以编写任意的HandlerMapping实现类，依据任何策略来决定一个web请求到HandlerExecutionChain对象的生成
 
 - HandlerExecutionChain
-    - 在真正调用其handler对象前，HandlerInterceptor接口实现类组成的数组将会被遍历，其preHandle方法会被依次调用，然后真正的handler对象将被调用
-    - 在将处理结果写到HttpServletResponse对象之前（SpringMVC称为渲染视图），其postHandle方法会被依次调用
-    - 视图渲染完成后，最后afterCompletion方法会被依次调用
+    - 有属性 `HandlerInterceptor[] interceptors`
+    - 在真正调用其handler对象前，HandlerInterceptor接口实现类组成的数组将会被遍历，其 `preHandle()` 方法会被依次调用，然后真正的handler对象将被调用
+    - 在将处理结果写到HttpServletResponse对象之前（SpringMVC称为渲染视图），其 `postHandle()` 方法会被依次调用
+    - 视图渲染完成后，最后 `afterCompletion()` 方法会被依次调用，整个web请求的处理过程就结束了
+    - 在一个处理对象执行之前，之后利用拦截器做文章，这已经成为一种经典的框架设计套路
     
 - HandlerInterceptor
-    - 扩展点
+    - 扩展点3位置
     - 通过自定义拦截器，可以在一个请求被真正处理之前、请求被处理但还没输出到响应中、请求已经被输出到响应中之后这三个时间点去做任何事情
 
+- HandlerAdapter  
+    - aa
+    
+    
 - ModelAndView是SpringMVC中对视图和数据的一个聚合类
     - 所有的数据，最后会作为一个Map对象传递到View实现类中的render方法，调用这个render方法，就完成了视图到响应的渲染
     - 这个View实现类，就是来自HandlerAdapter中的handle方法的返回结果
