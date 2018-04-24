@@ -2,8 +2,8 @@
 >基于servlet的mvc框架   
 
 ## target
-- 简单rest服务
-- 基于mvc的web开发
+- 快速开发rest服务
+- 基于mvc快速开发webapp
 - 使用方式与spring mvc相同
 
 ## overview
@@ -31,7 +31,8 @@
 
 ## demo
 ```sh
-  todo
+  cd play-mvc/test-mvc
+  mvn tomcat7:run
 ```
 
 start from [http://localhost:8999](http://localhost:8999)
