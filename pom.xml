@@ -3,8 +3,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>play-mvc</artifactId>
+    <modules>
+        <module>test-mvc</module>
+    </modules>
     <groupId>com.github.datalking</groupId>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
     <version>0.0.2</version>
     <name>play-mvc</name>
     <description>simple mvc framework based on java servlet.</description>

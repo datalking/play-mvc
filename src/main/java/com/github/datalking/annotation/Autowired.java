@@ -8,14 +8,16 @@ import java.lang.annotation.Target;
 
 /**
  * 标注为需要自动装配的bean
+ * 装配bean时默认by type
  *
  * @author yaoo on 4/2/18
  */
-@Target({ElementType.CONSTRUCTOR, ElementType.METHOD, ElementType.PARAMETER, ElementType.FIELD, ElementType.ANNOTATION_TYPE})
+@Target({ElementType.FIELD, ElementType.CONSTRUCTOR, ElementType.METHOD, ElementType.PARAMETER, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface Autowired {
 
+    // 默认依赖的对象必须存在
     boolean required() default true;
 
 }
