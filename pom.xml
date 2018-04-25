@@ -3,9 +3,6 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>play-mvc</artifactId>
-    <modules>
-        <module>test-mvc</module>
-    </modules>
     <groupId>com.github.datalking</groupId>
     <packaging>pom</packaging>
     <version>0.0.2</version>
@@ -13,7 +10,12 @@
     <description>simple mvc framework based on java servlet.</description>
     <url>https://github.com/uptonking/play-mvc</url>
 
+    <modules>
+        <module>test-mvc</module>
+    </modules>
+
     <dependencies>
+        <!--aop-->
         <dependency>
             <groupId>aopalliance</groupId>
             <artifactId>aopalliance</artifactId>
@@ -29,6 +31,14 @@
             <artifactId>cglib-nodep</artifactId>
             <version>3.1</version>
         </dependency>
+        <!--servlet-->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <!--logging-->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -44,6 +54,7 @@
             <artifactId>slf4j-log4j12</artifactId>
             <version>1.7.21</version>
         </dependency>
+        <!--test-->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

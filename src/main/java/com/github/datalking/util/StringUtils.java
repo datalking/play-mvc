@@ -23,11 +23,24 @@ public abstract class StringUtils {
 
 
     public static String firstLetterUpperCase(String original) {
+        Assert.notNull(original, "输入字符串不能为空");
         String result = "";
-        result = Character.toUpperCase(original.charAt(0)) + original.substring(1);
+        result = String.valueOf(Character.toUpperCase(original.charAt(0)));
+        if (original.length() > 1) {
+            result += original.substring(1);
+        }
         return result;
     }
 
+    public static String firstLetterLowerCase(String original) {
+        Assert.notNull(original, "输入字符串不能为空");
+        String result = "";
+        result = String.valueOf(Character.toLowerCase(original.charAt(0)));
+        if (original.length() > 1) {
+            result += original.substring(1);
+        }
+        return result;
+    }
 
     public static String replace(String inString, String oldPattern, String newPattern) {
 

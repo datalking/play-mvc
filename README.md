@@ -47,6 +47,7 @@ start from [http://localhost:8999](http://localhost:8999)
 
 ## later
 
+- [ ] WebApplicationInitializer支持order 
 - [ ] 支持 @RequestHeader, @CookieValue, @SessionAttributes 
 - [ ] 内置tomcat切换为外置 
 

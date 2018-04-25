@@ -6,10 +6,23 @@ spring笔记
 
 #### spring mvc
 
+- SpringServletContainerInitializer
+    - 实现了Servlet3.0的ServletContainerInitializer接口，且优先级会高于xml中配置的listener
+    - 用户可以选择是否提供WebApplicationInitializer实现，如果未检测到WebApplicationInitializer类型，则此SpringServletContainerInitializer将不起作用
+    - 如果在类路径下找不到WebApplicationInitializer实现，则此方法不会有任何操作。将发出INFO级别的日志消息，通知用户ServletContainerInitializer确实已被调用，但没有找到WebApplicationInitializer实现。
+    - 假设检测到一个或多个WebApplicationInitializer类型，它们将被实例化（如果存在@Order注释或实现Ordered接口，则对其进行排序）。然后，将调用每个实例WebApplicationInitializer.onStartup(ServletContext)方法，并委派ServletContext，以便每个实例都可以注册和配置Servlet，例如Spring的DispatcherServlet，listeners（如Spring的ContextLoaderListener），或者其他Servlet API组件（如filters）
+      
 
+- HttpServletBean 以依赖注入的方式来读取Servlet类的<init-param>配置信息
+- FrameworkServlet完成的是容器上下文的建立
+- DispatcherServlet完成的是SpringMVC具体编程元素的初始化策略
 
 - DispatcherServlet
     - 是一个标准的Servlet，它的作用是接收和转发web请求到内部框架处理单元
+    - 作为前端控制器，处理流程：
+        - 一个http请求到达服务器，被DispatcherServlet接收。DispatcherServlet将请求委派给合适的处理器Controller，此时处理控制权到达Controller对象。
+        - Controller内部完成请求的数据模型的创建和业务逻辑的处理，然后再将填充了数据后的模型即model和控制权一并交还给DispatcherServlet，委派DispatcherServlet来渲染响应。
+        - DispatcherServlet再将这些数据和适当的数据模版视图结合，向Response输出响应。
     - HandlerAdapter是扩展点，可以提供自己的实现类来处理handler对象
 
 - HandlerMapping接口
@@ -251,3 +264,10 @@ spring笔记
         - 序列化，远程调用和持久化 -对象需要实例化并存储为到一个特殊的状态，而没有调用代码。
         - 代理，AOP库和Mock对象 -类可以被子类继承而子类不用担心父类的构造器
         - 容器框架 -对象可以以非标准的方式被动态实例化。
+
+
+## spring boot
+
+- 常用特有注解
+    - @SpringBootApplication
+    - @EnableAutoConfiguration

@@ -9,6 +9,8 @@ import com.github.datalking.beans.factory.support.DefaultListableBeanFactory;
 import com.github.datalking.beans.factory.xml.XmlBeanDefinitionReader;
 import com.github.datalking.context.ConfigurableApplicationContext;
 import com.github.datalking.util.Assert;
+import com.github.datalking.util.ObjectUtils;
+import com.github.datalking.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +25,8 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
     private String configLocation;
 
     private final List<BeanFactoryPostProcessor> beanFactoryPostProcessors = new ArrayList<>();
+
+    private String displayName = this.getClass().getName() + "@" + this.hashCode();
 
     //private long startupDate;
 
@@ -130,6 +134,15 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
     public void addBeanFactoryPostProcessor(BeanFactoryPostProcessor postProcessor) {
         Assert.notNull(postProcessor, "BeanFactoryPostProcessor must not be null");
         this.beanFactoryPostProcessors.add(postProcessor);
+    }
+
+    public void setDisplayName(String displayName) {
+        StringUtils.hasLength(displayName);
+        this.displayName = displayName;
+    }
+
+    public String getDisplayName() {
+        return this.displayName;
     }
 
 }

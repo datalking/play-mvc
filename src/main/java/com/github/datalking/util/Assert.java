@@ -24,5 +24,11 @@ public interface Assert {
         isNull(object, "[Assertion failed] - the object argument must be null");
     }
 
+    static void isAssignable(Class<?> superType, Class<?> subType, String message) {
+        notNull(superType, "Type to check against must not be null");
+        if (subType == null || !superType.isAssignableFrom(subType)) {
+            throw new IllegalArgumentException(message + subType + " is not assignable to " + superType);
+        }
+    }
 
 }

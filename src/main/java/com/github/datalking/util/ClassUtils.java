@@ -20,6 +20,19 @@ public abstract class ClassUtils {
     private static final Map<Class<?>, Class<?>> primitiveTypeToWrapperMap = new IdentityHashMap<>(8);
 
 
+    public static String getCamelCaseNameFromClass(Class<?> clazz) {
+
+        String className = clazz.getName();
+
+        int lastDotIdx = className.lastIndexOf(".");
+
+        if (lastDotIdx != -1) {
+            className = className.substring(lastDotIdx+1);
+        }
+
+        return StringUtils.firstLetterLowerCase(className);
+    }
+
     public static Class<?>[] getAllInterfacesForClass(Class<?> clazz, ClassLoader classLoader) {
         Set<Class<?>> ifcs = getAllInterfacesForClassAsSet(clazz, classLoader);
         return ifcs.toArray(new Class<?>[ifcs.size()]);
