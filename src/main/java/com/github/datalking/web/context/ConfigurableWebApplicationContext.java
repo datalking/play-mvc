@@ -29,4 +29,7 @@ public interface ConfigurableWebApplicationContext extends WebApplicationContext
 //    void setConfigLocations(String[] configLocations);
 
 
+    void setId(String id);
+
+
 }

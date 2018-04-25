@@ -3,6 +3,7 @@ package com.github.datalking.web.context;
 import com.github.datalking.context.ApplicationContext;
 import com.github.datalking.context.ConfigurableApplicationContext;
 import com.github.datalking.util.Assert;
+import com.github.datalking.util.ClassUtils;
 import com.github.datalking.util.ObjectUtils;
 import com.github.datalking.util.StringUtils;
 import org.slf4j.Logger;

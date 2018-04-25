@@ -19,8 +19,6 @@ public interface ListableBeanFactory extends BeanFactory {
     String[] getBeanNamesForType(Class<?> type);
 
 //    <T> Map<String, T> getBeansOfType(Class<T> type);
-
-
 //    String[] getBeanNamesForAnnotation(Class<? extends Annotation> annotationType);
 //    <A extends Annotation> A findAnnotationOnBean(String beanName, Class<A> annotationType);
 

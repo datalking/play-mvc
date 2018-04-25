@@ -9,4 +9,12 @@ public interface ConfigurableApplicationContext extends ApplicationContext {
 
     void refresh();
 
+    boolean isActive();
+
+    void setParent(ApplicationContext parent);
+
+    void close();
+
+
+
 }

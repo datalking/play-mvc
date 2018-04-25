@@ -21,7 +21,6 @@ public abstract class HttpServletBean extends HttpServlet {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-
     // 作为参数传入servlet的必要属性
     private final Set<String> requiredProperties = new HashSet<>();
 

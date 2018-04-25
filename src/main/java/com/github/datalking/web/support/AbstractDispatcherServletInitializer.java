@@ -5,6 +5,7 @@ import com.github.datalking.util.ClassUtils;
 import com.github.datalking.util.ObjectUtils;
 import com.github.datalking.web.context.AbstractContextLoaderInitializer;
 import com.github.datalking.web.context.WebApplicationContext;
+import com.github.datalking.web.servlet.DispatcherServlet;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;

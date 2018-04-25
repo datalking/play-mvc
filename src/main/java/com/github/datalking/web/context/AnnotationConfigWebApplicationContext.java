@@ -18,9 +18,9 @@ public class AnnotationConfigWebApplicationContext extends AbstractWebApplicatio
 
     Logger logger = LoggerFactory.getLogger(AnnotationConfigWebApplicationContext.class);
 
-    private final Set<Class<?>> annotatedClasses = new LinkedHashSet<Class<?>>();
+    private final Set<Class<?>> annotatedClasses = new LinkedHashSet<>();
 
-    private final Set<String> basePackages = new LinkedHashSet<String>();
+    private final Set<String> basePackages = new LinkedHashSet<>();
 
     public void register(Class<?>... annotatedClasses) {
         Assert.notNull(annotatedClasses, "At least one annotated class must be specified");

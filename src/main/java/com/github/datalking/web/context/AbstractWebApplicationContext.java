@@ -12,7 +12,9 @@ import javax.servlet.ServletContext;
 public abstract class AbstractWebApplicationContext extends AbstractApplicationContext implements ConfigurableWebApplicationContext {
 
     private ServletContext servletContext;
+
     private ServletConfig servletConfig;
+
     private String namespace;
 
     public AbstractWebApplicationContext() {
@@ -88,11 +90,8 @@ public abstract class AbstractWebApplicationContext extends AbstractApplicationC
 //        beanFactory.ignoreDependencyInterface(ServletConfigAware.class);
 
         //WebApplicationContextUtils.registerWebApplicationScopes(beanFactory, this.servletContext);
-       // WebApplicationContextUtils.registerEnvironmentBeans(beanFactory, this.servletContext, this.servletConfig);
+        // WebApplicationContextUtils.registerEnvironmentBeans(beanFactory, this.servletContext, this.servletConfig);
     }
-
-
-
 
 
 }

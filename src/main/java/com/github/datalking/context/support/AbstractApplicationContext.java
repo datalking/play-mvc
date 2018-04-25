@@ -7,6 +7,7 @@ import com.github.datalking.beans.factory.support.AbstractBeanFactory;
 import com.github.datalking.beans.factory.support.BeanDefinitionRegistry;
 import com.github.datalking.beans.factory.support.DefaultListableBeanFactory;
 import com.github.datalking.beans.factory.xml.XmlBeanDefinitionReader;
+import com.github.datalking.context.ApplicationContext;
 import com.github.datalking.context.ConfigurableApplicationContext;
 import com.github.datalking.util.Assert;
 import com.github.datalking.util.ObjectUtils;
@@ -26,9 +27,15 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
 
     private final List<BeanFactoryPostProcessor> beanFactoryPostProcessors = new ArrayList<>();
 
+    private String id = ObjectUtils.identityToString(this);
+
     private String displayName = this.getClass().getName() + "@" + this.hashCode();
 
-    //private long startupDate;
+    private ApplicationContext parent;
+
+    private boolean active = false;
+
+    private long startupDate;
 
     public AbstractApplicationContext() {
         // 使用注解，不使用xml时，configLocation默认为空字符串
@@ -81,7 +88,12 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
     @Override
     public void refresh() {
 
+        prepareRefresh();
+
+
         try {
+
+
             // 读取xml配置文件
             obtainFreshBeanFactory();
 
@@ -98,6 +110,14 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+    }
+
+    protected void prepareRefresh() {
+
+        this.startupDate = System.currentTimeMillis();
+
+        this.active = true;
 
     }
 
@@ -144,5 +164,48 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
     public String getDisplayName() {
         return this.displayName;
     }
+
+    public boolean isActive() {
+        return this.active;
+    }
+
+
+    public void setParent(ApplicationContext parent) {
+        this.parent = parent;
+//        if (parent != null) {
+//            Environment parentEnvironment = parent.getEnvironment();
+//            if (parentEnvironment instanceof ConfigurableEnvironment) {
+//                getEnvironment().merge((ConfigurableEnvironment) parentEnvironment);
+//            }
+//        }
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void close() {
+        doClose();
+//        synchronized (this.startupShutdownMonitor) {
+//            // If we registered a JVM shutdown hook, we don't need it anymore now:
+//            // We've already explicitly closed the context.
+//            if (this.shutdownHook != null) {
+//                try {
+//                    Runtime.getRuntime().removeShutdownHook(this.shutdownHook);
+//                } catch (IllegalStateException ex) {
+//                    // ignore - VM is already shutting down
+//                }
+//            }
+//        }
+    }
+
+    private void doClose() {
+//        destroyBeans();
+//        closeBeanFactory();
+//        onClose();
+        this.active = false;
+
+    }
+
 
 }

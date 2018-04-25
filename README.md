@@ -8,7 +8,7 @@
 
 ## overview
 - 推荐使用纯注解、零配置的方式，目前实现的xml功能非常有限
-- 视图模板仅支持jsp，不支持velocity、freemarker   
+- 视图模板仅支持jsp，不支持jsf、velocity、freemarker   
 - 目前暂不支持：
     - 暂不支持@Autowired，需要显式配置Bean  
     - 暂不支持@Repository、@Resource  

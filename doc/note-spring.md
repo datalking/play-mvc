@@ -6,6 +6,8 @@ spring笔记
 
 #### spring mvc
 
+- RedirectView跳转时会将跳转之前的请求中的参数保存到FlashMap中，然后通过FlashManager保存起来
+
 - SpringServletContainerInitializer
     - 实现了Servlet3.0的ServletContainerInitializer接口，且优先级会高于xml中配置的listener
     - 用户可以选择是否提供WebApplicationInitializer实现，如果未检测到WebApplicationInitializer类型，则此SpringServletContainerInitializer将不起作用

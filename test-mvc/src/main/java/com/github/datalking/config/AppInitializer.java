@@ -1,6 +1,5 @@
 //package com.github.datalking.config;
 //
-//
 //import com.github.datalking.web.support.AbstractAnnotationConfigDispatcherServletInitializer;
 //
 //public class AppInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
