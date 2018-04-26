@@ -3,6 +3,7 @@ package com.github.datalking.web.context;
 import com.github.datalking.context.ApplicationContext;
 import com.github.datalking.context.support.ApplicationObjectSupport;
 import com.github.datalking.util.web.WebUtils;
+import com.github.datalking.web.support.ServletContextAware;
 
 import javax.servlet.ServletContext;
 import java.io.File;

@@ -14,7 +14,6 @@ public class ContextLoaderListener extends ContextLoader implements ServletConte
 
     private ContextLoader contextLoader;
 
-
     public ContextLoaderListener(WebApplicationContext context) {
         super(context);
     }

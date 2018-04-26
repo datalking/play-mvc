@@ -1,6 +1,8 @@
 package com.github.datalking.web.context;
 
 import com.github.datalking.web.WebApplicationInitializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -9,6 +11,8 @@ import javax.servlet.ServletException;
  * @author yaoo on 4/25/18
  */
 public abstract class AbstractContextLoaderInitializer implements WebApplicationInitializer {
+
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     protected abstract WebApplicationContext createRootApplicationContext();
 
@@ -22,9 +26,8 @@ public abstract class AbstractContextLoaderInitializer implements WebApplication
         if (rootAppContext != null) {
             servletContext.addListener(new ContextLoaderListener(rootAppContext));
 
-        }
-        else {
-            //logger.debug("No ContextLoaderListener registered, as createRootApplicationContext() did not return an application context");
+        } else {
+            logger.debug("No ContextLoaderListener registered");
         }
     }
 

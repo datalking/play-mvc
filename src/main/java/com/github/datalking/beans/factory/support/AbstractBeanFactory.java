@@ -45,7 +45,7 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
 
     protected abstract BeanDefinition getBeanDefinition(String beanName);
 
-    protected abstract boolean containsBeanDefinition(String beanName);
+    public abstract boolean containsBeanDefinition(String beanName);
 
     @Override
     public Class<?> getType(String name) {

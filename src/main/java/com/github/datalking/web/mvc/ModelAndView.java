@@ -5,7 +5,7 @@ import com.github.datalking.util.CollectionUtils;
 import java.util.Map;
 
 /**
- * 存储model和view
+ * 存放model和view
  *
  * @author yaoo on 4/25/18
  */

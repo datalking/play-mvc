@@ -13,7 +13,7 @@ import com.github.datalking.web.context.ConfigurableWebApplicationContext;
 import com.github.datalking.web.context.ContextLoader;
 import com.github.datalking.web.context.WebApplicationContext;
 import com.github.datalking.web.http.RequestMethod;
-import com.github.datalking.web.http.request.RequestAttributes;
+import com.github.datalking.web.http.RequestAttributes;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -25,7 +25,6 @@ import java.util.ArrayList;
 /**
  * @author yaoo on 4/25/18
  */
-@SuppressWarnings({"unused", "unchecked"})
 public abstract class FrameworkServlet extends HttpServletBean {
 
     public static final String DEFAULT_NAMESPACE_SUFFIX = "-servlet";
@@ -45,7 +44,7 @@ public abstract class FrameworkServlet extends HttpServletBean {
 
     private String contextInitializerClasses;
 
-    private final ArrayList<ApplicationContextInitializer<ConfigurableApplicationContext>> contextInitializers = new ArrayList<ApplicationContextInitializer<ConfigurableApplicationContext>>();
+    private final ArrayList<ApplicationContextInitializer<ConfigurableApplicationContext>> contextInitializers = new ArrayList<>();
 
     private WebApplicationContext webApplicationContext;
 
@@ -105,20 +104,11 @@ public abstract class FrameworkServlet extends HttpServletBean {
         initContextHolders(request, requestAttributes);
 
         try {
+            // ==== 实际处理请求的位置，由子类实现
             doService(request, response);
-        } catch (ServletException ex) {
-            failureCause = ex;
-            throw ex;
-        } catch (IOException ex) {
-            failureCause = ex;
-            throw ex;
         } catch (Throwable ex) {
             failureCause = ex;
-            try {
-                throw new Exception("Request processing failed", ex);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            ex.printStackTrace();
         } finally {
 
             resetContextHolders(request, previousAttributes);
@@ -172,25 +162,31 @@ public abstract class FrameworkServlet extends HttpServletBean {
         }
     }
 
+    /**
+     * 初始化WebApplicationContext
+     * <p>
+     * 覆盖父类中的方法，作为init()的一小步
+     */
     @Override
     protected final void initServletBean() throws ServletException {
         getServletContext().log("Initializing Spring FrameworkServlet '" + getServletName() + "'");
         if (this.logger.isInfoEnabled()) {
             this.logger.info("FrameworkServlet '" + getServletName() + "': initialization started");
         }
+
         long startTime = System.currentTimeMillis();
 
         try {
+            // ==== 初始化WebApplicationContext
             this.webApplicationContext = initWebApplicationContext();
+            //
             initFrameworkServlet();
-        } catch (ServletException ex) {
-            this.logger.error("Context initialization failed", ex);
-            throw ex;
-        } catch (RuntimeException ex) {
+        } catch (ServletException | RuntimeException ex) {
             this.logger.error("Context initialization failed", ex);
             throw ex;
         }
 
+        /// 打印容器启动时间
         if (this.logger.isInfoEnabled()) {
             long elapsedTime = System.currentTimeMillis() - startTime;
             this.logger.info("FrameworkServlet '" + getServletName() + "': initialization completed in " +
@@ -198,41 +194,44 @@ public abstract class FrameworkServlet extends HttpServletBean {
         }
     }
 
+    /**
+     * 初始化WebApplicationContext
+     */
     protected WebApplicationContext initWebApplicationContext() {
+        // 获取由ContextLoaderListener初始化并注册在ServletContext中的根上下文，记为rootContext
         WebApplicationContext rootContext = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
+
         WebApplicationContext wac = null;
 
+        /// 非空表示这个Servlet类是通过编程式注册到容器中的，context也由编程式传入
         if (this.webApplicationContext != null) {
-            // A context instance was injected at construction time -> use it
             wac = this.webApplicationContext;
+
             if (wac instanceof ConfigurableWebApplicationContext) {
                 ConfigurableWebApplicationContext cwac = (ConfigurableWebApplicationContext) wac;
                 if (!cwac.isActive()) {
-                    // The context has not yet been refreshed -> provide services such as
-                    // setting the parent context, setting the application context id, etc
                     if (cwac.getParent() == null) {
-                        // The context instance was injected without an explicit parent -> set
-                        // the root application context (if any; may be null) as the parent
                         cwac.setParent(rootContext);
                     }
                     configureAndRefreshWebApplicationContext(cwac);
                 }
             }
         }
+
+        /// wac==null说明未完成上下文的设置，该Servlet不是由编程方式注册到容器中
         if (wac == null) {
-            // No context instance was injected at construction time -> see if one
-            // has been registered in the servlet context. If one exists, it is assumed
-            // that the parent context (if any) has already been set and that the
-            // user has performed any initialization such as setting the context id
             wac = findWebApplicationContext();
         }
+
+        /// wac==null说明上面的初始化策略都没成功
         if (wac == null) {
-            // No context instance is defined for this servlet -> create a local one
+            // 建立一个全新的以rootContext为父上下文的上下文
             wac = createWebApplicationContext(rootContext);
         }
 
 //        if (!this.refreshEventReceived) {
-//            onRefresh(wac);
+        // 留给子类实现
+        onRefresh(wac);
 //        }
 
 //        if (this.publishContext) {
@@ -246,6 +245,10 @@ public abstract class FrameworkServlet extends HttpServletBean {
 //        }
 
         return wac;
+    }
+
+
+    protected void onRefresh(ApplicationContext context) {
     }
 
     protected WebApplicationContext findWebApplicationContext() {

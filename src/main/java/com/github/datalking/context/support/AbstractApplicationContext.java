@@ -1,6 +1,7 @@
 package com.github.datalking.context.support;
 
 
+import com.github.datalking.beans.factory.config.AutowireCapableBeanFactory;
 import com.github.datalking.beans.factory.config.BeanFactoryPostProcessor;
 import com.github.datalking.beans.factory.config.ConfigurableListableBeanFactory;
 import com.github.datalking.beans.factory.support.AbstractBeanFactory;
@@ -15,11 +16,13 @@ import com.github.datalking.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * ApplicationContext 抽象类
  */
-public abstract class AbstractApplicationContext implements ConfigurableApplicationContext {
+//public abstract class AbstractApplicationContext implements ConfigurableApplicationContext {
+public class AbstractApplicationContext implements ConfigurableApplicationContext {
 
     protected DefaultListableBeanFactory beanFactory;
 
@@ -36,6 +39,7 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
     private boolean active = false;
 
     private long startupDate;
+
 
     public AbstractApplicationContext() {
         // 使用注解，不使用xml时，configLocation默认为空字符串
@@ -66,7 +70,7 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
         return beanFactory.getBean(name);
     }
 
-    public AbstractBeanFactory getBeanFactory() {
+    public ConfigurableListableBeanFactory getBeanFactory() {
         return beanFactory;
     }
 
@@ -156,15 +160,6 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
         this.beanFactoryPostProcessors.add(postProcessor);
     }
 
-    public void setDisplayName(String displayName) {
-        StringUtils.hasLength(displayName);
-        this.displayName = displayName;
-    }
-
-    public String getDisplayName() {
-        return this.displayName;
-    }
-
     public boolean isActive() {
         return this.active;
     }
@@ -180,9 +175,6 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
 //        }
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public void close() {
         doClose();
@@ -207,10 +199,87 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
 
     }
 
+
     @Override
     public boolean containsBean(String name) {
         return getBeanFactory().containsBean(name);
     }
 
+    // ======== ApplicationContext interface ========
+    @Override
+    public String getId() {
+        return this.id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getApplicationName() {
+        return "";
+    }
+
+    public String getDisplayName() {
+        return this.displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        Assert.hasLength(displayName, "Display name must not be empty");
+        this.displayName = displayName;
+    }
+
+    @Override
+    public ApplicationContext getParent() {
+        return this.parent;
+    }
+
+    @Override
+    public AutowireCapableBeanFactory getAutowireCapableBeanFactory() {
+        return getBeanFactory();
+    }
+
+    public long getStartupDate() {
+        return this.startupDate;
+    }
+
+//    public void publishEvent(ApplicationEvent event) {
+//        Assert.notNull(event, "Event must not be null");
+//        if (logger.isTraceEnabled()) {
+//            logger.trace("Publishing event in " + getDisplayName() + ": " + event);
+//        }
+//        getApplicationEventMulticaster().multicastEvent(event);
+//        if (this.parent != null) {
+//            this.parent.publishEvent(event);
+//        }
+//    }
+
+
+    // ======== ListableBeanFactory Interface ========
+    @Override
+    public boolean containsBeanDefinition(String beanName) {
+        return getBeanFactory().containsBeanDefinition(beanName);
+    }
+
+
+    @Override
+    public int getBeanDefinitionCount() {
+        return getBeanFactory().getBeanDefinitionCount();
+    }
+
+    @Override
+    public String[] getBeanDefinitionNames() {
+        return getBeanFactory().getBeanDefinitionNames();
+    }
+
+    @Override
+    public String[] getBeanNamesForType(Class<?> type) {
+        return getBeanFactory().getBeanNamesForType(type);
 
     }
+
+    @Override
+    public <T> Map<String, T> getBeansOfType(Class<T> type) {
+        return getBeanFactory().getBeansOfType(type);
+    }
+
+}

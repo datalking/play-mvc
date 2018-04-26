@@ -6,6 +6,32 @@ spring笔记
 
 #### spring mvc
 
+
+- Servlet3.0提供了ServletContainerInitializer接口，支持web应用启动阶段动态注册servlet，filter和listener
+
+- spring mvc 父子上下文
+    - Tomcat启动时，监听器ContextLoaderListener创建一个XMLWebApplicationContext上下文容器，
+      并加载context-param中的配置文件，完成容器的刷新后将上下文设置到ServletContext。
+    - 当DispatcherServlet创建时，先进行初始化操作，从ServletContext中查询出监听器中创建的上下文对象，
+      作为父类上下文来创建servlet的上下文容器，并加载Servlet配置中的init-param的配置文件
+      (默认加载/WEB-INF/servletName-servlet.xml,servletName为DispatcherServlet配置的servlet-name)，然后完成容器的刷新。
+    - 子上下文可以访问父上下文中的bean，反之则不行
+    - 通常是将业务操作及数据库相关的bean维护在Listener的父容器中，而在Servlet的子容器中只加载Controller相关的业务实现的bean。
+    - 从而将业务实现和业务的具体操作分隔在两个上下文容器中，业务实现bean可以调用业务具体操作的bean。
+
+- WebRequest是Spring Web MVC提供的统一请求访问接口，不仅仅可以访问请求相关数据（如参数区数据、请求头数据，但访问不到Cookie区数据），
+  还可以访问会话和上下文中的数据；
+- NativeWebRequest继承了WebRequest，并提供访问本地Servlet API的方法。
+
+- Servlet生命周期的三个阶段，就是所谓的init-service-destroy
+- Servlet生命周期的service阶段中，每一次Http请求到来，容器都会启动一个请求线程，通过service()方法，委派到doGet()或者doPost()这些方法，完成Http请求的处理
+- 在初始化流程中，SpringMVC巧妙的运用依赖注入读取参数，并最终建立一个与容器上下文相关联的Spring子上下文。
+
+
+- DispatcherServlet类的初始化入口方法init()定义在HttpServletBean这个父类中
+- ContextLoaderListener所初始化的这个Spring容器上下文，被称为根上下文
+- 在DispatcherServlet的初始化过程中，同样会初始化一个WebApplicationContext的实现类，作为自己独有的上下文，会将上面的根上下文作为自己的父上下文
+
 - RedirectView跳转时会将跳转之前的请求中的参数保存到FlashMap中，然后通过FlashManager保存起来
 
 - SpringServletContainerInitializer
@@ -45,8 +71,6 @@ spring笔记
     - 通过自定义拦截器，可以在一个请求被真正处理之前、请求被处理但还没输出到响应中、请求已经被输出到响应中之后这三个时间点去做任何事情
 
 - HandlerAdapter  
-    - aa
-    
     
 - ModelAndView是SpringMVC中对视图和数据的一个聚合类
     - 所有的数据，最后会作为一个Map对象传递到View实现类中的render方法，调用这个render方法，就完成了视图到响应的渲染

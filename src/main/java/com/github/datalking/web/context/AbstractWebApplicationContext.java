@@ -2,6 +2,7 @@ package com.github.datalking.web.context;
 
 import com.github.datalking.beans.factory.config.ConfigurableListableBeanFactory;
 import com.github.datalking.context.support.AbstractApplicationContext;
+import com.github.datalking.web.support.ServletContextAwareProcessor;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -9,7 +10,8 @@ import javax.servlet.ServletContext;
 /**
  * @author yaoo on 4/25/18
  */
-public abstract class AbstractWebApplicationContext extends AbstractApplicationContext implements ConfigurableWebApplicationContext {
+public abstract class AbstractWebApplicationContext
+        extends AbstractApplicationContext implements ConfigurableWebApplicationContext {
 
     private ServletContext servletContext;
 
@@ -52,22 +54,6 @@ public abstract class AbstractWebApplicationContext extends AbstractApplicationC
     }
 
 
-//    @Override
-//    public Object getBean(String name) {
-//        return null;
-//    }
-//
-//    @Override
-//    public Class<?> getType(String name) {
-//        return null;
-//    }
-//
-//    @Override
-//    public boolean isTypeMatch(String name, Class<?> targetType) {
-//        return false;
-//    }
-
-
     public String getApplicationName() {
         if (this.servletContext == null) {
             return "";
@@ -80,9 +66,6 @@ public abstract class AbstractWebApplicationContext extends AbstractApplicationC
         }
     }
 
-    /**
-     * Register request/session scopes, a  ServletContextAwareProcessor
-     */
     //@Override
     protected void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
         beanFactory.addBeanPostProcessor(new ServletContextAwareProcessor(this.servletContext, this.servletConfig));

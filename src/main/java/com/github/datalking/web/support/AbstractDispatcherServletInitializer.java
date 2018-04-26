@@ -23,6 +23,17 @@ public abstract class AbstractDispatcherServletInitializer extends AbstractConte
     // 默认servlet名称，可以通过getServletName()覆盖
     public static final String DEFAULT_SERVLET_NAME = "dispatcher";
 
+    protected abstract WebApplicationContext createServletApplicationContext();
+
+    /**
+     * 对应servlet-mapping配置
+     */
+    protected abstract String[] getServletMappings();
+
+    protected Filter[] getServletFilters() {
+        return null;
+    }
+
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
         super.onStartup(servletContext);
@@ -62,17 +73,6 @@ public abstract class AbstractDispatcherServletInitializer extends AbstractConte
     protected String getServletName() {
         return DEFAULT_SERVLET_NAME;
     }
-
-    protected abstract WebApplicationContext createServletApplicationContext();
-
-
-    protected abstract String[] getServletMappings();
-
-
-    protected Filter[] getServletFilters() {
-        return null;
-    }
-
 
     protected FilterRegistration.Dynamic registerServletFilter(ServletContext servletContext, Filter filter) {
         //String filterName = Conventions.getVariableName(filter);

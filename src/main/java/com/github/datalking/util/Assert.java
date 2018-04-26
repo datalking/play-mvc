@@ -24,6 +24,10 @@ public interface Assert {
         isNull(object, "[Assertion failed] - the object argument must be null");
     }
 
+    public static void isAssignable(Class<?> superType, Class<?> subType) {
+        isAssignable(superType, subType, "");
+    }
+
     static void isAssignable(Class<?> superType, Class<?> subType, String message) {
         notNull(superType, "Type to check against must not be null");
         if (subType == null || !superType.isAssignableFrom(subType)) {

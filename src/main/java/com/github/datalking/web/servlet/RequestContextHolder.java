@@ -2,7 +2,7 @@ package com.github.datalking.web.servlet;
 
 import com.github.datalking.common.NamedInheritableThreadLocal;
 import com.github.datalking.common.NamedThreadLocal;
-import com.github.datalking.web.http.request.RequestAttributes;
+import com.github.datalking.web.http.RequestAttributes;
 
 /**
  * 工具类

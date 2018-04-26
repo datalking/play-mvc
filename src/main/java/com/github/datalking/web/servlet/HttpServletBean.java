@@ -13,7 +13,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * 获取初始化参数
+ * 获取初始化参数的servlet
  *
  * @author yaoo on 4/25/18
  */
@@ -30,7 +30,6 @@ public abstract class HttpServletBean extends HttpServlet {
             logger.debug("Initializing servlet '" + getServletName() + "'");
         }
 
-        // Set bean properties from init parameters.
         try {
             PropertyValues pvs = new ServletConfigPropertyValues(getServletConfig(), this.requiredProperties);
             //BeanWrapper bw = PropertyAccessorFactory.forBeanPropertyAccess(this);
@@ -44,7 +43,7 @@ public abstract class HttpServletBean extends HttpServlet {
             ex.printStackTrace();
         }
 
-        // Let subclasses do whatever initialization they like.
+        // ==== 留给子类实现
         initServletBean();
 
         if (logger.isDebugEnabled()) {

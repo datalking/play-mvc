@@ -1,4 +1,4 @@
-package com.github.datalking.web.http.request;
+package com.github.datalking.web.http;
 
 /**
  * @author yaoo on 4/25/18

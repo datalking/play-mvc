@@ -23,7 +23,6 @@ import java.util.Map;
  *
  * @author yaoo on 4/25/18
  */
-@SuppressWarnings({"unused", "unchecked"})
 public class DispatcherServlet extends FrameworkServlet {
 
     public static final String HANDLER_MAPPING_BEAN_NAME = "handlerMapping";
@@ -47,6 +46,7 @@ public class DispatcherServlet extends FrameworkServlet {
     private boolean detectAllHandlerAdapters = true;
 
     //    private MultipartResolver multipartResolver;
+
     private List<HandlerMapping> handlerMappings;
 
     private List<HandlerAdapter> handlerAdapters;
@@ -76,6 +76,12 @@ public class DispatcherServlet extends FrameworkServlet {
         this.detectAllViewResolvers = detectAllViewResolvers;
     }
 
+    /**
+     * 初始化http request处理器
+     * <p>
+     * 覆盖父类方法，作为initWebApplicationContext()的一小步
+     */
+    @Override
     protected void onRefresh(ApplicationContext context) {
         initStrategies(context);
     }
@@ -92,7 +98,11 @@ public class DispatcherServlet extends FrameworkServlet {
 //        initFlashMapManager(context);
     }
 
-
+    /**
+     * 实际请求处理方法
+     * <p>
+     * 覆盖父类方法
+     */
     @Override
     protected void doService(HttpServletRequest request, HttpServletResponse response) throws Exception {
         if (logger.isDebugEnabled()) {
@@ -137,7 +147,10 @@ public class DispatcherServlet extends FrameworkServlet {
         }
     }
 
-
+    /**
+     * 转发请求到控制器方法
+     * 实现MVC
+     */
     protected void doDispatch(HttpServletRequest request, HttpServletResponse response) throws Exception {
         HttpServletRequest processedRequest = request;
         HandlerExecutionChain mappedHandler = null;
@@ -281,9 +294,12 @@ public class DispatcherServlet extends FrameworkServlet {
     private void initHandlerMappings(ApplicationContext context) {
         this.handlerMappings = null;
 
+        /// 默认为true
         if (this.detectAllHandlerMappings) {
 //            Map<String, HandlerMapping> matchingBeans = BeanFactoryUtils.beansOfTypeIncludingAncestors(context, HandlerMapping.class, true, false);
+            // 获取所有HandlerMapping类型的bean
             Map<String, HandlerMapping> matchingBeans = context.getBeansOfType(HandlerMapping.class);
+
             if (!matchingBeans.isEmpty()) {
                 this.handlerMappings = new ArrayList<>(matchingBeans.values());
                 // OrderComparator.sort(this.handlerMappings);
@@ -386,9 +402,11 @@ public class DispatcherServlet extends FrameworkServlet {
     }
 
     /**
-     * 根据request获取拦截器链
+     * 接收http request的输入，返回拦截链
      */
     protected HandlerExecutionChain getHandler(HttpServletRequest request) throws Exception {
+
+        /// 遍历 handlerMappings
         for (HandlerMapping hm : this.handlerMappings) {
             if (logger.isTraceEnabled()) {
                 logger.trace("Testing handler map [" + hm + "] in DispatcherServlet with name '" + getServletName() + "'");

@@ -284,6 +284,24 @@ public abstract class StringUtils {
         return prefix + collectionToDelimitedString(pathElements, FOLDER_SEPARATOR);
     }
 
+    public static String applyRelativePath(String path, String relativePath) {
+        int separatorIndex = path.lastIndexOf(FOLDER_SEPARATOR);
+        if (separatorIndex != -1) {
+            String newPath = path.substring(0, separatorIndex);
+            if (!relativePath.startsWith(FOLDER_SEPARATOR)) {
+                newPath += FOLDER_SEPARATOR;
+            }
+            return newPath + relativePath;
+        }
+        else {
+            return relativePath;
+        }
+    }
+
+    public static String collectionToCommaDelimitedString(Collection<?> coll) {
+        return collectionToDelimitedString(coll, ",");
+    }
+
     public static String collectionToDelimitedString(Collection<?> coll, String delim) {
         return collectionToDelimitedString(coll, delim, "", "");
     }
@@ -301,20 +319,6 @@ public abstract class StringUtils {
             }
         }
         return sb.toString();
-    }
-
-    public static String applyRelativePath(String path, String relativePath) {
-        int separatorIndex = path.lastIndexOf(FOLDER_SEPARATOR);
-        if (separatorIndex != -1) {
-            String newPath = path.substring(0, separatorIndex);
-            if (!relativePath.startsWith(FOLDER_SEPARATOR)) {
-                newPath += FOLDER_SEPARATOR;
-            }
-            return newPath + relativePath;
-        }
-        else {
-            return relativePath;
-        }
     }
 
 

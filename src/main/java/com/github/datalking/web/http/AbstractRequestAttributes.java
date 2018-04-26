@@ -1,4 +1,4 @@
-package com.github.datalking.web.http.request;
+package com.github.datalking.web.http;
 
 import com.github.datalking.util.Assert;
 

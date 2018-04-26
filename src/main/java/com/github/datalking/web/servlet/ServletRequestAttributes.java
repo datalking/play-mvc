@@ -2,7 +2,7 @@ package com.github.datalking.web.servlet;
 
 import com.github.datalking.util.Assert;
 import com.github.datalking.util.StringUtils;
-import com.github.datalking.web.http.request.AbstractRequestAttributes;
+import com.github.datalking.web.http.AbstractRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;

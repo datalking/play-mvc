@@ -1,6 +1,7 @@
 package com.github.datalking.web.context;
 
 import com.github.datalking.context.ApplicationContext;
+import com.github.datalking.context.ApplicationContextInitializer;
 import com.github.datalking.context.ConfigurableApplicationContext;
 import com.github.datalking.util.Assert;
 import com.github.datalking.util.ClassUtils;
@@ -11,6 +12,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletContext;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
@@ -61,7 +64,7 @@ public class ContextLoader {
     // root
     private WebApplicationContext context;
 
-    private BeanFactoryReference parentContextRef;
+//    private BeanFactoryReference parentContextRef;
 
     public ContextLoader() {
     }
@@ -70,22 +73,9 @@ public class ContextLoader {
         this.context = context;
     }
 
-    /**
-     * Initialize Spring's web application context for the given servlet context,
-     * using the application context provided at construction time, or creating a new one
-     * according to the "{@link #CONTEXT_CLASS_PARAM contextClass}" and
-     * "{@link #CONFIG_LOCATION_PARAM contextConfigLocation}" context-params.
-     *
-     * @param servletContext current servlet context
-     * @return the new WebApplicationContext
-     * @see #ContextLoader(WebApplicationContext)
-     * @see #CONTEXT_CLASS_PARAM
-     * @see #CONFIG_LOCATION_PARAM
-     */
     public WebApplicationContext initWebApplicationContext(ServletContext servletContext) {
         if (servletContext.getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE) != null) {
-            throw new IllegalStateException("Cannot initialize context because there is already a root application context present - " +
-                    "check whether you have multiple ContextLoader* definitions in your web.xml!");
+            throw new IllegalStateException("Cannot initialize context because a root application context already exists.");
         }
 
         servletContext.log("Initializing Spring root WebApplicationContext");
@@ -95,8 +85,7 @@ public class ContextLoader {
         long startTime = System.currentTimeMillis();
 
         try {
-            // Store context in local instance variable, to guarantee that
-            // it is available on ServletContext shutdown.
+            // Store context in local instance variable, to guarantee that it is available on ServletContext shutdown.
             if (this.context == null) {
                 this.context = createWebApplicationContext(servletContext);
             }
@@ -106,8 +95,8 @@ public class ContextLoader {
                     // The context has not yet been refreshed -> provide services such as setting the parent context, setting the application context id, etc
                     if (cwac.getParent() == null) {
                         // The context instance was injected without an explicit parent ->  determine parent for root web application context, if any.
-                        ApplicationContext parent = loadParentContext(servletContext);
-                        cwac.setParent(parent);
+//                        ApplicationContext parent = loadParentContext(servletContext);
+//                        cwac.setParent(parent);
                     }
                     configureAndRefreshWebApplicationContext(cwac, servletContext);
                 }
@@ -168,6 +157,34 @@ public class ContextLoader {
         return createWebApplicationContext(sc);
     }
 
+    protected Class<?> determineContextClass(ServletContext servletContext) {
+        String contextClassName = servletContext.getInitParameter(CONTEXT_CLASS_PARAM);
+
+        if (contextClassName != null) {
+            try {
+                return ClassUtils.forName(contextClassName, this.getClass().getClassLoader());
+            } catch (ClassNotFoundException ex) {
+                try {
+                    throw new Exception("Failed to load custom context class [" + contextClassName + "]", ex);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+//        else {
+//            contextClassName = defaultStrategies.getProperty(WebApplicationContext.class.getName());
+//            try {
+//                return ClassUtils.forName(contextClassName, ContextLoader.class.getClassLoader());
+//            }
+//            catch (ClassNotFoundException ex) {
+//                throw new ApplicationContextException(
+//                        "Failed to load default context class [" + contextClassName + "]", ex);
+//            }
+//        }
+
+        return null;
+    }
+
     protected void configureAndRefreshWebApplicationContext(ConfigurableWebApplicationContext wac, ServletContext sc) {
 
 //        if (ObjectUtils.identityToString(wac).equals(wac.getId())) {
@@ -203,7 +220,7 @@ public class ContextLoader {
 //            ((ConfigurableWebEnvironment) env).initPropertySources(sc, null);
 //        }
 
-        customizeContext(sc, wac);
+        //customizeContext(sc, wac);
         wac.refresh();
     }
 
@@ -259,11 +276,10 @@ public class ContextLoader {
 //            }
 //        }
 //    }
-    protected List<Class<ApplicationContextInitializer<ConfigurableApplicationContext>>>
-    determineContextInitializerClasses(ServletContext servletContext) {
+    protected List<Class<ApplicationContextInitializer<ConfigurableApplicationContext>>> determineContextInitializerClasses
+    (ServletContext servletContext) {
 
-        List<Class<ApplicationContextInitializer<ConfigurableApplicationContext>>> classes =
-                new ArrayList<Class<ApplicationContextInitializer<ConfigurableApplicationContext>>>();
+        List<Class<ApplicationContextInitializer<ConfigurableApplicationContext>>> classes = new ArrayList<>();
 
         String globalClassNames = servletContext.getInitParameter(GLOBAL_INITIALIZER_CLASSES_PARAM);
         if (globalClassNames != null) {
@@ -283,14 +299,21 @@ public class ContextLoader {
     }
 
     @SuppressWarnings("unchecked")
-    private Class<ApplicationContextInitializer<ConfigurableApplicationContext>> loadInitializerClass(String className) {
+    private Class<ApplicationContextInitializer<ConfigurableApplicationContext>> loadInitializerClass(String
+                                                                                                              className) {
         try {
-            Class<?> clazz = ClassUtils.forName(className, ClassUtils.getDefaultClassLoader());
+            Class<?> clazz = ClassUtils.forName(className, this.getClass().getClassLoader());
             Assert.isAssignable(ApplicationContextInitializer.class, clazz);
             return (Class<ApplicationContextInitializer<ConfigurableApplicationContext>>) clazz;
         } catch (ClassNotFoundException ex) {
-            throw new ApplicationContextException("Failed to load context initializer class [" + className + "]", ex);
+            try {
+                throw new Exception("Failed to load context initializer class [" + className + "]", ex);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
+
+        return null;
     }
 
 //    protected ApplicationContext loadParentContext(ServletContext servletContext) {
@@ -327,9 +350,9 @@ public class ContextLoader {
                 currentContextPerThread.remove(ccl);
             }
             servletContext.removeAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
-            if (this.parentContextRef != null) {
-                this.parentContextRef.release();
-            }
+//            if (this.parentContextRef != null) {
+//                    this.parentContextRef.release();
+//            }
         }
     }
 

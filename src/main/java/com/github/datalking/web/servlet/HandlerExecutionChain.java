@@ -14,17 +14,18 @@ import java.util.List;
 
 /**
  * handler执行链
- * 包含handler对象和拦截方法
+ * 包含handler对象和拦截方法，可以在此扩展自定义拦截方法
  *
  * @author yaoo on 4/25/18
  */
 public class HandlerExecutionChain {
 
-
     private static final Logger logger = LoggerFactory.getLogger(HandlerExecutionChain.class);
 
+    // 实际执行对象
     private final Object handler;
 
+    // 拦截器方法数组
     private HandlerInterceptor[] interceptors;
 
     private List<HandlerInterceptor> interceptorList;
