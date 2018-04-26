@@ -31,4 +31,30 @@ public interface Assert {
         }
     }
 
+    static void hasLength(String text, String message) {
+        if (!StringUtils.hasLength(text)) {
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+    static void isTrue(boolean expression, String message) {
+        if (!expression) {
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+    static void isTrue(boolean expression) {
+        isTrue(expression, "[Assertion failed] - this expression must be true");
+    }
+
+    static void hasText(String text, String message) {
+        if (!StringUtils.hasText(text)) {
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+    static void hasText(String text) {
+        hasText(text, "[Assertion failed] - this String argument must have text; it must not be null, empty, or blank");
+    }
+
 }

@@ -2,7 +2,7 @@
 //
 //import com.github.datalking.annotation.Controller;
 //import com.github.datalking.annotation.RequestMapping;
-//import com.github.datalking.context.ui.Model;
+//import com.github.datalking.web.mvc.Model;
 //
 //import java.util.Locale;
 //

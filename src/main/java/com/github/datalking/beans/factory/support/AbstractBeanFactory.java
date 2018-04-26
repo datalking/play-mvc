@@ -152,7 +152,7 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
 
     }
 
-    //@Override
+    @Override
     public boolean containsBean(String name) {
         //String beanName = transformedBeanName(name);
         String beanName = name;

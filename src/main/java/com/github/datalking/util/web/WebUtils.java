@@ -1,4 +1,7 @@
-package com.github.datalking.util;
+package com.github.datalking.util.web;
+
+import com.github.datalking.util.Assert;
+import com.github.datalking.util.StringUtils;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
@@ -13,7 +16,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Enumeration;
 import java.util.Map;
-import java.util.StringTokenizer;
 import java.util.TreeMap;
 
 /**

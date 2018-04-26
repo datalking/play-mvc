@@ -7,6 +7,7 @@ import com.github.datalking.util.Assert;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -175,10 +176,18 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
     }
 
 
-//    @Override
-//    public <T> Map<String, T> getBeansOfType(Class<T> type) {
-//        return null;
-//    }
+    @Override
+    public <T> Map<String, T> getBeansOfType(Class<T> type) {
+
+        String[] beanNames = getBeanNamesForType(type);
+
+        Map<String, T> result = new LinkedHashMap<>(beanNames.length);
+        for (String name : beanNames) {
+            result.put(name, (T) getBean(name));
+        }
+
+        return result;
+    }
 
 
     // ======== AutowireCapableBeanFactory interface ========

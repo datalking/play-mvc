@@ -1,5 +1,6 @@
-package com.github.datalking.util;
+package com.github.datalking.util.web;
 
+import com.github.datalking.util.Assert;
 import com.github.datalking.web.context.WebApplicationContext;
 
 import javax.servlet.ServletContext;
@@ -33,5 +34,16 @@ public abstract class WebApplicationContextUtils {
         }
         return (WebApplicationContext) attr;
     }
+
+
+    public static WebApplicationContext getRequiredWebApplicationContext(ServletContext sc) throws IllegalStateException {
+        WebApplicationContext wac = getWebApplicationContext(sc);
+        if (wac == null) {
+            throw new IllegalStateException("No WebApplicationContext found: no ContextLoaderListener registered?");
+        }
+        return wac;
+    }
+
+
 
 }

@@ -248,6 +248,12 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
     }
 
+    @Override
+    public Object initializeBean(Object existingBean, String beanName) {
+        return initializeBean(beanName, existingBean, null);
+    }
+
+
     protected Object initializeBean(final String beanName, final Object bean, RootBeanDefinition mbd) {
 
         // 执行aware相关方法

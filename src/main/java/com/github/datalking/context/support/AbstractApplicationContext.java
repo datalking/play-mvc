@@ -207,5 +207,10 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
 
     }
 
+    @Override
+    public boolean containsBean(String name) {
+        return getBeanFactory().containsBean(name);
+    }
 
-}
+
+    }

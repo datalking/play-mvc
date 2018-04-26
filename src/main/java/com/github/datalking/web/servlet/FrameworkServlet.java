@@ -7,7 +7,7 @@ import com.github.datalking.context.ConfigurableApplicationContext;
 import com.github.datalking.util.Assert;
 import com.github.datalking.util.ObjectUtils;
 import com.github.datalking.util.StringUtils;
-import com.github.datalking.util.WebApplicationContextUtils;
+import com.github.datalking.util.web.WebApplicationContextUtils;
 import com.github.datalking.web.context.AnnotationConfigWebApplicationContext;
 import com.github.datalking.web.context.ConfigurableWebApplicationContext;
 import com.github.datalking.web.context.ContextLoader;
