@@ -1,6 +1,7 @@
 package com.github.datalking.web.mvc.method;
 
 import com.github.datalking.annotation.RequestBody;
+import com.github.datalking.annotation.ResponseBody;
 import com.github.datalking.common.MethodParameter;
 import com.github.datalking.web.http.converter.HttpMessageConverter;
 
@@ -36,15 +37,11 @@ public class RequestResponseBodyMethodProcessor extends AbstractMessageConverter
         return (returnType.getMethodAnnotation(ResponseBody.class) != null);
     }
 
-    /**
-     * Throws MethodArgumentNotValidException if validation fails.
-     *
-     * @throws HttpMessageNotReadableException if {@link RequestBody#required()}
-     *                                         is {@code true} and there is no body content or if there is no suitable
-     *                                         converter to read the content with.
-     */
-    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
-                                  NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+
+    public Object resolveArgument(MethodParameter parameter,
+                                  ModelAndViewContainer mavContainer,
+                                  NativeWebRequest webRequest,
+                                  WebDataBinderFactory binderFactory) throws Exception {
 
         Object arg = readWithMessageConverters(webRequest, parameter, parameter.getGenericParameterType());
         String name = Conventions.getVariableNameForParameter(parameter);
@@ -56,18 +53,8 @@ public class RequestResponseBodyMethodProcessor extends AbstractMessageConverter
         return arg;
     }
 
-    /**
-     * Validate the request part if applicable.
-     * <p>The default implementation checks for {@code @javax.validation.Valid},
-     * Spring's {@link org.springframework.validation.annotation.Validated},
-     * and custom annotations whose name starts with "Valid".
-     *
-     * @param binder      the DataBinder to be used
-     * @param methodParam the method parameter
-     * @throws MethodArgumentNotValidException in case of a binding error which
-     *                                         is meant to be fatal (i.e. without a declared {@link Errors} parameter)
-     */
-    private void validate(WebDataBinder binder, MethodParameter methodParam) throws MethodArgumentNotValidException {
+
+    private void validate(WebDataBinder binder, MethodParameter methodParam) {
         Annotation[] annotations = methodParam.getParameterAnnotations();
         for (Annotation ann : annotations) {
             if (ann.annotationType().getSimpleName().startsWith("Valid")) {
@@ -82,13 +69,7 @@ public class RequestResponseBodyMethodProcessor extends AbstractMessageConverter
         }
     }
 
-    /**
-     * Whether to raise a fatal bind exception on validation errors.
-     *
-     * @param binder      the data binder used to perform data binding
-     * @param methodParam the method argument
-     * @return {@code true} if the next method argument is not of type {@link Errors}
-     */
+
     private boolean isBindExceptionRequired(WebDataBinder binder, MethodParameter methodParam) {
         int i = methodParam.getParameterIndex();
         Class<?>[] paramTypes = methodParam.getMethod().getParameterTypes();
@@ -97,8 +78,9 @@ public class RequestResponseBodyMethodProcessor extends AbstractMessageConverter
     }
 
     @Override
-    protected <T> Object readWithMessageConverters(NativeWebRequest webRequest, MethodParameter methodParam,
-                                                   Type paramType) throws IOException, HttpMediaTypeNotSupportedException {
+    protected <T> Object readWithMessageConverters(NativeWebRequest webRequest,
+                                                   MethodParameter methodParam,
+                                                   Type paramType) throws IOException {
 
         HttpServletRequest servletRequest = webRequest.getNativeRequest(HttpServletRequest.class);
         HttpInputMessage inputMessage = new ServletServerHttpRequest(servletRequest);
@@ -146,5 +128,6 @@ public class RequestResponseBodyMethodProcessor extends AbstractMessageConverter
             writeWithMessageConverters(returnValue, returnType, webRequest);
         }
     }
+
 
 }

@@ -8,10 +8,11 @@
 
 ## overview
 - 推荐使用纯注解、零配置的方式，目前实现的xml功能非常有限
-- 视图模板仅支持jsp，不支持jsf、velocity、freemarker   
+- 暂不支持视图模板，视图模板以后仅支持普通jsp，不会支持jstl、jsf、velocity、freemarker等   
 - 目前暂不支持：
     - 暂不支持@Autowired，需要显式配置Bean  
     - 暂不支持@Repository、@Resource  
+    - 暂不支持静态资源处理  
     - 不支持introduction引入增强，仅支持weave  
     - 不支持指定aop生成代理对象的方式，默认使用JdkDynamicAopProxy，目标对象未实现接口时使用CglibAopProxy
     - 不支持动态代理指定构造函数参数

@@ -25,11 +25,10 @@ public interface ConfigurableWebApplicationContext extends WebApplicationContext
 
     String getNamespace();
 
-//    String[] getConfigLocations();
-//    void setConfigLocations(String[] configLocations);
-
-
     void setId(String id);
 
+//    String[] getConfigLocations();
+
+//    void setConfigLocations(String[] configLocations);
 
 }

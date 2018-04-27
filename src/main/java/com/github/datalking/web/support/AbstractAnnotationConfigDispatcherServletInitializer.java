@@ -15,20 +15,17 @@ import com.github.datalking.web.context.WebApplicationContext;
 public abstract class AbstractAnnotationConfigDispatcherServletInitializer extends AbstractDispatcherServletInitializer {
 
     /**
-     * RootApplicationContext配置类
-     * 对应web.xml中的ContextLoaderListener
+     * RootApplicationContext配置类，扫描普通Bean，对应web.xml中的ContextLoaderListener
      */
     protected abstract Class<?>[] getRootConfigClasses();
 
     /**
-     * ServletApplicationContext配置类
-     * 对应web.xml中的DispatcherServlet
+     * ServletApplicationContext配置类，扫描web相关配置类，对应web.xml中的DispatcherServlet
      */
     protected abstract Class<?>[] getServletConfigClasses();
 
     /**
-     * 初始化 RootApplicationContext
-     * 获取 getRootConfigClasses()
+     * 初始化 RootApplicationContext，获取 getRootConfigClasses()
      */
     @Override
     protected WebApplicationContext createRootApplicationContext() {
@@ -48,8 +45,7 @@ public abstract class AbstractAnnotationConfigDispatcherServletInitializer exten
     }
 
     /**
-     * 初始化 ServletApplicationContext
-     * 获取 getServletConfigClasses()
+     * 初始化 ServletApplicationContext，获取 getServletConfigClasses()
      */
     @Override
     protected WebApplicationContext createServletApplicationContext() {

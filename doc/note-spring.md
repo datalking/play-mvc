@@ -7,6 +7,9 @@ spring笔记
 #### spring mvc
 
 
+- DefaultServletHttpRequestHandler会对进入DispatcherServlet的URL进行筛查，如果发现是静态资源的请求，
+就将该请求转由Web应用服务器默认的Servlet处理，如果不是静态资源的请求，才由DispatcherServlet继续处理
+
 - 获取DispatcherServlet的映射信息
     - `/`：拦截所有请求（包括静态资源（xx.js,xx.png）），但是不包括*.jsp；
     - `/*`：拦截所有请求；连*.jsp页面都拦截，jsp页面是tomcat的jsp引擎解析的；

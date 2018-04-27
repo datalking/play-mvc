@@ -39,6 +39,7 @@ public class DispatcherServlet extends FrameworkServlet {
 
     public static final String PAGE_NOT_FOUND_LOG_CATEGORY = "org.springframework.web.servlet.PageNotFound";
 
+    /// true表示探测所有，包括在***-servlet.xml中声明的
     private boolean detectAllHandlerMappings = true;
 
     private boolean detectAllViewResolvers = true;
@@ -47,8 +48,10 @@ public class DispatcherServlet extends FrameworkServlet {
 
     //    private MultipartResolver multipartResolver;
 
+    // HandlerMapping链表
     private List<HandlerMapping> handlerMappings;
 
+    // HandlerAdapter链表
     private List<HandlerAdapter> handlerAdapters;
 
     private RequestToViewNameTranslator viewNameTranslator;
@@ -110,12 +113,12 @@ public class DispatcherServlet extends FrameworkServlet {
             logger.debug("DispatcherServlet with name '" + getServletName() + "'" + " processing " + request.getMethod() + " request for [" + getRequestUri(request) + "]");
         }
 
-        // Keep a snapshot of the request attributes in case of an include,
-        // to be able to restore the original attributes after the include.
+        // Keep a snapshot of the request attributes in case of an include, to be able to restore the original attributes after the include.
         Map<String, Object> attributesSnapshot = null;
         if (WebUtils.isIncludeRequest(request)) {
             attributesSnapshot = new HashMap<>();
             Enumeration<?> attrNames = request.getAttributeNames();
+
             while (attrNames.hasMoreElements()) {
                 String attrName = (String) attrNames.nextElement();
 //                if (this.cleanupAfterInclude || attrName.startsWith("org.springframework.web.servlet")) {
@@ -123,6 +126,7 @@ public class DispatcherServlet extends FrameworkServlet {
                     attributesSnapshot.put(attrName, request.getAttribute(attrName));
                 }
             }
+
         }
 
         // Make framework objects available to handlers and view objects.
@@ -164,7 +168,7 @@ public class DispatcherServlet extends FrameworkServlet {
 
             try {
 //                processedRequest = checkMultipart(request);
-                multipartRequestParsed = (processedRequest != request);
+                //multipartRequestParsed = (processedRequest != request);
 
                 // Determine handler for the current request.
                 mappedHandler = getHandler(processedRequest);

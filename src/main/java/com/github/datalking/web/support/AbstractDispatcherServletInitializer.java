@@ -43,11 +43,16 @@ public abstract class AbstractDispatcherServletInitializer extends AbstractConte
         return DEFAULT_SERVLET_NAME;
     }
 
+    /**
+     * servlet容器会调用这个方法
+     */
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
 
+        // 初始化RootApplicationContext
         super.onStartup(servletContext);
 
+        // 初始化ServletApplicationContext和默认的DispatcherServlet
         registerDispatcherServlet(servletContext);
     }
 
@@ -57,6 +62,7 @@ public abstract class AbstractDispatcherServletInitializer extends AbstractConte
         String servletName = getServletName();
         Assert.notNull(servletName, "getServletName() may not return empty or null");
 
+        // ==== 初始化ServletApplicationContext
         WebApplicationContext servletAppContext = createServletApplicationContext();
         Assert.notNull(servletAppContext, "createServletApplicationContext() did not return an application " +
                 "context for servlet [" + servletName + "]");
