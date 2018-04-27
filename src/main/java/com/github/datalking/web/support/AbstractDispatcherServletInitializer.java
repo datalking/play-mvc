@@ -16,6 +16,9 @@ import javax.servlet.ServletRegistration;
 import java.util.EnumSet;
 
 /**
+ * 初始化ServletApplicationContext 抽象类
+ * 初始化前端控制器DispatcherServlet
+ *
  * @author yaoo on 4/23/18
  */
 public abstract class AbstractDispatcherServletInitializer extends AbstractContextLoaderInitializer {
@@ -23,10 +26,11 @@ public abstract class AbstractDispatcherServletInitializer extends AbstractConte
     // 默认servlet名称，可以通过getServletName()覆盖
     public static final String DEFAULT_SERVLET_NAME = "dispatcher";
 
+    // 创建ServletApplicationContext抽象方法
     protected abstract WebApplicationContext createServletApplicationContext();
 
     /**
-     * 对应servlet-mapping配置
+     * 获取默认servlet即DispatcherServlet的映射配置
      */
     protected abstract String[] getServletMappings();
 
@@ -34,8 +38,14 @@ public abstract class AbstractDispatcherServletInitializer extends AbstractConte
         return null;
     }
 
+    // 获取默认servlet名
+    protected String getServletName() {
+        return DEFAULT_SERVLET_NAME;
+    }
+
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
+
         super.onStartup(servletContext);
 
         registerDispatcherServlet(servletContext);
@@ -43,6 +53,7 @@ public abstract class AbstractDispatcherServletInitializer extends AbstractConte
 
 
     protected void registerDispatcherServlet(ServletContext servletContext) {
+
         String servletName = getServletName();
         Assert.notNull(servletName, "getServletName() may not return empty or null");
 
@@ -51,14 +62,18 @@ public abstract class AbstractDispatcherServletInitializer extends AbstractConte
                 "context for servlet [" + servletName + "]");
 
         DispatcherServlet dispatcherServlet = new DispatcherServlet(servletAppContext);
+
+        // 注册servlet组件
         ServletRegistration.Dynamic registration = servletContext.addServlet(servletName, dispatcherServlet);
         Assert.notNull(registration, "Failed to register servlet with name '" + servletName + "'." +
                 "Check if there is another servlet registered under the same name.");
 
         registration.setLoadOnStartup(1);
+        // 配置servlet的映射信息
         registration.addMapping(getServletMappings());
         registration.setAsyncSupported(isAsyncSupported());
 
+        // 注册Filter并配置映射信息
         Filter[] filters = getServletFilters();
         if (!ObjectUtils.isEmpty(filters)) {
             for (Filter filter : filters) {
@@ -66,21 +81,23 @@ public abstract class AbstractDispatcherServletInitializer extends AbstractConte
             }
         }
 
+        // 注册Listener
+        //servletContext.addListener(UserListener.class);
+
+        // 空实现
         customizeRegistration(registration);
     }
 
 
-    protected String getServletName() {
-        return DEFAULT_SERVLET_NAME;
-    }
-
     protected FilterRegistration.Dynamic registerServletFilter(ServletContext servletContext, Filter filter) {
-        //String filterName = Conventions.getVariableName(filter);
+//        String filterName = Conventions.getVariableName(filter);
         // todo 处理数组集合的情况
         Class c = filter.getClass();
         String filterName = ClassUtils.getCamelCaseNameFromClass(c);
+
         FilterRegistration.Dynamic registration = servletContext.addFilter(filterName, filter);
         registration.setAsyncSupported(isAsyncSupported());
+        // 配置filter映射信息
         registration.addMappingForServletNames(getDispatcherTypes(), false, getServletName());
         return registration;
     }
@@ -92,7 +109,8 @@ public abstract class AbstractDispatcherServletInitializer extends AbstractConte
     }
 
     protected boolean isAsyncSupported() {
-        return true;
+        //return true;
+        return false;
     }
 
     protected void customizeRegistration(ServletRegistration.Dynamic registration) {

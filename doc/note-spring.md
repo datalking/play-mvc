@@ -7,7 +7,15 @@ spring笔记
 #### spring mvc
 
 
+- 获取DispatcherServlet的映射信息
+    - `/`：拦截所有请求（包括静态资源（xx.js,xx.png）），但是不包括*.jsp；
+    - `/*`：拦截所有请求；连*.jsp页面都拦截，jsp页面是tomcat的jsp引擎解析的；
+- @WebServlet和@WebFilter进行Servlet或Filter配置的情况，两个注解都提供了asyncSupported 属性，默认该属性的取值为false，默认不支持异步处理
+
 - Servlet3.0提供了ServletContainerInitializer接口，支持web应用启动阶段动态注册servlet，filter和listener
+    - 必须在对应的jar包的META-INF/services 目录创建一个名为javax.servlet.ServletContainerInitializer的文件，文件内容指定具体的ServletContainerInitializer实现类
+    - 一般伴随着ServletContainerInitializer一起使用的还有HandlesTypes注解，可以将感兴趣的一些类注入到ServletContainerInitializerde的onStartup方法作为参数传入
+    - Context容器启动时就会分别调用每个ServletContainerInitializer的onStartup方法，并将感兴趣的类作为参数传入
 
 - spring mvc 父子上下文
     - Tomcat启动时，监听器ContextLoaderListener创建一个XMLWebApplicationContext上下文容器，

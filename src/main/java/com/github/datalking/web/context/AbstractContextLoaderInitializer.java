@@ -8,6 +8,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
 /**
+ * 初始化RootApplicationContext
+ *
  * @author yaoo on 4/25/18
  */
 public abstract class AbstractContextLoaderInitializer implements WebApplicationInitializer {
@@ -18,14 +20,16 @@ public abstract class AbstractContextLoaderInitializer implements WebApplication
 
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
+        // ==== 注册ContextLoaderListener
         registerContextLoaderListener(servletContext);
     }
 
     protected void registerContextLoaderListener(ServletContext servletContext) {
+        // 创建RootApplicationContext，留给子类实现
         WebApplicationContext rootAppContext = createRootApplicationContext();
+
         if (rootAppContext != null) {
             servletContext.addListener(new ContextLoaderListener(rootAppContext));
-
         } else {
             logger.debug("No ContextLoaderListener registered");
         }
