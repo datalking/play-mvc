@@ -99,4 +99,11 @@ public abstract class ReflectionUtils {
         return result;
     }
 
+    public static MethodFilter USER_DECLARED_METHODS = new MethodFilter() {
+
+        public boolean matches(Method method) {
+            return (!method.isBridge() && method.getDeclaringClass() != Object.class);
+        }
+    };
+
 }

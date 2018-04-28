@@ -55,3 +55,4 @@
   public class ApplicationContextConfig { }
 ```   
 - [ ] 迁移到以注解为主的使用方式
+- [ ] 没有处理桥接方法 findBridgedMethod()
