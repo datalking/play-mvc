@@ -6,9 +6,20 @@ spring笔记
 
 #### spring mvc
 
+- Flash属性
+- flash attributes提供了一个请求为另一个请求存储有用属性的方法。
+  这在重定向的时候最常使用，比如常见的 POST/REDIRECT/GET 模式。Flash属性会在重定向前被暂时地保存起来（ 通常是保存在session中） ，
+  重定向后会重新被下一个请求取用并立即从原保存地移除。
+- FlashMap 被用来存储flash属性，而用 FlashMapManager 来存储、取回、管理 FlashMap 的实例
+- 控制器通常不需要直接接触 FlashMap 。一般是通过 @RequestMapping 方法去接受一个 RedirectAttributes 类型的参数，
+  然后直接地往其中添加flash属性。通过 RedirectAttributes 对象添加进去的flash属性会自动被填充到请求的“输出” FlashMap 对象中去
+  
 
-- DefaultServletHttpRequestHandler会对进入DispatcherServlet的URL进行筛查，如果发现是静态资源的请求，
-就将该请求转由Web应用服务器默认的Servlet处理，如果不是静态资源的请求，才由DispatcherServlet继续处理
+- handlerMapping
+    - 一个url路径和一个函数配对，你访问这个url，就会直接调用这个函数，第一步首先要找到是哪个对象，即handler，本工程的handler则是HomeAction对象，
+    第二步要找到访问的函数，即HomeAction的handleRequest方法，所以就出现了两个源码接口 HandlerMapping和HandlerAdapter，前者负责第一步，后者负责第二步
+    - DefaultServletHttpRequestHandler会对进入DispatcherServlet的URL进行筛查，如果发现是静态资源的请求，
+    就将该请求转由Web应用服务器默认的Servlet处理，如果不是静态资源的请求，才由DispatcherServlet继续处理
 
 - 获取DispatcherServlet的映射信息
     - `/`：拦截所有请求（包括静态资源（xx.js,xx.png）），但是不包括*.jsp；

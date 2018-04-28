@@ -67,6 +67,7 @@ public abstract class AbstractDispatcherServletInitializer extends AbstractConte
         Assert.notNull(servletAppContext, "createServletApplicationContext() did not return an application " +
                 "context for servlet [" + servletName + "]");
 
+        // ==== 初始化
         DispatcherServlet dispatcherServlet = new DispatcherServlet(servletAppContext);
 
         // 注册servlet组件

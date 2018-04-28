@@ -1,6 +1,8 @@
 package com.github.datalking.web.mvc;
 
 /**
+ * 把ModelAndView解析为具体的视图，返回具体的View
+ *
  * @author yaoo on 4/25/18
  */
 public interface ViewResolver {

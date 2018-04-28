@@ -5,7 +5,7 @@ import com.github.datalking.web.context.AnnotationConfigWebApplicationContext;
 import com.github.datalking.web.context.WebApplicationContext;
 
 /**
- * WebApplicationInitializer使用的门面类，此抽象类的实现类会被servlet容器启动时调用
+ * 实现WebApplicationInitializer接口的抽象类，此抽象类的实现类会被servlet容器启动时调用
  * <p>
  * 初始化容器RootApplicationContext和ServletApplicationContext
  * 初始化前端控制器DispatcherServlet

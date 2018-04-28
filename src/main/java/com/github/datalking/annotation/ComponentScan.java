@@ -25,8 +25,8 @@ public @interface ComponentScan {
     Class<?>[] basePackageClasses() default {};
 
     //Filter[] includeFilters() default {};
-    // Filter[] excludeFilters() default {};
-    // boolean lazyInit() default false;
+    //Filter[] excludeFilters() default {};
+    //boolean lazyInit() default false;
     //Class<? extends BeanNameGenerator> nameGenerator() default BeanNameGenerator.class;
 
 }

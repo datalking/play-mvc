@@ -3,7 +3,8 @@ package com.github.datalking.web.servlet;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * 定义request和handler之间的映射
+ * 映射处理器
+ * 根据请求的url来找到对应的Handler对象
  *
  * @author yaoo on 4/25/18
  */

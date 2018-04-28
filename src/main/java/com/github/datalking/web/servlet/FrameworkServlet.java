@@ -247,7 +247,6 @@ public abstract class FrameworkServlet extends HttpServletBean {
         return wac;
     }
 
-
     protected void onRefresh(ApplicationContext context) {
     }
 

@@ -3,7 +3,7 @@
 //import com.github.datalking.annotation.Bean;
 //import com.github.datalking.annotation.ComponentScan;
 //import com.github.datalking.annotation.Configuration;
-//import com.github.datalking.annotation.EnableWebMvc;
+//import com.github.datalking.annotation.web.EnableWebMvc;
 //import com.github.datalking.web.config.WebMvcConfigurer;
 //import com.github.datalking.web.view.InternalResourceViewResolver;
 //

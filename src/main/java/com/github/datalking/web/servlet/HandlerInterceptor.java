@@ -26,5 +26,10 @@ public interface HandlerInterceptor {
                          Object handler,
                          Exception ex) throws Exception;
 
+    // 异步并发时执行的方法
+    void afterConcurrentHandlingStarted(HttpServletRequest request,
+                                        HttpServletResponse response,
+                                        Object handler) throws Exception;
+
 
 }

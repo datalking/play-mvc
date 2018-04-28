@@ -1,7 +1,7 @@
 package com.github.datalking.web.mvc.method;
 
-import com.github.datalking.annotation.RequestBody;
-import com.github.datalking.annotation.ResponseBody;
+import com.github.datalking.annotation.web.RequestBody;
+import com.github.datalking.annotation.web.ResponseBody;
 import com.github.datalking.common.MethodParameter;
 import com.github.datalking.web.http.converter.HttpMessageConverter;
 

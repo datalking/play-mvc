@@ -3,6 +3,7 @@ package com.github.datalking.web.servlet;
 import com.github.datalking.util.CollectionUtils;
 import com.github.datalking.util.ObjectUtils;
 import com.github.datalking.util.StringUtils;
+import com.github.datalking.web.context.request.WebRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,7 +17,7 @@ import java.util.Map;
 /**
  * @author yaoo on 4/25/18
  */
-public class ServletWebRequest extends ServletRequestAttributes {
+public class ServletWebRequest extends ServletRequestAttributes implements WebRequest {
 
     private static final String HEADER_ETAG = "ETag";
 

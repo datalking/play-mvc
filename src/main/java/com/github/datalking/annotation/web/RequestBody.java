@@ -1,4 +1,4 @@
-package com.github.datalking.annotation;
+package com.github.datalking.annotation.web;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -7,14 +7,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * @author yaoo on 4/24/18
+ * @author yaoo on 4/26/18
  */
-@Target({ElementType.TYPE})
+@Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Component
-public @interface Controller {
+public @interface RequestBody {
 
-    String value() default "";
+    boolean required() default true;
 
 }
