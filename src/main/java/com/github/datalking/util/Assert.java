@@ -61,4 +61,14 @@ public interface Assert {
         hasText(text, "[Assertion failed] - this String argument must have text; it must not be null, empty, or blank");
     }
 
+    static void notEmpty(Object[] array, String message) {
+        if (ObjectUtils.isEmpty(array)) {
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+    static void notEmpty(Object[] array) {
+        notEmpty(array, "[Assertion failed] - this array must not be empty: it must contain at least 1 element");
+    }
+
 }

@@ -1,8 +1,10 @@
 package com.github.datalking.web.mvc.method;
 
+import com.github.datalking.web.mvc.condition.ConsumesRequestCondition;
 import com.github.datalking.web.mvc.condition.HeadersRequestCondition;
 import com.github.datalking.web.mvc.condition.ParamsRequestCondition;
 import com.github.datalking.web.mvc.condition.PatternsRequestCondition;
+import com.github.datalking.web.mvc.condition.ProducesRequestCondition;
 import com.github.datalking.web.mvc.condition.RequestCondition;
 import com.github.datalking.web.mvc.condition.RequestMethodsRequestCondition;
 
@@ -11,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * @author yaoo on 4/28/18
  */
-public final class RequestMappingInfo implements RequestCondition<RequestMappingInfo> {
+public class RequestMappingInfo implements RequestCondition<RequestMappingInfo> {
 
     private final PatternsRequestCondition patternsCondition;
 

@@ -11,6 +11,11 @@ import java.util.Map;
  */
 public interface WebRequest extends RequestAttributes {
 
+    Object getNativeRequest();
+
+    <T> T getNativeRequest(Class<T> requiredType);
+
+
     String getHeader(String headerName);
 
     String[] getHeaderValues(String headerName);

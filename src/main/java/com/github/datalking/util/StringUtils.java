@@ -334,5 +334,28 @@ public abstract class StringUtils {
         return count;
     }
 
+    public static String getFilename(String path) {
+        if (path == null) {
+            return null;
+        }
+        int separatorIndex = path.lastIndexOf(FOLDER_SEPARATOR);
+        return (separatorIndex != -1 ? path.substring(separatorIndex + 1) : path);
+    }
+
+    public static String getFilenameExtension(String path) {
+        if (path == null) {
+            return null;
+        }
+        int extIndex = path.lastIndexOf(EXTENSION_SEPARATOR);
+        if (extIndex == -1) {
+            return null;
+        }
+        int folderIndex = path.lastIndexOf(FOLDER_SEPARATOR);
+        if (folderIndex > extIndex) {
+            return null;
+        }
+        return path.substring(extIndex + 1);
+    }
+
 
 }

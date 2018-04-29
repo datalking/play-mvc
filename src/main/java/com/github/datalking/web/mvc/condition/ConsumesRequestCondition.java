@@ -9,6 +9,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.github.datalking.util.StringUtils;
 import com.github.datalking.web.http.MediaType;
 import com.github.datalking.web.mvc.condition.HeadersRequestCondition.HeaderExpression;
 
@@ -57,11 +58,9 @@ public final class ConsumesRequestCondition extends AbstractRequestCondition<Con
     }
 
 
-    /**
-     * Return the contained MediaType expressions.
-     */
+
     public Set<MediaTypeExpression> getExpressions() {
-        return new LinkedHashSet<MediaTypeExpression>(this.expressions);
+        return new LinkedHashSet<MediaTypeExpression>((Collection<? extends MediaTypeExpression>) this.expressions);
     }
 
     /**
@@ -166,16 +165,21 @@ public final class ConsumesRequestCondition extends AbstractRequestCondition<Con
         }
 
         @Override
-        protected boolean matchMediaType(HttpServletRequest request) throws HttpMediaTypeNotSupportedException {
+        protected boolean matchMediaType(HttpServletRequest request) {
             try {
                 MediaType contentType = StringUtils.hasLength(request.getContentType()) ?
                         MediaType.parseMediaType(request.getContentType()) :
                         MediaType.APPLICATION_OCTET_STREAM;
                 return getMediaType().includes(contentType);
             } catch (IllegalArgumentException ex) {
-                throw new HttpMediaTypeNotSupportedException(
-                        "Can't parse Content-Type [" + request.getContentType() + "]: " + ex.getMessage());
+                try {
+                    throw new Exception("Can't parse Content-Type [" + request.getContentType() + "]: " + ex.getMessage());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
+
+            return false;
         }
     }
 

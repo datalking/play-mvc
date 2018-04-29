@@ -3,6 +3,7 @@ package com.github.datalking.web.servlet;
 import com.github.datalking.util.CollectionUtils;
 import com.github.datalking.util.ObjectUtils;
 import com.github.datalking.util.StringUtils;
+import com.github.datalking.util.web.WebUtils;
 import com.github.datalking.web.context.request.WebRequest;
 
 import javax.servlet.http.HttpServletRequest;
@@ -51,6 +52,11 @@ public class ServletWebRequest extends ServletRequestAttributes implements WebRe
     public Object getNativeRequest() {
         return getRequest();
     }
+
+    public <T> T getNativeRequest(Class<T> requiredType) {
+        return WebUtils.getNativeRequest(getRequest(), requiredType);
+    }
+
 
     public Object getNativeResponse() {
         return getResponse();
