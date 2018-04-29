@@ -6,6 +6,7 @@ import com.github.datalking.web.mvc.condition.ParamsRequestCondition;
 import com.github.datalking.web.mvc.condition.PatternsRequestCondition;
 import com.github.datalking.web.mvc.condition.ProducesRequestCondition;
 import com.github.datalking.web.mvc.condition.RequestCondition;
+import com.github.datalking.web.mvc.condition.RequestConditionHolder;
 import com.github.datalking.web.mvc.condition.RequestMethodsRequestCondition;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,12 +31,13 @@ public class RequestMappingInfo implements RequestCondition<RequestMappingInfo> 
     private final RequestConditionHolder customConditionHolder;
 
 
-    /**
-     * Creates a new instance with the given request conditions.
-     */
-    public RequestMappingInfo(PatternsRequestCondition patterns, RequestMethodsRequestCondition methods,
-                              ParamsRequestCondition params, HeadersRequestCondition headers, ConsumesRequestCondition consumes,
-                              ProducesRequestCondition produces, RequestCondition<?> custom) {
+    public RequestMappingInfo(PatternsRequestCondition patterns,
+                              RequestMethodsRequestCondition methods,
+                              ParamsRequestCondition params,
+                              HeadersRequestCondition headers,
+                              ConsumesRequestCondition consumes,
+                              ProducesRequestCondition produces,
+                              RequestCondition<?> custom) {
 
         this.patternsCondition = (patterns != null ? patterns : new PatternsRequestCondition());
         this.methodsCondition = (methods != null ? methods : new RequestMethodsRequestCondition());
@@ -46,77 +48,44 @@ public class RequestMappingInfo implements RequestCondition<RequestMappingInfo> 
         this.customConditionHolder = new RequestConditionHolder(custom);
     }
 
-    /**
-     * Re-create a RequestMappingInfo with the given custom request condition.
-     */
     public RequestMappingInfo(RequestMappingInfo info, RequestCondition<?> customRequestCondition) {
         this(info.patternsCondition, info.methodsCondition, info.paramsCondition, info.headersCondition,
                 info.consumesCondition, info.producesCondition, customRequestCondition);
     }
 
 
-    /**
-     * Returns the URL patterns of this {@link RequestMappingInfo};
-     * or instance with 0 patterns, never {@code null}.
-     */
     public PatternsRequestCondition getPatternsCondition() {
         return this.patternsCondition;
     }
 
-    /**
-     * Returns the HTTP request methods of this {@link RequestMappingInfo};
-     * or instance with 0 request methods, never {@code null}.
-     */
+
     public RequestMethodsRequestCondition getMethodsCondition() {
         return this.methodsCondition;
     }
 
-    /**
-     * Returns the "parameters" condition of this {@link RequestMappingInfo};
-     * or instance with 0 parameter expressions, never {@code null}.
-     */
     public ParamsRequestCondition getParamsCondition() {
         return this.paramsCondition;
     }
 
-    /**
-     * Returns the "headers" condition of this {@link RequestMappingInfo};
-     * or instance with 0 header expressions, never {@code null}.
-     */
     public HeadersRequestCondition getHeadersCondition() {
         return this.headersCondition;
     }
 
-    /**
-     * Returns the "consumes" condition of this {@link RequestMappingInfo};
-     * or instance with 0 consumes expressions, never {@code null}.
-     */
+
     public ConsumesRequestCondition getConsumesCondition() {
         return this.consumesCondition;
     }
 
-    /**
-     * Returns the "produces" condition of this {@link RequestMappingInfo};
-     * or instance with 0 produces expressions, never {@code null}.
-     */
+
     public ProducesRequestCondition getProducesCondition() {
         return this.producesCondition;
     }
 
-    /**
-     * Returns the "custom" condition of this {@link RequestMappingInfo}; or {@code null}.
-     */
+
     public RequestCondition<?> getCustomCondition() {
         return this.customConditionHolder.getCondition();
     }
 
-
-    /**
-     * Combines "this" request mapping info (i.e. the current instance) with another request mapping info instance.
-     * <p>Example: combine type- and method-level request mappings.
-     *
-     * @return a new request mapping info instance; never {@code null}
-     */
     public RequestMappingInfo combine(RequestMappingInfo other) {
         PatternsRequestCondition patterns = this.patternsCondition.combine(other.patternsCondition);
         RequestMethodsRequestCondition methods = this.methodsCondition.combine(other.methodsCondition);
@@ -129,14 +98,6 @@ public class RequestMappingInfo implements RequestCondition<RequestMappingInfo> 
         return new RequestMappingInfo(patterns, methods, params, headers, consumes, produces, custom.getCondition());
     }
 
-    /**
-     * Checks if all conditions in this request mapping info match the provided request and returns
-     * a potentially new request mapping info with conditions tailored to the current request.
-     * <p>For example the returned instance may contain the subset of URL patterns that match to
-     * the current request, sorted with best matching patterns on top.
-     *
-     * @return a new instance in case all conditions match; or {@code null} otherwise
-     */
     public RequestMappingInfo getMatchingCondition(HttpServletRequest request) {
         RequestMethodsRequestCondition methods = this.methodsCondition.getMatchingCondition(request);
         ParamsRequestCondition params = this.paramsCondition.getMatchingCondition(request);
@@ -161,13 +122,6 @@ public class RequestMappingInfo implements RequestCondition<RequestMappingInfo> 
         return new RequestMappingInfo(patterns, methods, params, headers, consumes, produces, custom.getCondition());
     }
 
-
-    /**
-     * Compares "this" info (i.e. the current instance) with another info in the context of a request.
-     * <p>Note: It is assumed both instances have been obtained via
-     * {@link #getMatchingCondition(HttpServletRequest)} to ensure they have conditions with
-     * content relevant to current request.
-     */
     public int compareTo(RequestMappingInfo other, HttpServletRequest request) {
         int result = this.patternsCondition.compareTo(other.getPatternsCondition(), request);
         if (result != 0) {

@@ -1,5 +1,7 @@
 package com.github.datalking.util.web;
 
+import com.github.datalking.common.LinkedMultiValueMap;
+import com.github.datalking.common.MultiValueMap;
 import com.github.datalking.util.Assert;
 import com.github.datalking.util.StringUtils;
 
@@ -16,6 +18,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Enumeration;
 import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.TreeMap;
 
 /**
@@ -731,34 +734,26 @@ public abstract class WebUtils {
     }
 
     /**
-     * Parse the given string with matrix variables. An example string would look
-     * like this {@code "q1=a;q1=b;q2=a,b,c"}. The resulting map would contain
-     * keys {@code "q1"} and {@code "q2"} with values {@code ["a","b"]} and
-     * {@code ["a","b","c"]} respectively.
-     *
-     * @param matrixVariables the unparsed matrix variables string
-     * @return a map with matrix variable names and values (never {@code null})
-     * @since 3.2
      */
-//    public static MultiValueMap<String, String> parseMatrixVariables(String matrixVariables) {
-//        MultiValueMap<String, String> result = new LinkedMultiValueMap<String, String>();
-//        if (!StringUtils.hasText(matrixVariables)) {
-//            return result;
-//        }
-//        StringTokenizer pairs = new StringTokenizer(matrixVariables, ";");
-//        while (pairs.hasMoreTokens()) {
-//            String pair = pairs.nextToken();
-//            int index = pair.indexOf('=');
-//            if (index != -1) {
-//                String name = pair.substring(0, index);
-//                String rawValue = pair.substring(index + 1);
-//                for (String value : StringUtils.commaDelimitedListToStringArray(rawValue)) {
-//                    result.add(name, value);
-//                }
-//            } else {
-//                result.add(pair, "");
-//            }
-//        }
-//        return result;
-//    }
+    public static MultiValueMap<String, String> parseMatrixVariables(String matrixVariables) {
+        MultiValueMap<String, String> result = new LinkedMultiValueMap<>();
+        if (!StringUtils.hasText(matrixVariables)) {
+            return result;
+        }
+        StringTokenizer pairs = new StringTokenizer(matrixVariables, ";");
+        while (pairs.hasMoreTokens()) {
+            String pair = pairs.nextToken();
+            int index = pair.indexOf('=');
+            if (index != -1) {
+                String name = pair.substring(0, index);
+                String rawValue = pair.substring(index + 1);
+                for (String value : StringUtils.commaDelimitedListToStringArray(rawValue)) {
+                    result.add(name, value);
+                }
+            } else {
+                result.add(pair, "");
+            }
+        }
+        return result;
+    }
 }

@@ -36,6 +36,13 @@ public abstract class StringUtils {
         return list.toArray(new String[list.size()]);
     }
 
+    public static String[] toStringArray(Collection<?> c) {
+        if (c == null) {
+            return null;
+        }
+        return c.toArray(new String[c.size()]);
+    }
+
     public static boolean isEmpty(String str) {
         return (str == null || "".equals(str));
     }

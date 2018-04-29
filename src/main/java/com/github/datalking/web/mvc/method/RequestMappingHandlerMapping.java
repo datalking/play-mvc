@@ -2,8 +2,17 @@ package com.github.datalking.web.mvc.method;
 
 import com.github.datalking.annotation.Controller;
 import com.github.datalking.annotation.web.RequestMapping;
+import com.github.datalking.common.StringValueResolver;
+import com.github.datalking.context.EmbeddedValueResolverAware;
 import com.github.datalking.util.AnnotationUtils;
 import com.github.datalking.util.Assert;
+import com.github.datalking.web.http.accept.ContentNegotiationManager;
+import com.github.datalking.web.mvc.condition.ConsumesRequestCondition;
+import com.github.datalking.web.mvc.condition.HeadersRequestCondition;
+import com.github.datalking.web.mvc.condition.ParamsRequestCondition;
+import com.github.datalking.web.mvc.condition.PatternsRequestCondition;
+import com.github.datalking.web.mvc.condition.ProducesRequestCondition;
+import com.github.datalking.web.mvc.condition.RequestCondition;
 import com.github.datalking.web.mvc.condition.RequestMethodsRequestCondition;
 
 import java.lang.reflect.Method;
@@ -24,7 +33,7 @@ public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMappi
 
     private ContentNegotiationManager contentNegotiationManager = new ContentNegotiationManager();
 
-    private final List<String> fileExtensions = new ArrayList<String>();
+    private final List<String> fileExtensions = new ArrayList<>();
 
     private StringValueResolver embeddedValueResolver;
 
@@ -92,9 +101,11 @@ public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMappi
         RequestMappingInfo info = null;
         RequestMapping methodAnnotation = AnnotationUtils.findAnnotation(method, RequestMapping.class);
         if (methodAnnotation != null) {
+
             RequestCondition<?> methodCondition = getCustomMethodCondition(method);
             info = createRequestMappingInfo(methodAnnotation, methodCondition);
             RequestMapping typeAnnotation = AnnotationUtils.findAnnotation(handlerType, RequestMapping.class);
+
             if (typeAnnotation != null) {
                 RequestCondition<?> typeCondition = getCustomTypeCondition(handlerType);
                 info = createRequestMappingInfo(typeAnnotation, typeCondition).combine(info);
@@ -114,15 +125,14 @@ public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMappi
 
     protected RequestMappingInfo createRequestMappingInfo(RequestMapping annotation, RequestCondition<?> customCondition) {
         String[] patterns = resolveEmbeddedValuesInPatterns(annotation.value());
+
         return new RequestMappingInfo(
-                new PatternsRequestCondition(patterns, getUrlPathHelper(), getPathMatcher(),
-                        this.useSuffixPatternMatch, this.useTrailingSlashMatch, this.fileExtensions),
+                new PatternsRequestCondition(patterns, getUrlPathHelper(), getPathMatcher(), this.useSuffixPatternMatch, this.useTrailingSlashMatch, this.fileExtensions),
                 new RequestMethodsRequestCondition(annotation.method()),
                 new ParamsRequestCondition(annotation.params()),
                 new HeadersRequestCondition(annotation.headers()),
                 new ConsumesRequestCondition(annotation.consumes(), annotation.headers()),
-                new ProducesRequestCondition(annotation.produces(), annotation.headers(), getContentNegotiationManager()),
-                customCondition);
+                new ProducesRequestCondition(annotation.produces(), annotation.headers(), getContentNegotiationManager()), customCondition);
     }
 
 
@@ -137,5 +147,6 @@ public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMappi
             return resolvedPatterns;
         }
     }
+
 
 }
