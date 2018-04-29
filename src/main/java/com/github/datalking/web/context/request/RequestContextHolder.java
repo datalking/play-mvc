@@ -1,4 +1,4 @@
-package com.github.datalking.web.servlet;
+package com.github.datalking.web.context.request;
 
 import com.github.datalking.common.NamedInheritableThreadLocal;
 import com.github.datalking.common.NamedThreadLocal;

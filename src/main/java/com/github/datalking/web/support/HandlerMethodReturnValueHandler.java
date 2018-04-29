@@ -1,6 +1,7 @@
 package com.github.datalking.web.support;
 
 import com.github.datalking.common.MethodParameter;
+import com.github.datalking.web.context.request.WebRequest;
 
 /**
  * @author yaoo on 4/26/18
@@ -12,8 +13,7 @@ public interface HandlerMethodReturnValueHandler {
     void handleReturnValue(Object returnValue,
                            MethodParameter returnType,
                            ModelAndViewContainer mavContainer,
-                           NativeWebRequest webRequest) throws Exception;
-
+                           WebRequest webRequest) throws Exception;
 
 
 }

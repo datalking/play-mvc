@@ -5,9 +5,13 @@ import com.github.datalking.beans.factory.FactoryBean;
 import com.github.datalking.beans.factory.ObjectFactory;
 import com.github.datalking.beans.factory.config.BeanDefinition;
 import com.github.datalking.beans.factory.config.BeanDefinitionHolder;
+import com.github.datalking.beans.factory.config.BeanExpressionContext;
+import com.github.datalking.beans.factory.config.BeanExpressionResolver;
 import com.github.datalking.beans.factory.config.BeanPostProcessor;
 import com.github.datalking.beans.factory.config.ConfigurableBeanFactory;
 import com.github.datalking.beans.factory.config.InstantiationAwareBeanPostProcessor;
+import com.github.datalking.beans.factory.config.Scope;
+import com.github.datalking.common.StringValueResolver;
 import com.github.datalking.exception.NoSuchBeanDefinitionException;
 import com.github.datalking.util.Assert;
 import com.github.datalking.util.ClassUtils;
@@ -15,6 +19,7 @@ import com.github.datalking.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -34,6 +39,10 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
     private final Map<String, RootBeanDefinition> mergedBeanDefinitions = new ConcurrentHashMap<>(256);
 
     private boolean hasInstantiationAwareBeanPostProcessors;
+
+    private final List<StringValueResolver> embeddedValueResolvers = new LinkedList<>();
+
+    private BeanExpressionResolver beanExpressionResolver;
 
     //    private boolean hasDestructionAwareBeanPostProcessors;
 
@@ -350,6 +359,39 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
         return false;
 
     }
+
+    public String resolveEmbeddedValue(String value) {
+        String result = value;
+        for (StringValueResolver resolver : this.embeddedValueResolvers) {
+            if (result == null) {
+                return null;
+            }
+            result = resolver.resolveStringValue(result);
+        }
+        return result;
+    }
+
+    public void addEmbeddedValueResolver(StringValueResolver valueResolver) {
+        Assert.notNull(valueResolver, "StringValueResolver must not be null");
+        this.embeddedValueResolvers.add(valueResolver);
+    }
+
+    public void setBeanExpressionResolver(BeanExpressionResolver resolver) {
+        this.beanExpressionResolver = resolver;
+    }
+
+    public BeanExpressionResolver getBeanExpressionResolver() {
+        return this.beanExpressionResolver;
+    }
+
+//    protected Object evaluateBeanDefinitionString(String value, BeanDefinition beanDefinition) {
+//        if (this.beanExpressionResolver == null) {
+//            return value;
+//        }
+//        Scope scope = (beanDefinition != null ? getRegisteredScope(beanDefinition.getScope()) : null);
+//        return this.beanExpressionResolver.evaluate(value, new BeanExpressionContext(this, scope));
+//    }
+
 
 //    protected boolean isFactoryBean(String beanName, RootBeanDefinition mbd) {
 //        Class<?> beanType = predictBeanType(beanName, mbd, FactoryBean.class);

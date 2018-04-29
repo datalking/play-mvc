@@ -24,6 +24,7 @@ public interface WebRequest extends RequestAttributes {
 
     String getParameter(String paramName);
 
+    String[] getParameterValues(String paramName);
 
     Iterator<String> getParameterNames();
 

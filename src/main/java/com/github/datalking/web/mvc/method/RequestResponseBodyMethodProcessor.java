@@ -3,6 +3,7 @@ package com.github.datalking.web.mvc.method;
 import com.github.datalking.annotation.web.RequestBody;
 import com.github.datalking.annotation.web.ResponseBody;
 import com.github.datalking.common.MethodParameter;
+import com.github.datalking.web.http.accept.ContentNegotiationManager;
 import com.github.datalking.web.http.converter.HttpMessageConverter;
 
 import javax.servlet.http.HttpServletRequest;

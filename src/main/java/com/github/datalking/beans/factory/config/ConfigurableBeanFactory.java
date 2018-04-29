@@ -16,6 +16,10 @@ public interface ConfigurableBeanFactory extends BeanFactory {
 
     int getBeanPostProcessorCount();
 
+    String resolveEmbeddedValue(String value);
+
+    BeanExpressionResolver getBeanExpressionResolver();
+
 //void destroyBean(String beanName, Object beanInstance);
 //void registerAlias(String beanName, String alias) ;
 

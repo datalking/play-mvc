@@ -337,5 +337,37 @@ public abstract class ClassUtils {
         return packageName.replace(PACKAGE_SEPARATOR, PATH_SEPARATOR);
     }
 
+    public static String getClassFileName(Class<?> clazz) {
+        Assert.notNull(clazz, "Class must not be null");
+        String className = clazz.getName();
+        int lastDotIndex = className.lastIndexOf(PACKAGE_SEPARATOR);
+        return className.substring(lastDotIndex + 1) + CLASS_FILE_SUFFIX;
+    }
+
+    public static Class<?> resolveClassName(String className, ClassLoader classLoader) throws IllegalArgumentException {
+        try {
+            return forName(className, classLoader);
+        } catch (ClassNotFoundException ex) {
+            throw new IllegalArgumentException("Cannot find class [" + className + "]", ex);
+        } catch (LinkageError ex) {
+            throw new IllegalArgumentException(
+                    "Error loading class [" + className + "]: problem with class file or dependent class.", ex);
+        }
+    }
+
+    public static boolean isPrimitiveOrWrapper(Class<?> clazz) {
+        Assert.notNull(clazz, "Class must not be null");
+        return (clazz.isPrimitive() || isPrimitiveWrapper(clazz));
+    }
+
+    public static boolean isPrimitiveWrapper(Class<?> clazz) {
+        Assert.notNull(clazz, "Class must not be null");
+        return primitiveWrapperTypeMap.containsKey(clazz);
+    }
+
+    public static boolean isPrimitiveArray(Class<?> clazz) {
+        Assert.notNull(clazz, "Class must not be null");
+        return (clazz.isArray() && clazz.getComponentType().isPrimitive());
+    }
 
 }

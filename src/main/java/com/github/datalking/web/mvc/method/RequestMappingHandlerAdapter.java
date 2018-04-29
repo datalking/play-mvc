@@ -2,8 +2,37 @@ package com.github.datalking.web.mvc.method;
 
 import com.github.datalking.annotation.ModelAttribute;
 import com.github.datalking.annotation.web.RequestMapping;
+import com.github.datalking.beans.factory.BeanFactory;
+import com.github.datalking.beans.factory.BeanFactoryAware;
+import com.github.datalking.beans.factory.InitializingBean;
+import com.github.datalking.beans.factory.config.ConfigurableBeanFactory;
+import com.github.datalking.common.LocalVariableTableParameterNameDiscoverer;
+import com.github.datalking.common.ParameterNameDiscoverer;
 import com.github.datalking.util.AnnotationUtils;
+import com.github.datalking.util.Assert;
+import com.github.datalking.util.CollectionUtils;
 import com.github.datalking.util.ReflectionUtils.MethodFilter;
+import com.github.datalking.util.web.WebUtils;
+import com.github.datalking.web.bind.WebBindingInitializer;
+import com.github.datalking.web.bind.WebDataBinderFactory;
+import com.github.datalking.web.context.request.WebRequest;
+import com.github.datalking.web.http.accept.ContentNegotiationManager;
+import com.github.datalking.web.http.converter.HttpMessageConverter;
+import com.github.datalking.web.http.converter.StringHttpMessageConverter;
+import com.github.datalking.web.mvc.ModelAndView;
+import com.github.datalking.web.mvc.ModelAndViewResolver;
+import com.github.datalking.web.mvc.ModelMap;
+import com.github.datalking.web.mvc.View;
+import com.github.datalking.web.servlet.ServletWebRequest;
+import com.github.datalking.web.support.HandlerMethodArgumentResolver;
+import com.github.datalking.web.support.HandlerMethodArgumentResolverComposite;
+import com.github.datalking.web.support.HandlerMethodReturnValueHandler;
+import com.github.datalking.web.support.HandlerMethodReturnValueHandlerComposite;
+import com.github.datalking.web.support.ModelAndViewContainer;
+import com.github.datalking.web.support.PathVariableMethodArgumentResolver;
+import com.github.datalking.web.support.RequestParamMethodArgumentResolver;
+import com.github.datalking.web.support.SessionAttributeStore;
+import com.github.datalking.web.support.SessionAttributesHandler;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,12 +49,14 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * 实现调用处理请求的方法
+ *
  * @author yaoo on 4/28/18
  */
 public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
         implements BeanFactoryAware, InitializingBean {
 
-    private List<HandlerMethodArgumentResolver> customArgumentResolvers;
+//    private List<HandlerMethodArgumentResolver> customArgumentResolvers;
 
     private HandlerMethodArgumentResolverComposite argumentResolvers;
 
@@ -43,13 +74,13 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 
     private WebBindingInitializer webBindingInitializer;
 
-    private AsyncTaskExecutor taskExecutor = new SimpleAsyncTaskExecutor("MvcAsync");
+//    private AsyncTaskExecutor taskExecutor = new SimpleAsyncTaskExecutor("MvcAsync");
 
     private Long asyncRequestTimeout;
 
-    private CallableProcessingInterceptor[] callableInterceptors = new CallableProcessingInterceptor[0];
+//    private CallableProcessingInterceptor[] callableInterceptors = new CallableProcessingInterceptor[0];
 
-    private DeferredResultProcessingInterceptor[] deferredResultInterceptors = new DeferredResultProcessingInterceptor[0];
+//    private DeferredResultProcessingInterceptor[] deferredResultInterceptors = new DeferredResultProcessingInterceptor[0];
 
     private boolean ignoreDefaultModelOnRedirect = false;
 
@@ -63,326 +94,180 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 
     private ConfigurableBeanFactory beanFactory;
 
+    private final Map<Class<?>, SessionAttributesHandler> sessionAttributesHandlerCache = new ConcurrentHashMap<>(64);
 
-    private final Map<Class<?>, SessionAttributesHandler> sessionAttributesHandlerCache =
-            new ConcurrentHashMap<Class<?>, SessionAttributesHandler>(64);
+    private final Map<Class<?>, Set<Method>> initBinderCache = new ConcurrentHashMap<>(64);
 
-    private final Map<Class<?>, Set<Method>> initBinderCache = new ConcurrentHashMap<Class<?>, Set<Method>>(64);
+//    private final Map<ControllerAdviceBean, Set<Method>> initBinderAdviceCache = new LinkedHashMap<>();
 
-    private final Map<ControllerAdviceBean, Set<Method>> initBinderAdviceCache =
-            new LinkedHashMap<ControllerAdviceBean, Set<Method>>();
+    private final Map<Class<?>, Set<Method>> modelAttributeCache = new ConcurrentHashMap<>(64);
 
-    private final Map<Class<?>, Set<Method>> modelAttributeCache = new ConcurrentHashMap<Class<?>, Set<Method>>(64);
-
-    private final Map<ControllerAdviceBean, Set<Method>> modelAttributeAdviceCache =
-            new LinkedHashMap<ControllerAdviceBean, Set<Method>>();
-
+//    private final Map<ControllerAdviceBean, Set<Method>> modelAttributeAdviceCache = new LinkedHashMap<>();
 
     public RequestMappingHandlerAdapter() {
+
         StringHttpMessageConverter stringHttpMessageConverter = new StringHttpMessageConverter();
-        stringHttpMessageConverter.setWriteAcceptCharset(false);  // see SPR-7316
+        stringHttpMessageConverter.setWriteAcceptCharset(false);
 
-        this.messageConverters = new ArrayList<HttpMessageConverter<?>>(4);
-        this.messageConverters.add(new ByteArrayHttpMessageConverter());
+        /// 添加4种http数据转换器
+        this.messageConverters = new ArrayList<>(4);
+//        this.messageConverters.add(new ByteArrayHttpMessageConverter());
         this.messageConverters.add(stringHttpMessageConverter);
-        this.messageConverters.add(new SourceHttpMessageConverter<Source>());
-        this.messageConverters.add(new AllEncompassingFormHttpMessageConverter());
+//        this.messageConverters.add(new SourceHttpMessageConverter<Source>());
+//        this.messageConverters.add(new AllEncompassingFormHttpMessageConverter());
     }
 
+//    public void setCustomArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+//        this.customArgumentResolvers = argumentResolvers;
+//    }
+//
+//
+//    public List<HandlerMethodArgumentResolver> getCustomArgumentResolvers() {
+//        return this.customArgumentResolvers;
+//    }
 
-    /**
-     * Provide resolvers for custom argument types. Custom resolvers are ordered
-     * after built-in ones. To override the built-in support for argument
-     * resolution use {@link #setArgumentResolvers} instead.
-     */
-    public void setCustomArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
-        this.customArgumentResolvers = argumentResolvers;
-    }
 
-    /**
-     * Return the custom argument resolvers, or {@code null}.
-     */
-    public List<HandlerMethodArgumentResolver> getCustomArgumentResolvers() {
-        return this.customArgumentResolvers;
-    }
-
-    /**
-     * Configure the complete list of supported argument types thus overriding
-     * the resolvers that would otherwise be configured by default.
-     */
     public void setArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
         if (argumentResolvers == null) {
             this.argumentResolvers = null;
-        }
-        else {
+        } else {
             this.argumentResolvers = new HandlerMethodArgumentResolverComposite();
             this.argumentResolvers.addResolvers(argumentResolvers);
         }
     }
 
-    /**
-     * Return the configured argument resolvers, or possibly {@code null} if
-     * not initialized yet via {@link #afterPropertiesSet()}.
-     */
     public HandlerMethodArgumentResolverComposite getArgumentResolvers() {
         return this.argumentResolvers;
     }
 
-    /**
-     * Configure the supported argument types in {@code @InitBinder} methods.
-     */
+
     public void setInitBinderArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
         if (argumentResolvers == null) {
             this.initBinderArgumentResolvers = null;
-        }
-        else {
+        } else {
             this.initBinderArgumentResolvers = new HandlerMethodArgumentResolverComposite();
             this.initBinderArgumentResolvers.addResolvers(argumentResolvers);
         }
     }
 
-    /**
-     * Return the argument resolvers for {@code @InitBinder} methods, or possibly
-     * {@code null} if not initialized yet via {@link #afterPropertiesSet()}.
-     */
+
     public HandlerMethodArgumentResolverComposite getInitBinderArgumentResolvers() {
         return this.initBinderArgumentResolvers;
     }
 
-    /**
-     * Provide handlers for custom return value types. Custom handlers are
-     * ordered after built-in ones. To override the built-in support for
-     * return value handling use {@link #setReturnValueHandlers}.
-     */
+
     public void setCustomReturnValueHandlers(List<HandlerMethodReturnValueHandler> returnValueHandlers) {
         this.customReturnValueHandlers = returnValueHandlers;
     }
 
-    /**
-     * Return the custom return value handlers, or {@code null}.
-     */
     public List<HandlerMethodReturnValueHandler> getCustomReturnValueHandlers() {
         return this.customReturnValueHandlers;
     }
 
-    /**
-     * Configure the complete list of supported return value types thus
-     * overriding handlers that would otherwise be configured by default.
-     */
+
     public void setReturnValueHandlers(List<HandlerMethodReturnValueHandler> returnValueHandlers) {
         if (returnValueHandlers == null) {
             this.returnValueHandlers = null;
-        }
-        else {
+        } else {
             this.returnValueHandlers = new HandlerMethodReturnValueHandlerComposite();
             this.returnValueHandlers.addHandlers(returnValueHandlers);
         }
     }
 
-    /**
-     * Return the configured handlers, or possibly {@code null} if not
-     * initialized yet via {@link #afterPropertiesSet()}.
-     */
+
     public HandlerMethodReturnValueHandlerComposite getReturnValueHandlers() {
         return this.returnValueHandlers;
     }
 
-    /**
-     * Provide custom {@link ModelAndViewResolver}s.
-     * <p><strong>Note:</strong> This method is available for backwards
-     * compatibility only. However, it is recommended to re-write a
-     * {@code ModelAndViewResolver} as {@link HandlerMethodReturnValueHandler}.
-     * An adapter between the two interfaces is not possible since the
-     * {@link HandlerMethodReturnValueHandler#supportsReturnType} method
-     * cannot be implemented. Hence {@code ModelAndViewResolver}s are limited
-     * to always being invoked at the end after all other return value
-     * handlers have been given a chance.
-     * <p>A {@code HandlerMethodReturnValueHandler} provides better access to
-     * the return type and controller method information and can be ordered
-     * freely relative to other return value handlers.
-     */
+
     public void setModelAndViewResolvers(List<ModelAndViewResolver> modelAndViewResolvers) {
         this.modelAndViewResolvers = modelAndViewResolvers;
     }
 
-    /**
-     * Return the configured {@link ModelAndViewResolver}s, or {@code null}.
-     */
+
     public List<ModelAndViewResolver> getModelAndViewResolvers() {
         return modelAndViewResolvers;
     }
 
-    /**
-     * Set the {@link ContentNegotiationManager} to use to determine requested media types.
-     * If not set, the default constructor is used.
-     */
+
     public void setContentNegotiationManager(ContentNegotiationManager contentNegotiationManager) {
         this.contentNegotiationManager = contentNegotiationManager;
     }
 
-    /**
-     * Provide the converters to use in argument resolvers and return value
-     * handlers that support reading and/or writing to the body of the
-     * request and response.
-     */
+
     public void setMessageConverters(List<HttpMessageConverter<?>> messageConverters) {
         this.messageConverters = messageConverters;
     }
 
-    /**
-     * Return the configured message body converters.
-     */
     public List<HttpMessageConverter<?>> getMessageConverters() {
         return this.messageConverters;
     }
 
-    /**
-     * Provide a WebBindingInitializer with "global" initialization to apply
-     * to every DataBinder instance.
-     */
+
     public void setWebBindingInitializer(WebBindingInitializer webBindingInitializer) {
         this.webBindingInitializer = webBindingInitializer;
     }
 
-    /**
-     * Return the configured WebBindingInitializer, or {@code null} if none.
-     */
+
     public WebBindingInitializer getWebBindingInitializer() {
         return this.webBindingInitializer;
     }
 
-    /**
-     * Set the default {@link AsyncTaskExecutor} to use when a controller method
-     * return a {@link Callable}. Controller methods can override this default on
-     * a per-request basis by returning an {@link WebAsyncTask}.
-     * <p>By default a {@link SimpleAsyncTaskExecutor} instance is used.
-     * It's recommended to change that default in production as the simple executor
-     * does not re-use threads.
-     */
-    public void setTaskExecutor(AsyncTaskExecutor taskExecutor) {
-        this.taskExecutor = taskExecutor;
-    }
 
-    /**
-     * Specify the amount of time, in milliseconds, before concurrent handling
-     * should time out. In Servlet 3, the timeout begins after the main request
-     * processing thread has exited and ends when the request is dispatched again
-     * for further processing of the concurrently produced result.
-     * <p>If this value is not set, the default timeout of the underlying
-     * implementation is used, e.g. 10 seconds on Tomcat with Servlet 3.
-     * @param timeout the timeout value in milliseconds
-     */
+//    public void setTaskExecutor(AsyncTaskExecutor taskExecutor) {
+//        this.taskExecutor = taskExecutor;
+//    }
+
+
     public void setAsyncRequestTimeout(long timeout) {
         this.asyncRequestTimeout = timeout;
     }
 
-    /**
-     * Configure {@code CallableProcessingInterceptor}'s to register on async requests.
-     * @param interceptors the interceptors to register
-     */
-    public void setCallableInterceptors(List<CallableProcessingInterceptor> interceptors) {
-        Assert.notNull(interceptors);
-        this.callableInterceptors = interceptors.toArray(new CallableProcessingInterceptor[interceptors.size()]);
-    }
+//    public void setCallableInterceptors(List<CallableProcessingInterceptor> interceptors) {
+//        Assert.notNull(interceptors);
+//        this.callableInterceptors = interceptors.toArray(new CallableProcessingInterceptor[interceptors.size()]);
+//    }
+//
+//
+//    public void setDeferredResultInterceptors(List<DeferredResultProcessingInterceptor> interceptors) {
+//        Assert.notNull(interceptors);
+//        this.deferredResultInterceptors = interceptors.toArray(new DeferredResultProcessingInterceptor[interceptors.size()]);
+//    }
 
-    /**
-     * Configure {@code DeferredResultProcessingInterceptor}'s to register on async requests.
-     * @param interceptors the interceptors to register
-     */
-    public void setDeferredResultInterceptors(List<DeferredResultProcessingInterceptor> interceptors) {
-        Assert.notNull(interceptors);
-        this.deferredResultInterceptors = interceptors.toArray(new DeferredResultProcessingInterceptor[interceptors.size()]);
-    }
 
-    /**
-     * By default the content of the "default" model is used both during
-     * rendering and redirect scenarios. Alternatively a controller method
-     * can declare a {@link RedirectAttributes} argument and use it to provide
-     * attributes for a redirect.
-     * <p>Setting this flag to {@code true} guarantees the "default" model is
-     * never used in a redirect scenario even if a RedirectAttributes argument
-     * is not declared. Setting it to {@code false} means the "default" model
-     * may be used in a redirect if the controller method doesn't declare a
-     * RedirectAttributes argument.
-     * <p>The default setting is {@code false} but new applications should
-     * consider setting it to {@code true}.
-     * @see RedirectAttributes
-     */
     public void setIgnoreDefaultModelOnRedirect(boolean ignoreDefaultModelOnRedirect) {
         this.ignoreDefaultModelOnRedirect = ignoreDefaultModelOnRedirect;
     }
 
-    /**
-     * Specify the strategy to store session attributes with. The default is
-     * {@link org.springframework.web.bind.support.DefaultSessionAttributeStore},
-     * storing session attributes in the HttpSession with the same attribute
-     * name as in the model.
-     */
+
     public void setSessionAttributeStore(SessionAttributeStore sessionAttributeStore) {
         this.sessionAttributeStore = sessionAttributeStore;
     }
 
-    /**
-     * Cache content produced by {@code @SessionAttributes} annotated handlers
-     * for the given number of seconds. Default is 0, preventing caching completely.
-     * <p>In contrast to the "cacheSeconds" property which will apply to all general
-     * handlers (but not to {@code @SessionAttributes} annotated handlers),
-     * this setting will apply to {@code @SessionAttributes} handlers only.
-     * @see #setCacheSeconds
-     * @see org.springframework.web.bind.annotation.SessionAttributes
-     */
+
     public void setCacheSecondsForSessionAttributeHandlers(int cacheSecondsForSessionAttributeHandlers) {
         this.cacheSecondsForSessionAttributeHandlers = cacheSecondsForSessionAttributeHandlers;
     }
 
-    /**
-     * Set if controller execution should be synchronized on the session,
-     * to serialize parallel invocations from the same client.
-     * <p>More specifically, the execution of the {@code handleRequestInternal}
-     * method will get synchronized if this flag is "true". The best available
-     * session mutex will be used for the synchronization; ideally, this will
-     * be a mutex exposed by HttpSessionMutexListener.
-     * <p>The session mutex is guaranteed to be the same object during
-     * the entire lifetime of the session, available under the key defined
-     * by the {@code SESSION_MUTEX_ATTRIBUTE} constant. It serves as a
-     * safe reference to synchronize on for locking on the current session.
-     * <p>In many cases, the HttpSession reference itself is a safe mutex
-     * as well, since it will always be the same object reference for the
-     * same active logical session. However, this is not guaranteed across
-     * different servlet containers; the only 100% safe way is a session mutex.
-     * @see org.springframework.web.util.HttpSessionMutexListener
-     * @see org.springframework.web.util.WebUtils#getSessionMutex(javax.servlet.http.HttpSession)
-     */
+
     public void setSynchronizeOnSession(boolean synchronizeOnSession) {
         this.synchronizeOnSession = synchronizeOnSession;
     }
 
-    /**
-     * Set the ParameterNameDiscoverer to use for resolving method parameter names if needed
-     * (e.g. for default attribute names).
-     * <p>Default is a {@link org.springframework.core.LocalVariableTableParameterNameDiscoverer}.
-     */
     public void setParameterNameDiscoverer(ParameterNameDiscoverer parameterNameDiscoverer) {
         this.parameterNameDiscoverer = parameterNameDiscoverer;
     }
 
-    /**
-     * A {@link ConfigurableBeanFactory} is expected for resolving expressions
-     * in method argument default values.
-     */
+
     public void setBeanFactory(BeanFactory beanFactory) {
         if (beanFactory instanceof ConfigurableBeanFactory) {
             this.beanFactory = (ConfigurableBeanFactory) beanFactory;
         }
     }
 
-    /**
-     * Return the owning factory of this bean instance, or {@code null} if none.
-     */
     protected ConfigurableBeanFactory getBeanFactory() {
         return this.beanFactory;
     }
-
 
     public void afterPropertiesSet() {
         if (this.argumentResolvers == null) {
@@ -400,55 +285,50 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
         initControllerAdviceCache();
     }
 
-    /**
-     * Return the list of argument resolvers to use including built-in resolvers
-     * and custom resolvers provided via {@link #setCustomArgumentResolvers}.
-     */
+
     private List<HandlerMethodArgumentResolver> getDefaultArgumentResolvers() {
-        List<HandlerMethodArgumentResolver> resolvers = new ArrayList<HandlerMethodArgumentResolver>();
+
+        List<HandlerMethodArgumentResolver> resolvers = new ArrayList<>();
 
         // Annotation-based argument resolution
         resolvers.add(new RequestParamMethodArgumentResolver(getBeanFactory(), false));
-        resolvers.add(new RequestParamMapMethodArgumentResolver());
+//        resolvers.add(new RequestParamMapMethodArgumentResolver());
         resolvers.add(new PathVariableMethodArgumentResolver());
-        resolvers.add(new PathVariableMapMethodArgumentResolver());
-        resolvers.add(new MatrixVariableMethodArgumentResolver());
-        resolvers.add(new MatrixVariableMapMethodArgumentResolver());
-        resolvers.add(new ServletModelAttributeMethodProcessor(false));
+//        resolvers.add(new PathVariableMapMethodArgumentResolver());
+//        resolvers.add(new MatrixVariableMethodArgumentResolver());
+//        resolvers.add(new MatrixVariableMapMethodArgumentResolver());
+//        resolvers.add(new ServletModelAttributeMethodProcessor(false));
         resolvers.add(new RequestResponseBodyMethodProcessor(getMessageConverters()));
-        resolvers.add(new RequestPartMethodArgumentResolver(getMessageConverters()));
-        resolvers.add(new RequestHeaderMethodArgumentResolver(getBeanFactory()));
-        resolvers.add(new RequestHeaderMapMethodArgumentResolver());
-        resolvers.add(new ServletCookieValueMethodArgumentResolver(getBeanFactory()));
-        resolvers.add(new ExpressionValueMethodArgumentResolver(getBeanFactory()));
+//        resolvers.add(new RequestPartMethodArgumentResolver(getMessageConverters()));
+//        resolvers.add(new RequestHeaderMethodArgumentResolver(getBeanFactory()));
+//        resolvers.add(new RequestHeaderMapMethodArgumentResolver());
+//        resolvers.add(new ServletCookieValueMethodArgumentResolver(getBeanFactory()));
+//        resolvers.add(new ExpressionValueMethodArgumentResolver(getBeanFactory()));
 
         // Type-based argument resolution
-        resolvers.add(new ServletRequestMethodArgumentResolver());
-        resolvers.add(new ServletResponseMethodArgumentResolver());
-        resolvers.add(new HttpEntityMethodProcessor(getMessageConverters()));
-        resolvers.add(new RedirectAttributesMethodArgumentResolver());
-        resolvers.add(new ModelMethodProcessor());
-        resolvers.add(new MapMethodProcessor());
-        resolvers.add(new ErrorsMethodArgumentResolver());
-        resolvers.add(new SessionStatusMethodArgumentResolver());
-        resolvers.add(new UriComponentsBuilderMethodArgumentResolver());
+//        resolvers.add(new ServletRequestMethodArgumentResolver());
+//        resolvers.add(new ServletResponseMethodArgumentResolver());
+//        resolvers.add(new HttpEntityMethodProcessor(getMessageConverters()));
+//        resolvers.add(new RedirectAttributesMethodArgumentResolver());
+//        resolvers.add(new ModelMethodProcessor());
+//        resolvers.add(new MapMethodProcessor());
+//        resolvers.add(new ErrorsMethodArgumentResolver());
+//        resolvers.add(new SessionStatusMethodArgumentResolver());
+//        resolvers.add(new UriComponentsBuilderMethodArgumentResolver());
 
         // Custom arguments
-        if (getCustomArgumentResolvers() != null) {
-            resolvers.addAll(getCustomArgumentResolvers());
-        }
+//        if (getCustomArgumentResolvers() != null) {
+//            resolvers.addAll(getCustomArgumentResolvers());
+//        }
 
         // Catch-all
-        resolvers.add(new RequestParamMethodArgumentResolver(getBeanFactory(), true));
-        resolvers.add(new ServletModelAttributeMethodProcessor(true));
+//        resolvers.add(new RequestParamMethodArgumentResolver(getBeanFactory(), true));
+//        resolvers.add(new ServletModelAttributeMethodProcessor(true));
 
         return resolvers;
     }
 
-    /**
-     * Return the list of argument resolvers to use for {@code @InitBinder}
-     * methods including built-in and custom resolvers.
-     */
+
     private List<HandlerMethodArgumentResolver> getDefaultInitBinderArgumentResolvers() {
         List<HandlerMethodArgumentResolver> resolvers = new ArrayList<HandlerMethodArgumentResolver>();
 
@@ -476,10 +356,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
         return resolvers;
     }
 
-    /**
-     * Return the list of return value handlers to use including built-in and
-     * custom handlers provided via {@link #setReturnValueHandlers}.
-     */
+
     private List<HandlerMethodReturnValueHandler> getDefaultReturnValueHandlers() {
         List<HandlerMethodReturnValueHandler> handlers = new ArrayList<HandlerMethodReturnValueHandler>();
 
@@ -508,8 +385,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
         // Catch-all
         if (!CollectionUtils.isEmpty(getModelAndViewResolvers())) {
             handlers.add(new ModelAndViewResolverMethodReturnValueHandler(getModelAndViewResolvers()));
-        }
-        else {
+        } else {
             handlers.add(new ModelAttributeMethodProcessor(true));
         }
 
@@ -541,15 +417,6 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
         }
     }
 
-
-    /**
-     * Always return {@code true} since any method argument and return value
-     * type will be processed in some way. A method argument not recognized
-     * by any HandlerMethodArgumentResolver is interpreted as a request parameter
-     * if it is a simple type, or as a model attribute otherwise. A return value
-     * not recognized by any HandlerMethodReturnValueHandler will be interpreted
-     * as a model attribute.
-     */
     @Override
     protected boolean supportsInternal(HandlerMethod handlerMethod) {
         return true;
@@ -562,8 +429,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
         if (getSessionAttributesHandler(handlerMethod).hasSessionAttributes()) {
             // Always prevent caching in case of session attribute management.
             checkAndPrepare(request, response, this.cacheSecondsForSessionAttributeHandlers, true);
-        }
-        else {
+        } else {
             // Uses configured default cacheSeconds setting.
             checkAndPrepare(request, response, true);
         }
@@ -582,21 +448,13 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
         return invokeHandleMethod(request, response, handlerMethod);
     }
 
-    /**
-     * This implementation always returns -1. An {@code @RequestMapping} method can
-     * calculate the lastModified value, call {@link WebRequest#checkNotModified(long)},
-     * and return {@code null} if the result of that call is {@code true}.
-     */
+
     @Override
     protected long getLastModifiedInternal(HttpServletRequest request, HandlerMethod handlerMethod) {
         return -1;
     }
 
 
-    /**
-     * Return the {@link SessionAttributesHandler} instance for the given handler type
-     * (never {@code null}).
-     */
     private SessionAttributesHandler getSessionAttributesHandler(HandlerMethod handlerMethod) {
         Class<?> handlerType = handlerMethod.getBeanType();
         SessionAttributesHandler sessionAttrHandler = this.sessionAttributesHandlerCache.get(handlerType);
@@ -612,12 +470,10 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
         return sessionAttrHandler;
     }
 
-    /**
-     * Invoke the {@link RequestMapping} handler method preparing a {@link ModelAndView}
-     * if view resolution is required.
-     */
+
     private ModelAndView invokeHandleMethod(HttpServletRequest request,
-                                            HttpServletResponse response, HandlerMethod handlerMethod) throws Exception {
+                                            HttpServletResponse response,
+                                            HandlerMethod handlerMethod) throws Exception {
 
         ServletWebRequest webRequest = new ServletWebRequest(request, response);
 
@@ -630,31 +486,31 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
         modelFactory.initModel(webRequest, mavContainer, requestMappingMethod);
         mavContainer.setIgnoreDefaultModelOnRedirect(this.ignoreDefaultModelOnRedirect);
 
-        AsyncWebRequest asyncWebRequest = WebAsyncUtils.createAsyncWebRequest(request, response);
-        asyncWebRequest.setTimeout(this.asyncRequestTimeout);
+//        AsyncWebRequest asyncWebRequest = WebAsyncUtils.createAsyncWebRequest(request, response);
+//        asyncWebRequest.setTimeout(this.asyncRequestTimeout);
 
-        final WebAsyncManager asyncManager = WebAsyncUtils.getAsyncManager(request);
-        asyncManager.setTaskExecutor(this.taskExecutor);
-        asyncManager.setAsyncWebRequest(asyncWebRequest);
-        asyncManager.registerCallableInterceptors(this.callableInterceptors);
-        asyncManager.registerDeferredResultInterceptors(this.deferredResultInterceptors);
+//        final WebAsyncManager asyncManager = WebAsyncUtils.getAsyncManager(request);
+//        asyncManager.setTaskExecutor(this.taskExecutor);
+//        asyncManager.setAsyncWebRequest(asyncWebRequest);
+//        asyncManager.registerCallableInterceptors(this.callableInterceptors);
+//        asyncManager.registerDeferredResultInterceptors(this.deferredResultInterceptors);
 
-        if (asyncManager.hasConcurrentResult()) {
-            Object result = asyncManager.getConcurrentResult();
-            mavContainer = (ModelAndViewContainer) asyncManager.getConcurrentResultContext()[0];
-            asyncManager.clearConcurrentResult();
-
-            if (logger.isDebugEnabled()) {
-                logger.debug("Found concurrent result value [" + result + "]");
-            }
-            requestMappingMethod = requestMappingMethod.wrapConcurrentResult(result);
-        }
+//        if (asyncManager.hasConcurrentResult()) {
+//            Object result = asyncManager.getConcurrentResult();
+//            mavContainer = (ModelAndViewContainer) asyncManager.getConcurrentResultContext()[0];
+//            asyncManager.clearConcurrentResult();
+//
+//            if (logger.isDebugEnabled()) {
+//                logger.debug("Found concurrent result value [" + result + "]");
+//            }
+//            requestMappingMethod = requestMappingMethod.wrapConcurrentResult(result);
+//        }
 
         requestMappingMethod.invokeAndHandle(webRequest, mavContainer);
 
-        if (asyncManager.isConcurrentHandlingStarted()) {
-            return null;
-        }
+//        if (asyncManager.isConcurrentHandlingStarted()) {
+//            return null;
+//        }
 
         return getModelAndView(mavContainer, modelFactory, webRequest);
     }
@@ -711,7 +567,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
         }
         List<InvocableHandlerMethod> initBinderMethods = new ArrayList<InvocableHandlerMethod>();
         // Global methods first
-        for (Map.Entry<ControllerAdviceBean, Set<Method>> entry : this.initBinderAdviceCache .entrySet()) {
+        for (Map.Entry<ControllerAdviceBean, Set<Method>> entry : this.initBinderAdviceCache.entrySet()) {
             Object bean = entry.getKey().resolveBean();
             for (Method method : entry.getValue()) {
                 initBinderMethods.add(createInitBinderMethod(bean, method));
@@ -732,22 +588,15 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
         return binderMethod;
     }
 
-    /**
-     * Template method to create a new ServletRequestDataBinderFactory instance.
-     * <p>The default implementation creates a ServletRequestDataBinderFactory.
-     * This can be overridden for custom ServletRequestDataBinder subclasses.
-     * @param binderMethods {@code @InitBinder} methods
-     * @return the ServletRequestDataBinderFactory instance to use
-     * @throws Exception in case of invalid state or arguments
-     */
-    protected ServletRequestDataBinderFactory createDataBinderFactory(List<InvocableHandlerMethod> binderMethods)
-            throws Exception {
+
+    protected ServletRequestDataBinderFactory createDataBinderFactory(List<InvocableHandlerMethod> binderMethods) throws Exception {
 
         return new ServletRequestDataBinderFactory(binderMethods, getWebBindingInitializer());
     }
 
     private ModelAndView getModelAndView(ModelAndViewContainer mavContainer,
-                                         ModelFactory modelFactory, NativeWebRequest webRequest) throws Exception {
+                                         ModelFactory modelFactory,
+                                         WebRequest webRequest) throws Exception {
 
         modelFactory.updateModel(webRequest, mavContainer);
         if (mavContainer.isRequestHandled()) {
@@ -767,7 +616,6 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
     }
 
 
-
     public static final MethodFilter INIT_BINDER_METHODS = new MethodFilter() {
 
         public boolean matches(Method method) {
@@ -775,9 +623,6 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
         }
     };
 
-    /**
-     * MethodFilter that matches {@link ModelAttribute @ModelAttribute} methods.
-     */
     public static final MethodFilter MODEL_ATTRIBUTE_METHODS = new MethodFilter() {
 
         public boolean matches(Method method) {
@@ -785,5 +630,6 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
                     (AnnotationUtils.findAnnotation(method, ModelAttribute.class) != null));
         }
     };
+
 
 }

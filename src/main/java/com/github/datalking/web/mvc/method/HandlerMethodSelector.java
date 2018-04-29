@@ -15,7 +15,6 @@ import java.util.Set;
  */
 public abstract class HandlerMethodSelector {
 
-
     public static Set<Method> selectMethods(final Class<?> handlerType, final MethodFilter handlerMethodFilter) {
         final Set<Method> handlerMethods = new LinkedHashSet<>();
         Set<Class<?>> handlerTypes = new LinkedHashSet<>();

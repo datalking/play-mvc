@@ -12,6 +12,7 @@ import com.github.datalking.web.context.AnnotationConfigWebApplicationContext;
 import com.github.datalking.web.context.ConfigurableWebApplicationContext;
 import com.github.datalking.web.context.ContextLoader;
 import com.github.datalking.web.context.WebApplicationContext;
+import com.github.datalking.web.context.request.RequestContextHolder;
 import com.github.datalking.web.http.RequestMethod;
 import com.github.datalking.web.http.RequestAttributes;
 

@@ -6,14 +6,25 @@ spring笔记
 
 #### spring mvc
 
+- HttpMessageConverter接口指定了一个可以把Http request信息和Http response信息进行格式转换的转换器。通常实现HttpMessageConverter接口的转换器有以下几种：
+    - ByteArrayHttpMessageConverter: 负责读取二进制格式的数据和写出二进制格式的数据；
+    - StringHttpMessageConverter： 负责读取字符串格式的数据和写出二进制格式的数据；
+    - ResourceHttpMessageConverter：负责读取资源文件和写出资源文件数据；
+    - FormHttpMessageConverter： 负责读取form提交的数据（能读取的数据格式为 application/x-www-form-urlencoded，不能读取multipart/form-data格式数据）；负责写入application/x-www-from-urlencoded和multipart/form-data格式的数据；
+    - MappingJacksonHttpMessageConverter: 负责读取和写入json格式的数据；
+    - SourceHttpMessageConverter： 负责读取和写入 xml 中javax.xml.transform.Source定义的数据；
+    - Jaxb2RootElementHttpMessageConverter: 负责读取和写入xml 标签格式的数据；
+    - AtomFeedHttpMessageConverter: 负责读取和写入Atom格式的数据；
+    - RssChannelHttpMessageConverter: 负责读取和写入RSS格式的数据；
+    
 - Flash属性
-- flash attributes提供了一个请求为另一个请求存储有用属性的方法。
-  这在重定向的时候最常使用，比如常见的 POST/REDIRECT/GET 模式。Flash属性会在重定向前被暂时地保存起来（ 通常是保存在session中） ，
-  重定向后会重新被下一个请求取用并立即从原保存地移除。
-- FlashMap 被用来存储flash属性，而用 FlashMapManager 来存储、取回、管理 FlashMap 的实例
-- 控制器通常不需要直接接触 FlashMap 。一般是通过 @RequestMapping 方法去接受一个 RedirectAttributes 类型的参数，
-  然后直接地往其中添加flash属性。通过 RedirectAttributes 对象添加进去的flash属性会自动被填充到请求的“输出” FlashMap 对象中去
-  
+    - flash attributes提供了一个请求为另一个请求存储有用属性的方法。
+      这在重定向的时候最常使用，比如常见的 POST/REDIRECT/GET 模式。Flash属性会在重定向前被暂时地保存起来（ 通常是保存在session中） ，
+      重定向后会重新被下一个请求取用并立即从原保存地移除。
+    - FlashMap 被用来存储flash属性，而用 FlashMapManager 来存储、取回、管理 FlashMap 的实例
+    - 控制器通常不需要直接接触 FlashMap 。一般是通过 @RequestMapping 方法去接受一个 RedirectAttributes 类型的参数，
+      然后直接地往其中添加flash属性。通过 RedirectAttributes 对象添加进去的flash属性会自动被填充到请求的“输出” FlashMap 对象中去
+      
 
 - handlerMapping
     - 一个url路径和一个函数配对，你访问这个url，就会直接调用这个函数，第一步首先要找到是哪个对象，即handler，本工程的handler则是HomeAction对象，
