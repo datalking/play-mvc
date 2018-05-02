@@ -229,4 +229,19 @@ public abstract class AnnotationUtils {
         }
     }
 
+
+    public static Object getValue(Annotation annotation) {
+        return getValue(annotation, VALUE);
+    }
+
+    public static Object getValue(Annotation annotation, String attributeName) {
+        try {
+            Method method = annotation.annotationType().getDeclaredMethod(attributeName);
+            ReflectionUtils.makeAccessible(method);
+            return method.invoke(annotation);
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+
 }

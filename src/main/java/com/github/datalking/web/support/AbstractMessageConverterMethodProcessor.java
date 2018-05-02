@@ -1,11 +1,18 @@
 package com.github.datalking.web.support;
 
+import com.github.datalking.common.MethodParameter;
+import com.github.datalking.util.CollectionUtils;
+import com.github.datalking.util.StringUtils;
 import com.github.datalking.util.web.UrlPathHelper;
 import com.github.datalking.web.context.request.WebRequest;
+import com.github.datalking.web.http.HttpHeaders;
 import com.github.datalking.web.http.MediaType;
+import com.github.datalking.web.http.ServletServerHttpRequest;
 import com.github.datalking.web.http.ServletServerHttpResponse;
 import com.github.datalking.web.http.accept.ContentNegotiationManager;
 import com.github.datalking.web.http.converter.HttpMessageConverter;
+import com.github.datalking.web.servlet.HandlerMapping;
+import com.github.datalking.web.servlet.ServletWebRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -63,33 +70,17 @@ public abstract class AbstractMessageConverterMethodProcessor extends AbstractMe
         return new ServletServerHttpResponse(response);
     }
 
-    /**
-     * Writes the given return value to the given web request. Delegates to
-     * {@link #writeWithMessageConverters(Object, MethodParameter, ServletServerHttpRequest, ServletServerHttpResponse)}
-     */
-    protected <T> void writeWithMessageConverters(T returnValue, MethodParameter returnType, WebRequest webRequest)
-            throws IOException, HttpMediaTypeNotAcceptableException {
+    protected <T> void writeWithMessageConverters(T returnValue, MethodParameter returnType, WebRequest webRequest) throws IOException {
 
         ServletServerHttpRequest inputMessage = createInputMessage(webRequest);
         ServletServerHttpResponse outputMessage = createOutputMessage(webRequest);
         writeWithMessageConverters(returnValue, returnType, inputMessage, outputMessage);
     }
 
-    /**
-     * Writes the given return type to the given output message.
-     *
-     * @param returnValue   the value to write to the output message
-     * @param returnType    the type of the value
-     * @param inputMessage  the input messages. Used to inspect the {@code Accept} header.
-     * @param outputMessage the output message to write to
-     * @throws IOException                         thrown in case of I/O errors
-     * @throws HttpMediaTypeNotAcceptableException thrown when the conditions indicated by {@code Accept} header on
-     *                                             the request cannot be met by the message converters
-     */
-    @SuppressWarnings("unchecked")
-    protected <T> void writeWithMessageConverters(T returnValue, MethodParameter returnType,
-                                                  ServletServerHttpRequest inputMessage, ServletServerHttpResponse outputMessage)
-            throws IOException, HttpMediaTypeNotAcceptableException {
+    protected <T> void writeWithMessageConverters(T returnValue,
+                                                  MethodParameter returnType,
+                                                  ServletServerHttpRequest inputMessage,
+                                                  ServletServerHttpResponse outputMessage) throws IOException {
 
         Class<?> returnValueClass = returnValue.getClass();
         HttpServletRequest servletRequest = inputMessage.getServletRequest();
@@ -104,12 +95,13 @@ public abstract class AbstractMessageConverterMethodProcessor extends AbstractMe
                 }
             }
         }
+
         if (compatibleMediaTypes.isEmpty()) {
-            throw new HttpMediaTypeNotAcceptableException(producibleMediaTypes);
+//            throw new HttpMediaTypeNotAcceptableException(producibleMediaTypes);
         }
 
         List<MediaType> mediaTypes = new ArrayList<MediaType>(compatibleMediaTypes);
-        MediaType.sortBySpecificityAndQuality(mediaTypes);
+//        MediaType.sortBySpecificityAndQuality(mediaTypes);
 
         MediaType selectedMediaType = null;
         for (MediaType mediaType : mediaTypes) {
@@ -136,7 +128,9 @@ public abstract class AbstractMessageConverterMethodProcessor extends AbstractMe
                 }
             }
         }
-        throw new HttpMediaTypeNotAcceptableException(this.allSupportedMediaTypes);
+
+//        throw new HttpMediaTypeNotAcceptableException(this.allSupportedMediaTypes);
+
     }
 
     /**
@@ -151,9 +145,9 @@ public abstract class AbstractMessageConverterMethodProcessor extends AbstractMe
     protected List<MediaType> getProducibleMediaTypes(HttpServletRequest request, Class<?> returnValueClass) {
         Set<MediaType> mediaTypes = (Set<MediaType>) request.getAttribute(HandlerMapping.PRODUCIBLE_MEDIA_TYPES_ATTRIBUTE);
         if (!CollectionUtils.isEmpty(mediaTypes)) {
-            return new ArrayList<MediaType>(mediaTypes);
+            return new ArrayList<>(mediaTypes);
         } else if (!this.allSupportedMediaTypes.isEmpty()) {
-            List<MediaType> result = new ArrayList<MediaType>();
+            List<MediaType> result = new ArrayList<>();
             for (HttpMessageConverter<?> converter : this.messageConverters) {
                 if (converter.canWrite(returnValueClass, null)) {
                     result.addAll(converter.getSupportedMediaTypes());
@@ -165,27 +159,16 @@ public abstract class AbstractMessageConverterMethodProcessor extends AbstractMe
         }
     }
 
-    private List<MediaType> getAcceptableMediaTypes(HttpServletRequest request) throws HttpMediaTypeNotAcceptableException {
+    private List<MediaType> getAcceptableMediaTypes(HttpServletRequest request) {
         List<MediaType> mediaTypes = this.contentNegotiationManager.resolveMediaTypes(new ServletWebRequest(request));
         return (mediaTypes.isEmpty() ? Collections.singletonList(MediaType.ALL) : mediaTypes);
     }
 
-    /**
-     * Return the more specific of the acceptable and the producible media types
-     * with the q-value of the former.
-     */
     private MediaType getMostSpecificMediaType(MediaType acceptType, MediaType produceType) {
         MediaType produceTypeToUse = produceType.copyQualityValue(acceptType);
         return (MediaType.SPECIFICITY_COMPARATOR.compare(acceptType, produceTypeToUse) <= 0 ? acceptType : produceTypeToUse);
     }
 
-    /**
-     * Check if the path has a file extension and whether the extension is either
-     * {@link #WHITELISTED_EXTENSIONS whitelisted} or
-     * {@link ContentNegotiationManager#getAllFileExtensions() explicitly
-     * registered}. If not add a 'Content-Disposition' header with a safe
-     * attachment file name ("f.txt") to prevent RFD exploits.
-     */
     private void addContentDispositionHeader(ServletServerHttpRequest request,
                                              ServletServerHttpResponse response) {
 
@@ -218,7 +201,6 @@ public abstract class AbstractMessageConverterMethodProcessor extends AbstractMe
         }
     }
 
-    @SuppressWarnings("unchecked")
     private boolean safeExtension(HttpServletRequest request, String extension) {
         if (!StringUtils.hasText(extension)) {
             return true;
@@ -240,5 +222,6 @@ public abstract class AbstractMessageConverterMethodProcessor extends AbstractMe
         }
         return false;
     }
+
 
 }

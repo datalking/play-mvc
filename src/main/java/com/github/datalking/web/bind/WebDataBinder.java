@@ -2,6 +2,7 @@ package com.github.datalking.web.bind;
 
 import com.github.datalking.beans.MutablePropertyValues;
 import com.github.datalking.beans.PropertyValue;
+import com.github.datalking.common.BindingResult;
 
 import java.lang.reflect.Array;
 import java.util.List;
@@ -53,6 +54,22 @@ public class WebDataBinder extends DataBinder {
     public boolean isBindEmptyMultipartFiles() {
         return this.bindEmptyMultipartFiles;
     }
+
+    public BindingResult getBindingResult() {
+
+        // todo 绑定结果
+        return null;
+//        return getInternalBindingResult();
+    }
+
+
+//    protected AbstractPropertyBindingResult getInternalBindingResult() {
+//        if (this.bindingResult == null) {
+//            initBeanPropertyAccess();
+//        }
+//        return this.bindingResult;
+//    }
+
 
 //    @Override
 //    protected void doBind(MutablePropertyValues mpvs) {

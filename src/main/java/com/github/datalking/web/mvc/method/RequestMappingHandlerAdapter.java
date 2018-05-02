@@ -28,11 +28,15 @@ import com.github.datalking.web.support.HandlerMethodArgumentResolver;
 import com.github.datalking.web.support.HandlerMethodArgumentResolverComposite;
 import com.github.datalking.web.support.HandlerMethodReturnValueHandler;
 import com.github.datalking.web.support.HandlerMethodReturnValueHandlerComposite;
+import com.github.datalking.web.support.HttpEntityMethodProcessor;
 import com.github.datalking.web.support.ModelAndViewContainer;
+import com.github.datalking.web.support.ModelAndViewMethodReturnValueHandler;
+import com.github.datalking.web.support.ModelMethodProcessor;
 import com.github.datalking.web.support.PathVariableMethodArgumentResolver;
 import com.github.datalking.web.support.RequestParamMethodArgumentResolver;
 import com.github.datalking.web.support.SessionAttributeStore;
 import com.github.datalking.web.support.SessionAttributesHandler;
+import com.github.datalking.web.support.ViewMethodReturnValueHandler;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -330,25 +334,25 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 
 
     private List<HandlerMethodArgumentResolver> getDefaultInitBinderArgumentResolvers() {
-        List<HandlerMethodArgumentResolver> resolvers = new ArrayList<HandlerMethodArgumentResolver>();
+        List<HandlerMethodArgumentResolver> resolvers = new ArrayList<>();
 
         // Annotation-based argument resolution
         resolvers.add(new RequestParamMethodArgumentResolver(getBeanFactory(), false));
-        resolvers.add(new RequestParamMapMethodArgumentResolver());
+//        resolvers.add(new RequestParamMapMethodArgumentResolver());
         resolvers.add(new PathVariableMethodArgumentResolver());
-        resolvers.add(new PathVariableMapMethodArgumentResolver());
-        resolvers.add(new MatrixVariableMethodArgumentResolver());
-        resolvers.add(new MatrixVariableMapMethodArgumentResolver());
-        resolvers.add(new ExpressionValueMethodArgumentResolver(getBeanFactory()));
+//        resolvers.add(new PathVariableMapMethodArgumentResolver());
+//        resolvers.add(new MatrixVariableMethodArgumentResolver());
+//        resolvers.add(new MatrixVariableMapMethodArgumentResolver());
+//        resolvers.add(new ExpressionValueMethodArgumentResolver(getBeanFactory()));
 
         // Type-based argument resolution
-        resolvers.add(new ServletRequestMethodArgumentResolver());
-        resolvers.add(new ServletResponseMethodArgumentResolver());
+//        resolvers.add(new ServletRequestMethodArgumentResolver());
+//        resolvers.add(new ServletResponseMethodArgumentResolver());
 
         // Custom arguments
-        if (getCustomArgumentResolvers() != null) {
-            resolvers.addAll(getCustomArgumentResolvers());
-        }
+//        if (getCustomArgumentResolvers() != null) {
+//            resolvers.addAll(getCustomArgumentResolvers());
+//        }
 
         // Catch-all
         resolvers.add(new RequestParamMethodArgumentResolver(getBeanFactory(), true));
@@ -358,16 +362,16 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 
 
     private List<HandlerMethodReturnValueHandler> getDefaultReturnValueHandlers() {
-        List<HandlerMethodReturnValueHandler> handlers = new ArrayList<HandlerMethodReturnValueHandler>();
+        List<HandlerMethodReturnValueHandler> handlers = new ArrayList<>();
 
         // Single-purpose return value types
         handlers.add(new ModelAndViewMethodReturnValueHandler());
         handlers.add(new ModelMethodProcessor());
         handlers.add(new ViewMethodReturnValueHandler());
         handlers.add(new HttpEntityMethodProcessor(getMessageConverters(), this.contentNegotiationManager));
-        handlers.add(new CallableMethodReturnValueHandler());
-        handlers.add(new DeferredResultMethodReturnValueHandler());
-        handlers.add(new AsyncTaskMethodReturnValueHandler(this.beanFactory));
+//        handlers.add(new CallableMethodReturnValueHandler());
+//        handlers.add(new DeferredResultMethodReturnValueHandler());
+//        handlers.add(new AsyncTaskMethodReturnValueHandler(this.beanFactory));
 
         // Annotation-based return value types
         handlers.add(new ModelAttributeMethodProcessor(false));

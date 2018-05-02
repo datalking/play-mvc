@@ -2,9 +2,20 @@ package com.github.datalking.web.mvc.method;
 
 import com.github.datalking.annotation.web.RequestBody;
 import com.github.datalking.annotation.web.ResponseBody;
+import com.github.datalking.common.BindingResult;
+import com.github.datalking.common.Conventions;
 import com.github.datalking.common.MethodParameter;
+import com.github.datalking.exception.Errors;
+import com.github.datalking.util.AnnotationUtils;
+import com.github.datalking.web.bind.WebDataBinder;
+import com.github.datalking.web.bind.WebDataBinderFactory;
+import com.github.datalking.web.context.request.WebRequest;
+import com.github.datalking.web.http.HttpInputMessage;
+import com.github.datalking.web.http.ServletServerHttpRequest;
 import com.github.datalking.web.http.accept.ContentNegotiationManager;
 import com.github.datalking.web.http.converter.HttpMessageConverter;
+import com.github.datalking.web.support.AbstractMessageConverterMethodProcessor;
+import com.github.datalking.web.support.ModelAndViewContainer;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -41,7 +52,7 @@ public class RequestResponseBodyMethodProcessor extends AbstractMessageConverter
 
     public Object resolveArgument(MethodParameter parameter,
                                   ModelAndViewContainer mavContainer,
-                                  NativeWebRequest webRequest,
+                                  WebRequest webRequest,
                                   WebDataBinderFactory binderFactory) throws Exception {
 
         Object arg = readWithMessageConverters(webRequest, parameter, parameter.getGenericParameterType());
@@ -50,6 +61,7 @@ public class RequestResponseBodyMethodProcessor extends AbstractMessageConverter
         if (arg != null) {
             validate(binder, parameter);
         }
+//        mavContainer.addAttribute(BindingResult.MODEL_KEY_PREFIX + name, binder.getBindingResult());
         mavContainer.addAttribute(BindingResult.MODEL_KEY_PREFIX + name, binder.getBindingResult());
         return arg;
     }
@@ -60,10 +72,10 @@ public class RequestResponseBodyMethodProcessor extends AbstractMessageConverter
         for (Annotation ann : annotations) {
             if (ann.annotationType().getSimpleName().startsWith("Valid")) {
                 Object hints = AnnotationUtils.getValue(ann);
-                binder.validate(hints instanceof Object[] ? (Object[]) hints : new Object[]{hints});
+//                binder.validate(hints instanceof Object[] ? (Object[]) hints : new Object[]{hints});
                 BindingResult bindingResult = binder.getBindingResult();
                 if (bindingResult.hasErrors() && isBindExceptionRequired(binder, methodParam)) {
-                    throw new MethodArgumentNotValidException(methodParam, bindingResult);
+//                    throw new MethodArgumentNotValidException(methodParam, bindingResult);
                 }
                 break;
             }
@@ -79,7 +91,7 @@ public class RequestResponseBodyMethodProcessor extends AbstractMessageConverter
     }
 
     @Override
-    protected <T> Object readWithMessageConverters(NativeWebRequest webRequest,
+    protected <T> Object readWithMessageConverters(WebRequest webRequest,
                                                    MethodParameter methodParam,
                                                    Type paramType) throws IOException {
 
@@ -121,8 +133,8 @@ public class RequestResponseBodyMethodProcessor extends AbstractMessageConverter
     public void handleReturnValue(Object returnValue,
                                   MethodParameter returnType,
                                   ModelAndViewContainer mavContainer,
-                                  NativeWebRequest webRequest)
-            throws IOException, HttpMediaTypeNotAcceptableException {
+                                  WebRequest webRequest)
+            throws IOException {
 
         mavContainer.setRequestHandled(true);
         if (returnValue != null) {

@@ -71,4 +71,18 @@ public interface Assert {
         notEmpty(array, "[Assertion failed] - this array must not be empty: it must contain at least 1 element");
     }
 
+    static void isInstanceOf(Class<?> clazz, Object obj) {
+        isInstanceOf(clazz, obj, "");
+    }
+
+    static void isInstanceOf(Class<?> type, Object obj, String message) {
+        notNull(type, "Type to check against must not be null");
+        if (!type.isInstance(obj)) {
+            throw new IllegalArgumentException(
+                    (StringUtils.hasLength(message) ? message + " " : "") +
+                            "Object of class [" + (obj != null ? obj.getClass().getName() : "null") +
+                            "] must be an instance of " + type);
+        }
+    }
+
 }

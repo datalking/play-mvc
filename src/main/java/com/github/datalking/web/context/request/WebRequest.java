@@ -15,6 +15,9 @@ public interface WebRequest extends RequestAttributes {
 
     <T> T getNativeRequest(Class<T> requiredType);
 
+    Object getNativeResponse();
+
+    <T> T getNativeResponse(Class<T> requiredType);
 
     String getHeader(String headerName);
 
