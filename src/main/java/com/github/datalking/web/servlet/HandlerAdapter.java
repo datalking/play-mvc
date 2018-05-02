@@ -17,7 +17,7 @@ public interface HandlerAdapter {
     boolean supports(Object handler);
 
     // 使用handler处理request
-    ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler);
+    ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception;
 
     // 与HttpServlet的getLastModified()相同
     long getLastModified(HttpServletRequest request, Object handler);

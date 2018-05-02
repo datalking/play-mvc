@@ -26,14 +26,14 @@ public abstract class AbstractHandlerMethodAdapter extends WebContentGenerator i
 
     protected abstract boolean supportsInternal(HandlerMethod handlerMethod);
 
-    public final ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+    public final ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
         return handleInternal(request, response, (HandlerMethod) handler);
     }
 
     protected abstract ModelAndView handleInternal(HttpServletRequest request,
                                                    HttpServletResponse response,
-                                                   HandlerMethod handlerMethod);
+                                                   HandlerMethod handlerMethod)throws Exception;
 
     public final long getLastModified(HttpServletRequest request, Object handler) {
         return getLastModifiedInternal(request, (HandlerMethod) handler);

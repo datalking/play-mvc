@@ -23,5 +23,15 @@ public class DataBinder {
     }
 
 
+    public Object getTarget() {
+        return this.target;
+    }
+
+    public String getObjectName() {
+        return this.objectName;
+    }
+
+
+
 
 }

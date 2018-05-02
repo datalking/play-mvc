@@ -83,7 +83,7 @@ public class SessionAttributesHandler {
         }
     }
 
-    Object retrieveAttribute(WebRequest request, String attributeName) {
+    public Object retrieveAttribute(WebRequest request, String attributeName) {
         return this.sessionAttributeStore.retrieveAttribute(request, attributeName);
     }
 

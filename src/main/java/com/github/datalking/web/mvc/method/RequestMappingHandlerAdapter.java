@@ -12,7 +12,9 @@ import com.github.datalking.util.AnnotationUtils;
 import com.github.datalking.util.Assert;
 import com.github.datalking.util.CollectionUtils;
 import com.github.datalking.util.ReflectionUtils.MethodFilter;
+import com.github.datalking.util.web.RequestContextUtils;
 import com.github.datalking.util.web.WebUtils;
+import com.github.datalking.web.bind.DefaultDataBinderFactory;
 import com.github.datalking.web.bind.WebBindingInitializer;
 import com.github.datalking.web.bind.WebDataBinderFactory;
 import com.github.datalking.web.context.request.WebRequest;
@@ -21,22 +23,29 @@ import com.github.datalking.web.http.converter.HttpMessageConverter;
 import com.github.datalking.web.http.converter.StringHttpMessageConverter;
 import com.github.datalking.web.mvc.ModelAndView;
 import com.github.datalking.web.mvc.ModelAndViewResolver;
+import com.github.datalking.web.mvc.ModelFactory;
 import com.github.datalking.web.mvc.ModelMap;
 import com.github.datalking.web.mvc.View;
+import com.github.datalking.web.servlet.InvocableHandlerMethod;
 import com.github.datalking.web.servlet.ServletWebRequest;
 import com.github.datalking.web.support.HandlerMethodArgumentResolver;
 import com.github.datalking.web.support.HandlerMethodArgumentResolverComposite;
 import com.github.datalking.web.support.HandlerMethodReturnValueHandler;
 import com.github.datalking.web.support.HandlerMethodReturnValueHandlerComposite;
 import com.github.datalking.web.support.HttpEntityMethodProcessor;
+import com.github.datalking.web.support.MapMethodProcessor;
 import com.github.datalking.web.support.ModelAndViewContainer;
 import com.github.datalking.web.support.ModelAndViewMethodReturnValueHandler;
+import com.github.datalking.web.support.ModelAndViewResolverMethodReturnValueHandler;
+import com.github.datalking.web.support.ModelAttributeMethodProcessor;
 import com.github.datalking.web.support.ModelMethodProcessor;
 import com.github.datalking.web.support.PathVariableMethodArgumentResolver;
 import com.github.datalking.web.support.RequestParamMethodArgumentResolver;
+import com.github.datalking.web.support.ServletInvocableHandlerMethod;
 import com.github.datalking.web.support.SessionAttributeStore;
 import com.github.datalking.web.support.SessionAttributesHandler;
 import com.github.datalking.web.support.ViewMethodReturnValueHandler;
+import com.github.datalking.web.support.ViewNameMethodReturnValueHandler;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -404,21 +413,22 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
             logger.debug("Looking for controller advice: " + getApplicationContext());
         }
 
-        List<ControllerAdviceBean> beans = ControllerAdviceBean.findAnnotatedBeans(getApplicationContext());
-        Collections.sort(beans, new OrderComparator());
+//        List<ControllerAdviceBean> beans = ControllerAdviceBean.findAnnotatedBeans(getApplicationContext());
+//        Collections.sort(beans, new OrderComparator());
+//
+//        for (ControllerAdviceBean bean : beans) {
+//            Set<Method> attrMethods = HandlerMethodSelector.selectMethods(bean.getBeanType(), MODEL_ATTRIBUTE_METHODS);
+//            if (!attrMethods.isEmpty()) {
+//                this.modelAttributeAdviceCache.put(bean, attrMethods);
+//                logger.info("Detected @ModelAttribute methods in " + bean);
+//            }
+//            Set<Method> binderMethods = HandlerMethodSelector.selectMethods(bean.getBeanType(), INIT_BINDER_METHODS);
+//            if (!binderMethods.isEmpty()) {
+//                this.initBinderAdviceCache.put(bean, binderMethods);
+//                logger.info("Detected @InitBinder methods in " + bean);
+//            }
+//        }
 
-        for (ControllerAdviceBean bean : beans) {
-            Set<Method> attrMethods = HandlerMethodSelector.selectMethods(bean.getBeanType(), MODEL_ATTRIBUTE_METHODS);
-            if (!attrMethods.isEmpty()) {
-                this.modelAttributeAdviceCache.put(bean, attrMethods);
-                logger.info("Detected @ModelAttribute methods in " + bean);
-            }
-            Set<Method> binderMethods = HandlerMethodSelector.selectMethods(bean.getBeanType(), INIT_BINDER_METHODS);
-            if (!binderMethods.isEmpty()) {
-                this.initBinderAdviceCache.put(bean, binderMethods);
-                logger.info("Detected @InitBinder methods in " + bean);
-            }
-        }
     }
 
     @Override
@@ -428,7 +438,8 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 
     @Override
     protected final ModelAndView handleInternal(HttpServletRequest request,
-                                                HttpServletResponse response, HandlerMethod handlerMethod) throws Exception {
+                                                HttpServletResponse response,
+                                                HandlerMethod handlerMethod) throws Exception {
 
         if (getSessionAttributesHandler(handlerMethod).hasSessionAttributes()) {
             // Always prevent caching in case of session attribute management.
@@ -539,14 +550,14 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
             methods = HandlerMethodSelector.selectMethods(handlerType, MODEL_ATTRIBUTE_METHODS);
             this.modelAttributeCache.put(handlerType, methods);
         }
-        List<InvocableHandlerMethod> attrMethods = new ArrayList<InvocableHandlerMethod>();
+        List<InvocableHandlerMethod> attrMethods = new ArrayList<>();
         // Global methods first
-        for (Map.Entry<ControllerAdviceBean, Set<Method>> entry : this.modelAttributeAdviceCache.entrySet()) {
-            Object bean = entry.getKey().resolveBean();
-            for (Method method : entry.getValue()) {
-                attrMethods.add(createModelAttributeMethod(binderFactory, bean, method));
-            }
-        }
+//        for (Map.Entry<ControllerAdviceBean, Set<Method>> entry : this.modelAttributeAdviceCache.entrySet()) {
+//            Object bean = entry.getKey().resolveBean();
+//            for (Method method : entry.getValue()) {
+//                attrMethods.add(createModelAttributeMethod(binderFactory, bean, method));
+//            }
+//        }
         for (Method method : methods) {
             Object bean = handlerMethod.getBean();
             attrMethods.add(createModelAttributeMethod(binderFactory, bean, method));
@@ -571,12 +582,12 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
         }
         List<InvocableHandlerMethod> initBinderMethods = new ArrayList<InvocableHandlerMethod>();
         // Global methods first
-        for (Map.Entry<ControllerAdviceBean, Set<Method>> entry : this.initBinderAdviceCache.entrySet()) {
-            Object bean = entry.getKey().resolveBean();
-            for (Method method : entry.getValue()) {
-                initBinderMethods.add(createInitBinderMethod(bean, method));
-            }
-        }
+//        for (Map.Entry<ControllerAdviceBean, Set<Method>> entry : this.initBinderAdviceCache.entrySet()) {
+//            Object bean = entry.getKey().resolveBean();
+//            for (Method method : entry.getValue()) {
+//                initBinderMethods.add(createInitBinderMethod(bean, method));
+//            }
+//        }
         for (Method method : methods) {
             Object bean = handlerMethod.getBean();
             initBinderMethods.add(createInitBinderMethod(bean, method));
@@ -593,7 +604,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
     }
 
 
-    protected ServletRequestDataBinderFactory createDataBinderFactory(List<InvocableHandlerMethod> binderMethods) throws Exception {
+        protected ServletRequestDataBinderFactory createDataBinderFactory(List<InvocableHandlerMethod> binderMethods) throws Exception {
 
         return new ServletRequestDataBinderFactory(binderMethods, getWebBindingInitializer());
     }

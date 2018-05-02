@@ -2,10 +2,14 @@ package com.github.datalking.web.support;
 
 import com.github.datalking.annotation.ModelAttribute;
 import com.github.datalking.common.MethodParameter;
+import com.github.datalking.exception.Errors;
+import com.github.datalking.util.AnnotationUtils;
 import com.github.datalking.util.BeanUtils;
 import com.github.datalking.web.bind.WebDataBinder;
 import com.github.datalking.web.bind.WebDataBinderFactory;
+import com.github.datalking.web.bind.WebRequestDataBinder;
 import com.github.datalking.web.context.request.WebRequest;
+import com.github.datalking.web.mvc.ModelFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,11 +35,9 @@ public class ModelAttributeMethodProcessor
     public boolean supportsParameter(MethodParameter parameter) {
         if (parameter.hasParameterAnnotation(ModelAttribute.class)) {
             return true;
-        }
-        else if (this.annotationNotRequired) {
+        } else if (this.annotationNotRequired) {
             return !BeanUtils.isSimpleProperty(parameter.getParameterType());
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -83,18 +85,12 @@ public class ModelAttributeMethodProcessor
         for (Annotation ann : annotations) {
             if (ann.annotationType().getSimpleName().startsWith("Valid")) {
                 Object hints = AnnotationUtils.getValue(ann);
-                binder.validate(hints instanceof Object[] ? (Object[]) hints : new Object[] {hints});
+//                binder.validate(hints instanceof Object[] ? (Object[]) hints : new Object[] {hints});
                 break;
             }
         }
     }
 
-    /**
-     * Whether to raise a fatal bind exception on validation errors.
-     * @param binder the data binder used to perform data binding
-     * @param methodParam the method argument
-     * @return {@code true} if the next method argument is not of type {@link Errors}
-     */
     protected boolean isBindExceptionRequired(WebDataBinder binder, MethodParameter methodParam) {
         int i = methodParam.getParameterIndex();
         Class<?>[] paramTypes = methodParam.getMethod().getParameterTypes();
@@ -102,19 +98,12 @@ public class ModelAttributeMethodProcessor
         return !hasBindingResult;
     }
 
-    /**
-     * Return {@code true} if there is a method-level {@code @ModelAttribute}
-     * or, in default resolution mode, for any return value type that is not
-     * a simple type.
-     */
     public boolean supportsReturnType(MethodParameter returnType) {
         if (returnType.getMethodAnnotation(ModelAttribute.class) != null) {
             return true;
-        }
-        else if (this.annotationNotRequired) {
+        } else if (this.annotationNotRequired) {
             return !BeanUtils.isSimpleProperty(returnType.getParameterType());
-        }
-        else {
+        } else {
             return false;
         }
     }
