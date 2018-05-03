@@ -71,12 +71,13 @@ public class WebDataBinder extends DataBinder {
 //    }
 
 
-//    @Override
-//    protected void doBind(MutablePropertyValues mpvs) {
-////        checkFieldDefaults(mpvs);
-////        checkFieldMarkers(mpvs);
-//        super.doBind(mpvs);
-//
+    @Override
+    protected void doBind(MutablePropertyValues mpvs) {
+//        checkFieldDefaults(mpvs);
+//        checkFieldMarkers(mpvs);
+        super.doBind(mpvs);
+    }
+
 //        protected void checkFieldDefaults (MutablePropertyValues mpvs){
 //            if (getFieldDefaultPrefix() != null) {
 //                String fieldDefaultPrefix = getFieldDefaultPrefix();
@@ -91,7 +92,6 @@ public class WebDataBinder extends DataBinder {
 //                    }
 //                }
 //            }
-//        }
 //
 //        protected void checkFieldMarkers (MutablePropertyValues mpvs){
 //            if (getFieldMarkerPrefix() != null) {
@@ -142,3 +142,5 @@ public class WebDataBinder extends DataBinder {
 //    }
 
 }
+
+

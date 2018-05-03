@@ -1,5 +1,6 @@
 package com.github.datalking.web.mvc.method;
 
+import com.github.datalking.annotation.InitBinder;
 import com.github.datalking.annotation.ModelAttribute;
 import com.github.datalking.annotation.web.RequestMapping;
 import com.github.datalking.beans.factory.BeanFactory;
@@ -9,12 +10,12 @@ import com.github.datalking.beans.factory.config.ConfigurableBeanFactory;
 import com.github.datalking.common.LocalVariableTableParameterNameDiscoverer;
 import com.github.datalking.common.ParameterNameDiscoverer;
 import com.github.datalking.util.AnnotationUtils;
-import com.github.datalking.util.Assert;
 import com.github.datalking.util.CollectionUtils;
 import com.github.datalking.util.ReflectionUtils.MethodFilter;
 import com.github.datalking.util.web.RequestContextUtils;
 import com.github.datalking.util.web.WebUtils;
 import com.github.datalking.web.bind.DefaultDataBinderFactory;
+import com.github.datalking.web.bind.ServletRequestDataBinderFactory;
 import com.github.datalking.web.bind.WebBindingInitializer;
 import com.github.datalking.web.bind.WebDataBinderFactory;
 import com.github.datalking.web.context.request.WebRequest;
@@ -50,15 +51,11 @@ import com.github.datalking.web.support.ViewNameMethodReturnValueHandler;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.xml.transform.Source;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -604,7 +601,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
     }
 
 
-        protected ServletRequestDataBinderFactory createDataBinderFactory(List<InvocableHandlerMethod> binderMethods) throws Exception {
+    protected ServletRequestDataBinderFactory createDataBinderFactory(List<InvocableHandlerMethod> binderMethods) throws Exception {
 
         return new ServletRequestDataBinderFactory(binderMethods, getWebBindingInitializer());
     }
@@ -622,11 +619,12 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
         if (!mavContainer.isViewReference()) {
             mav.setView((View) mavContainer.getView());
         }
-        if (model instanceof RedirectAttributes) {
-            Map<String, ?> flashAttributes = ((RedirectAttributes) model).getFlashAttributes();
-            HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
-            RequestContextUtils.getOutputFlashMap(request).putAll(flashAttributes);
-        }
+//        if (model instanceof RedirectAttributes) {
+//            Map<String, ?> flashAttributes = ((RedirectAttributes) model).getFlashAttributes();
+//            HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
+//            RequestContextUtils.getOutputFlashMap(request).putAll(flashAttributes);
+//        }
+
         return mav;
     }
 

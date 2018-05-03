@@ -42,6 +42,7 @@ start from [http://localhost:8999](http://localhost:8999)
 
 - [ ] 实现DispatcherServlet 
 - [ ] 支持 @PathVariable, @RequestParam 
+- [ ] 支持 Redirect 
 - [ ] 使用内置tomcat直接启动mvc应用 
 - [ ] servlet和filter支持async处理
 

@@ -1,5 +1,7 @@
 package com.github.datalking.web.bind;
 
+import com.github.datalking.beans.MutablePropertyValues;
+
 /**
  * @author yaoo on 4/29/18
  */
@@ -22,7 +24,6 @@ public class DataBinder {
         this.objectName = objectName;
     }
 
-
     public Object getTarget() {
         return this.target;
     }
@@ -31,7 +32,14 @@ public class DataBinder {
         return this.objectName;
     }
 
+    protected void doBind(MutablePropertyValues mpvs) {
+//        checkAllowedFields(mpvs);
+//        checkRequiredFields(mpvs);
+        applyPropertyValues(mpvs);
+    }
 
+    protected void applyPropertyValues(MutablePropertyValues mpvs) {
 
+    }
 
 }

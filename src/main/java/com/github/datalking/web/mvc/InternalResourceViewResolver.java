@@ -17,7 +17,6 @@ public class InternalResourceViewResolver extends UrlBasedViewResolver {
 
     private String[] exposedContextBeanNames;
 
-
     public InternalResourceViewResolver() {
         Class<?> viewClass = requiredViewClass();
 //        if (viewClass.equals(InternalResourceView.class) && jstlPresent) {
@@ -43,7 +42,6 @@ public class InternalResourceViewResolver extends UrlBasedViewResolver {
     public void setExposedContextBeanNames(String... exposedContextBeanNames) {
         this.exposedContextBeanNames = exposedContextBeanNames;
     }
-
 
     @Override
     protected AbstractUrlBasedView buildView(String viewName) {

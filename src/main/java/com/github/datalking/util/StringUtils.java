@@ -364,5 +364,19 @@ public abstract class StringUtils {
         return path.substring(extIndex + 1);
     }
 
+    public static String stripFilenameExtension(String path) {
+        if (path == null) {
+            return null;
+        }
+        int extIndex = path.lastIndexOf(EXTENSION_SEPARATOR);
+        if (extIndex == -1) {
+            return path;
+        }
+        int folderIndex = path.lastIndexOf(FOLDER_SEPARATOR);
+        if (folderIndex > extIndex) {
+            return path;
+        }
+        return path.substring(0, extIndex);
+    }
 
 }

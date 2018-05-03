@@ -13,7 +13,6 @@ public class DelegatingWebMvcConfiguration extends WebMvcConfigurationSupport {
 
     private final WebMvcConfigurerComposite configurers = new WebMvcConfigurerComposite();
 
-
     @Autowired(required = false)
     public void setConfigurers(List<WebMvcConfigurer> configurers) {
         if (configurers == null || configurers.isEmpty()) {

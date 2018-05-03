@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 public interface HandlerExceptionResolver {
 
-    ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex);
+    ModelAndView resolveException(HttpServletRequest request,
+                                  HttpServletResponse response,
+                                  Object handler, Exception ex);
 
 }
