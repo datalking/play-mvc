@@ -62,6 +62,39 @@ public abstract class FrameworkServlet extends HttpServletBean {
 
     protected abstract void doService(HttpServletRequest request, HttpServletResponse response) throws Exception;
 
+    /**
+     * 初始化WebApplicationContext
+     * <p>
+     * 覆盖父类中的方法，作为init()的一小步
+     */
+    @Override
+    protected final void initServletBean() throws ServletException {
+        getServletContext().log("Initializing Spring FrameworkServlet '" + getServletName() + "'");
+        if (this.logger.isInfoEnabled()) {
+            this.logger.info("FrameworkServlet '" + getServletName() + "': initialization started");
+        }
+
+        long startTime = System.currentTimeMillis();
+
+        try {
+            // ==== 初始化WebApplicationContext
+            this.webApplicationContext = initWebApplicationContext();
+
+            // 空方法，留给子类实现
+            initFrameworkServlet();
+        } catch (ServletException | RuntimeException ex) {
+            this.logger.error("Context initialization failed", ex);
+            throw ex;
+        }
+
+        /// 打印容器启动时间
+        if (this.logger.isInfoEnabled()) {
+            long elapsedTime = System.currentTimeMillis() - startTime;
+            this.logger.info("FrameworkServlet '" + getServletName() + "': initialization completed in " +
+                    elapsedTime + " ms");
+        }
+    }
+
     @Override
     protected final void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         processRequest(request, response);
@@ -160,38 +193,6 @@ public abstract class FrameworkServlet extends HttpServletBean {
         } else {
             // preserve the pre-bound RequestAttributes instance
             return null;
-        }
-    }
-
-    /**
-     * 初始化WebApplicationContext
-     * <p>
-     * 覆盖父类中的方法，作为init()的一小步
-     */
-    @Override
-    protected final void initServletBean() throws ServletException {
-        getServletContext().log("Initializing Spring FrameworkServlet '" + getServletName() + "'");
-        if (this.logger.isInfoEnabled()) {
-            this.logger.info("FrameworkServlet '" + getServletName() + "': initialization started");
-        }
-
-        long startTime = System.currentTimeMillis();
-
-        try {
-            // ==== 初始化WebApplicationContext
-            this.webApplicationContext = initWebApplicationContext();
-            //
-            initFrameworkServlet();
-        } catch (ServletException | RuntimeException ex) {
-            this.logger.error("Context initialization failed", ex);
-            throw ex;
-        }
-
-        /// 打印容器启动时间
-        if (this.logger.isInfoEnabled()) {
-            long elapsedTime = System.currentTimeMillis() - startTime;
-            this.logger.info("FrameworkServlet '" + getServletName() + "': initialization completed in " +
-                    elapsedTime + " ms");
         }
     }
 
@@ -341,6 +342,7 @@ public abstract class FrameworkServlet extends HttpServletBean {
 
         postProcessWebApplicationContext(wac);
         applyInitializers(wac);
+
         wac.refresh();
     }
 

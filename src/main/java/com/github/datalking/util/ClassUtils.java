@@ -1,5 +1,6 @@
 package com.github.datalking.util;
 
+import java.beans.Introspector;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -421,5 +422,46 @@ public abstract class ClassUtils {
         }
     }
 
+    public static String getShortNameAsProperty(Class<?> clazz) {
+        String shortName = getShortName(clazz);
+        int dotIndex = shortName.lastIndexOf(PACKAGE_SEPARATOR);
+        shortName = (dotIndex != -1 ? shortName.substring(dotIndex + 1) : shortName);
+        return Introspector.decapitalize(shortName);
+    }
+
+    public static String getShortName(Class<?> clazz) {
+        return getShortName(getQualifiedName(clazz));
+    }
+
+    public static String getShortName(String className) {
+        Assert.hasLength(className, "Class name must not be empty");
+        int lastDotIndex = className.lastIndexOf(PACKAGE_SEPARATOR);
+        int nameEndIndex = className.indexOf(CGLIB_CLASS_SEPARATOR);
+        if (nameEndIndex == -1) {
+            nameEndIndex = className.length();
+        }
+        String shortName = className.substring(lastDotIndex + 1, nameEndIndex);
+        shortName = shortName.replace(INNER_CLASS_SEPARATOR, PACKAGE_SEPARATOR);
+        return shortName;
+    }
+
+    public static String getQualifiedName(Class<?> clazz) {
+        Assert.notNull(clazz, "Class must not be null");
+        if (clazz.isArray()) {
+            return getQualifiedNameForArray(clazz);
+        } else {
+            return clazz.getName();
+        }
+    }
+
+    private static String getQualifiedNameForArray(Class<?> clazz) {
+        StringBuilder result = new StringBuilder();
+        while (clazz.isArray()) {
+            clazz = clazz.getComponentType();
+            result.append(ARRAY_SUFFIX);
+        }
+        result.insert(0, clazz.getName());
+        return result.toString();
+    }
 
 }

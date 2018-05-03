@@ -54,7 +54,8 @@ public abstract class AbstractNamedValueMethodArgumentResolver implements Handle
 
         if (binderFactory != null) {
             WebDataBinder binder = binderFactory.createBinder(webRequest, null, namedValueInfo.name);
-            arg = binder.convertIfNecessary(arg, paramType, parameter);
+            // todo args convertion
+//            arg = binder.convertIfNecessary(arg, paramType, parameter);
         }
 
         handleResolvedValue(arg, namedValueInfo.name, parameter, mavContainer, webRequest);

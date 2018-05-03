@@ -1,5 +1,7 @@
 package com.github.datalking.annotation.web;
 
+import com.github.datalking.annotation.ValueConstants;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -18,6 +20,6 @@ public @interface RequestParam {
 
     boolean required() default true;
 
-    //String defaultValue() default ValueConstants.DEFAULT_NONE;
+    String defaultValue() default ValueConstants.DEFAULT_NONE;
 
 }

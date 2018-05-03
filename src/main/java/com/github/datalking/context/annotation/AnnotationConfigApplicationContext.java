@@ -66,6 +66,10 @@ public class AnnotationConfigApplicationContext extends AbstractApplicationConte
         this.reader.register(annotatedClasses);
     }
 
+    @Override
+    protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) {
+
+    }
 
 }
 

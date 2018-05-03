@@ -39,31 +39,31 @@ public interface Errors {
 
     int getErrorCount();
 
-    List<ObjectError> getAllErrors();
-
     boolean hasGlobalErrors();
 
     int getGlobalErrorCount();
 
-    List<ObjectError> getGlobalErrors();
-
-    ObjectError getGlobalError();
+//    List<ObjectError> getGlobalErrors();
+//
+//    List<ObjectError> getAllErrors();
+//
+//    ObjectError getGlobalError();
 
     boolean hasFieldErrors();
 
     int getFieldErrorCount();
 
-    List<FieldError> getFieldErrors();
-
-    FieldError getFieldError();
-
     boolean hasFieldErrors(String field);
 
     int getFieldErrorCount(String field);
 
-    List<FieldError> getFieldErrors(String field);
-
-    FieldError getFieldError(String field);
+//    List<FieldError> getFieldErrors();
+//
+//    List<FieldError> getFieldErrors(String field);
+//
+//    FieldError getFieldError();
+//
+//    FieldError getFieldError(String field);
 
     Object getFieldValue(String field);
 

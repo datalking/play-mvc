@@ -13,6 +13,7 @@
     - 暂不支持@Autowired，需要显式配置Bean  
     - 暂不支持@Repository、@Resource  
     - 暂不支持静态资源处理  
+    - 不支持servlet2.5及以下的web容器，仅支持servlet3.0及以上的容器
     - 不支持introduction引入增强，仅支持weave  
     - 不支持指定aop生成代理对象的方式，默认使用JdkDynamicAopProxy，目标对象未实现接口时使用CglibAopProxy
     - 不支持动态代理指定构造函数参数
@@ -43,6 +44,7 @@ start from [http://localhost:8999](http://localhost:8999)
 - [ ] 实现DispatcherServlet 
 - [ ] 支持 @PathVariable, @RequestParam 
 - [ ] 支持 Redirect 
+- [ ] 支持 文件上传 MultipartResolver 
 - [ ] 使用内置tomcat直接启动mvc应用 
 - [ ] servlet和filter支持async处理
 

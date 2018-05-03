@@ -1,10 +1,9 @@
 package com.github.datalking.context.support;
 
-
 import com.github.datalking.beans.factory.config.AutowireCapableBeanFactory;
 import com.github.datalking.beans.factory.config.BeanFactoryPostProcessor;
 import com.github.datalking.beans.factory.config.ConfigurableListableBeanFactory;
-import com.github.datalking.beans.factory.support.AbstractBeanFactory;
+import com.github.datalking.beans.factory.support.BeanDefinitionReader;
 import com.github.datalking.beans.factory.support.BeanDefinitionRegistry;
 import com.github.datalking.beans.factory.support.DefaultListableBeanFactory;
 import com.github.datalking.beans.factory.xml.XmlBeanDefinitionReader;
@@ -12,7 +11,6 @@ import com.github.datalking.context.ApplicationContext;
 import com.github.datalking.context.ConfigurableApplicationContext;
 import com.github.datalking.util.Assert;
 import com.github.datalking.util.ObjectUtils;
-import com.github.datalking.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +19,7 @@ import java.util.Map;
 /**
  * ApplicationContext 抽象类
  */
-//public abstract class AbstractApplicationContext implements ConfigurableApplicationContext {
-public class AbstractApplicationContext implements ConfigurableApplicationContext {
+public abstract class AbstractApplicationContext implements ConfigurableApplicationContext {
 
     protected DefaultListableBeanFactory beanFactory;
 
@@ -34,12 +31,12 @@ public class AbstractApplicationContext implements ConfigurableApplicationContex
 
     private String displayName = this.getClass().getName() + "@" + this.hashCode();
 
+    // parent默认为null
     private ApplicationContext parent;
 
     private boolean active = false;
 
     private long startupDate;
-
 
     public AbstractApplicationContext() {
         // 使用注解，不使用xml时，configLocation默认为空字符串
@@ -64,7 +61,6 @@ public class AbstractApplicationContext implements ConfigurableApplicationContex
         this.beanFactory = beanFactory;
     }
 
-
     @Override
     public Object getBean(String name) {
         return beanFactory.getBean(name);
@@ -86,17 +82,15 @@ public class AbstractApplicationContext implements ConfigurableApplicationContex
 
     /**
      * 读取配置文件并注册bean
-     * <p>
      * 默认采用立即初始化
      */
     @Override
     public void refresh() {
 
+        // 暂时用来记录启动时间
         prepareRefresh();
 
-
         try {
-
 
             // 读取xml配置文件
             obtainFreshBeanFactory();
@@ -126,11 +120,16 @@ public class AbstractApplicationContext implements ConfigurableApplicationContex
     }
 
     private void obtainFreshBeanFactory() throws Exception {
+
+        /// 读取xml配置并解析成BeanDefinition
         if (configLocation != null && !configLocation.trim().equals("")) {
-            //读取xml配置并解析成BeanDefinition
-            XmlBeanDefinitionReader xmlBeanDefinitionReader = new XmlBeanDefinitionReader(((BeanDefinitionRegistry) getBeanFactory()));
+            BeanDefinitionReader xmlBeanDefinitionReader = new XmlBeanDefinitionReader(((BeanDefinitionRegistry) getBeanFactory()));
             xmlBeanDefinitionReader.loadBeanDefinitions(configLocation);
         }
+
+        // 读取Java注解配置并解析成BeanDefinition
+        loadBeanDefinitions(beanFactory);
+
     }
 
     protected void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory) {
@@ -281,5 +280,7 @@ public class AbstractApplicationContext implements ConfigurableApplicationContex
     public <T> Map<String, T> getBeansOfType(Class<T> type) {
         return getBeanFactory().getBeansOfType(type);
     }
+
+    protected abstract void loadBeanDefinitions(DefaultListableBeanFactory beanFactory);
 
 }

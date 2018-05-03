@@ -17,7 +17,6 @@ public class ClassPathXmlApplicationContext extends AbstractApplicationContext {
         this(configLocation, true, beanFactory);
     }
 
-
     public ClassPathXmlApplicationContext(String configLocation, boolean enableRefresh, DefaultListableBeanFactory beanFactory) throws Exception {
 
         super(configLocation, beanFactory);
@@ -31,5 +30,10 @@ public class ClassPathXmlApplicationContext extends AbstractApplicationContext {
 //    protected Resource[] getConfigResources() {
 //        return this.configResources;
 //    }
+
+    @Override
+    protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) {
+
+    }
 
 }

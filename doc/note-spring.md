@@ -6,6 +6,23 @@ spring笔记
 
 #### spring mvc
 
+- ServletContext与ApplicationContext相关概念
+    - ServletContext：此接口定义了一系列的方法，可以很方便地与所在的容器进行一些交互，比如通过getMajorVersion与getMinorVersion来获取容器的版本信息等，
+      在一个应用中(一个JVM)只有一个ServletContext, 换句话说，容器中所有的servlet都共享同一个ServletContext.
+    - ServletConfig: servletConfig是针对servlet而言的，每个servlet都有它独有的serveltConfig信息，相互之间不共享
+    - ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE
+    
+
+- spring mvc 父子上下文/容器
+    - Tomcat启动时，监听器ContextLoaderListener创建一个XMLWebApplicationContext上下文容器，
+      并加载context-param中的配置文件，完成容器的刷新后将上下文设置到ServletContext。
+    - 当DispatcherServlet创建时，先进行初始化操作，从ServletContext中查询出监听器中创建的上下文对象，
+      作为父类上下文来创建servlet的上下文容器，并加载Servlet配置中的init-param的配置文件
+      (默认加载/WEB-INF/servletName-servlet.xml，servletName为DispatcherServlet配置的servlet-name)，然后完成容器的刷新。
+    - 子上下文可以访问父上下文中的bean，反之则不行
+    - 通常是将业务操作及数据库相关的bean维护在Listener的父容器中，而在Servlet的子容器中只加载Controller相关的业务实现的bean。
+    - 从而将业务实现和业务的具体操作分隔在两个上下文容器中，业务实现bean可以调用业务具体操作的bean。
+
 - HttpMessageConverter接口指定了一个可以把Http request信息和Http response信息进行格式转换的转换器。通常实现HttpMessageConverter接口的转换器有以下几种：
     - ByteArrayHttpMessageConverter: 负责读取二进制格式的数据和写出二进制格式的数据；
     - StringHttpMessageConverter： 负责读取字符串格式的数据和写出二进制格式的数据；
@@ -41,16 +58,6 @@ spring笔记
     - 必须在对应的jar包的META-INF/services 目录创建一个名为javax.servlet.ServletContainerInitializer的文件，文件内容指定具体的ServletContainerInitializer实现类
     - 一般伴随着ServletContainerInitializer一起使用的还有HandlesTypes注解，可以将感兴趣的一些类注入到ServletContainerInitializerde的onStartup方法作为参数传入
     - Context容器启动时就会分别调用每个ServletContainerInitializer的onStartup方法，并将感兴趣的类作为参数传入
-
-- spring mvc 父子上下文
-    - Tomcat启动时，监听器ContextLoaderListener创建一个XMLWebApplicationContext上下文容器，
-      并加载context-param中的配置文件，完成容器的刷新后将上下文设置到ServletContext。
-    - 当DispatcherServlet创建时，先进行初始化操作，从ServletContext中查询出监听器中创建的上下文对象，
-      作为父类上下文来创建servlet的上下文容器，并加载Servlet配置中的init-param的配置文件
-      (默认加载/WEB-INF/servletName-servlet.xml,servletName为DispatcherServlet配置的servlet-name)，然后完成容器的刷新。
-    - 子上下文可以访问父上下文中的bean，反之则不行
-    - 通常是将业务操作及数据库相关的bean维护在Listener的父容器中，而在Servlet的子容器中只加载Controller相关的业务实现的bean。
-    - 从而将业务实现和业务的具体操作分隔在两个上下文容器中，业务实现bean可以调用业务具体操作的bean。
 
 - WebRequest是Spring Web MVC提供的统一请求访问接口，不仅仅可以访问请求相关数据（如参数区数据、请求头数据，但访问不到Cookie区数据），
   还可以访问会话和上下文中的数据；
@@ -181,7 +188,7 @@ spring笔记
     - @Bean是显式声明bean定义，bean：class -> N:1
     - @Component用于type，@Bean用于方法
 
-- `@Order` 注解可以控制配置类的加载顺序
+- `@Order` 注解可以控制配置类的加载顺序，数值越小，优先级越高
 
 - 常用的后处理器
     - BeanFactoryPostProcessor

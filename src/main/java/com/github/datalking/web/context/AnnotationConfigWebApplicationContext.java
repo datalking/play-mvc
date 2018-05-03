@@ -16,7 +16,7 @@ import java.util.Set;
  */
 public class AnnotationConfigWebApplicationContext extends AbstractWebApplicationContext {
 
-    Logger logger = LoggerFactory.getLogger(AnnotationConfigWebApplicationContext.class);
+    private Logger logger = LoggerFactory.getLogger(AnnotationConfigWebApplicationContext.class);
 
     private final Set<Class<?>> annotatedClasses = new LinkedHashSet<>();
 
@@ -33,7 +33,7 @@ public class AnnotationConfigWebApplicationContext extends AbstractWebApplicatio
     }
 
 
-    //@Override
+    @Override
     protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) {
         AnnotatedBeanDefinitionReader reader = new AnnotatedBeanDefinitionReader(beanFactory);
         //reader.setEnvironment(getEnvironment());

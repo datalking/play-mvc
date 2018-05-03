@@ -67,7 +67,8 @@ public class DispatcherServlet extends FrameworkServlet {
     static {
         // 从内部配置文件 DispatcherServlet.properties 加载mvc相关类
         try {
-            InputStream in = DispatcherServlet.class.getResourceAsStream(DEFAULT_STRATEGIES_PATH);
+            ClassLoader classLoader = DispatcherServlet.class.getClassLoader();
+            InputStream in = classLoader.getResourceAsStream(DEFAULT_STRATEGIES_PATH);
             defaultStrategies.load(in);
         } catch (IOException ex) {
             throw new IllegalStateException("Could not load 'DispatcherServlet.properties': " + ex.getMessage());
@@ -649,8 +650,10 @@ public class DispatcherServlet extends FrameworkServlet {
         return null;
     }
 
-    private void triggerAfterCompletion(HttpServletRequest request, HttpServletResponse response,
-                                        HandlerExecutionChain mappedHandler, Exception ex) throws Exception {
+    private void triggerAfterCompletion(HttpServletRequest request,
+                                        HttpServletResponse response,
+                                        HandlerExecutionChain mappedHandler,
+                                        Exception ex) throws Exception {
 
         if (mappedHandler != null) {
             mappedHandler.triggerAfterCompletion(request, response, ex);
@@ -658,8 +661,10 @@ public class DispatcherServlet extends FrameworkServlet {
         throw ex;
     }
 
-    private void triggerAfterCompletionWithError(HttpServletRequest request, HttpServletResponse response,
-                                                 HandlerExecutionChain mappedHandler, Error error) throws Exception {
+    private void triggerAfterCompletionWithError(HttpServletRequest request,
+                                                 HttpServletResponse response,
+                                                 HandlerExecutionChain mappedHandler,
+                                                 Error error) throws Exception {
 
         Exception ex = new Exception("Handler processing failed", error);
         if (mappedHandler != null) {
@@ -675,6 +680,5 @@ public class DispatcherServlet extends FrameworkServlet {
         }
         return uri;
     }
-
 
 }

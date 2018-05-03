@@ -1,10 +1,10 @@
 <!doctype html>
 <html>
 <head>
-    <title>play-mvc web app</title>
+    <title>test-mvc-anno-minimal</title>
 </head>
 <body>
-<h1>minimum play-mvc web app</h1>
-<h2>home is here</h2>
+<h1>test-mvc-webapp</h1>
+<h2>here is home page</h2>
 </body>
 </html>
