@@ -1,4 +1,4 @@
-package com.github.datalking.config;
+package com1.github.datalking.config;
 
 import com.github.datalking.web.support.AbstractAnnotationConfigDispatcherServletInitializer;
 

@@ -21,11 +21,9 @@ import java.util.Set;
  * @author yaoo on 4/13/18
  */
 public class ConfigurationClassPostProcessor
-        implements BeanDefinitionRegistryPostProcessor,PriorityOrdered {
-
+        implements BeanDefinitionRegistryPostProcessor, PriorityOrdered {
 
     //private ConfigurationClassBeanDefinitionReader reader;
-
 
     @Override
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) {
@@ -64,7 +62,7 @@ public class ConfigurationClassPostProcessor
             ((AbstractBeanDefinition) beanDef).setBeanClass(beanClass);
 
             // 获取所有被@Configuration标注的类 对应的BeanDefinition
-            // spring的实现所设置的范围包括几乎所有可以表示@Bean的注解
+            // spring的实现所设置的范围包括所有full和lite
             if (beanClass != null && beanClass.isAnnotationPresent(Configuration.class)) {
                 configCandidates.add(new BeanDefinitionHolder(beanDef, beanName));
             }

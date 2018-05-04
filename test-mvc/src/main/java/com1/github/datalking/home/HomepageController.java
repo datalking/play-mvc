@@ -1,4 +1,4 @@
-package com.github.datalking.home;
+package com1.github.datalking.home;
 
 import com.github.datalking.annotation.Controller;
 import com.github.datalking.annotation.web.RequestMapping;

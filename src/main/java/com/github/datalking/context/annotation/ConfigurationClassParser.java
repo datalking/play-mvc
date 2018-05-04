@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Deque;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -64,6 +65,12 @@ public class ConfigurationClassParser {
     }
 
     private void processConfigurationClass(ConfigurationClass configClass) {
+
+        ConfigurationClass existingClass = this.configurationClasses.get(configClass);
+
+//        if (existingClass != null) {
+//            this.configurationClasses.remove(configClass);
+//        }
 
         // ==== 真正扫描@Configuration、@Bean、@ComponentScan
         doProcessConfigurationClass(configClass);

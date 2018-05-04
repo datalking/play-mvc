@@ -1,4 +1,4 @@
-package com.github.datalking.config;
+package com1.github.datalking.config;
 
 import com.github.datalking.annotation.Bean;
 import com.github.datalking.annotation.ComponentScan;
@@ -10,7 +10,7 @@ import com.github.datalking.web.mvc.ViewResolver;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = {"com.github.datalking"})
+@ComponentScan(basePackages = {"com1.github.datalking"})
 public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
     @Bean
@@ -21,6 +21,5 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
         resolver.setSuffix(".jsp");
         return resolver;
     }
-
 
 }
