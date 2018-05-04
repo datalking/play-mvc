@@ -4,6 +4,7 @@ import com.github.datalking.io.Resource;
 import com.github.datalking.io.ResourceLoader;
 import com.github.datalking.util.Assert;
 import com.github.datalking.util.CollectionUtils;
+import com.github.datalking.web.support.ResourceHttpRequestHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,15 +45,14 @@ public class ResourceHandlerRegistration {
         return pathPatterns;
     }
 
-
-//    protected ResourceHttpRequestHandler getRequestHandler() {
-//        Assert.isTrue(!CollectionUtils.isEmpty(locations), "At least one location is required for resource handling.");
-//        ResourceHttpRequestHandler requestHandler = new ResourceHttpRequestHandler();
-//        requestHandler.setLocations(locations);
-//        if (cachePeriod != null) {
-//            requestHandler.setCacheSeconds(cachePeriod);
-//        }
-//        return requestHandler;
-//    }
+    protected ResourceHttpRequestHandler getRequestHandler() {
+        Assert.isTrue(!CollectionUtils.isEmpty(locations), "At least one location is required for resource handling.");
+        ResourceHttpRequestHandler requestHandler = new ResourceHttpRequestHandler();
+        requestHandler.setLocations(locations);
+        if (cachePeriod != null) {
+            requestHandler.setCacheSeconds(cachePeriod);
+        }
+        return requestHandler;
+    }
 
 }

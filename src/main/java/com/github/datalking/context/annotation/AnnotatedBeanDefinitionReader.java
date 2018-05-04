@@ -18,7 +18,6 @@ public class AnnotatedBeanDefinitionReader {
 
     public final String CONFIGURATION_ANNOTATION_PROCESSOR_BEAN_NAME = "play.context.annotation.internalConfigurationClassPostProcessor";
 
-
     private final BeanDefinitionRegistry registry;
 
     public AnnotatedBeanDefinitionReader(BeanDefinitionRegistry registry) {
@@ -34,7 +33,6 @@ public class AnnotatedBeanDefinitionReader {
             registerBean(annotatedClass);
         }
     }
-
 
     public void registerBean(Class<?> annotatedClass) {
 

@@ -198,7 +198,6 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
 
     }
 
-
     @Override
     public boolean containsBean(String name) {
         return getBeanFactory().containsBean(name);
@@ -258,7 +257,6 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
     public boolean containsBeanDefinition(String beanName) {
         return getBeanFactory().containsBeanDefinition(beanName);
     }
-
 
     @Override
     public int getBeanDefinitionCount() {

@@ -26,70 +26,69 @@ public class DelegatingWebMvcConfiguration extends WebMvcConfigurationSupport {
         this.configurers.addResourceHandlers(registry);
     }
 
-    @Override
-    protected void addInterceptors(InterceptorRegistry registry) {
-        this.configurers.addInterceptors(registry);
-    }
-
-    @Override
-    protected void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
-        this.configurers.configureContentNegotiation(configurer);
-    }
-
-    @Override
-    public void configureAsyncSupport(AsyncSupportConfigurer configurer) {
-        this.configurers.configureAsyncSupport(configurer);
-    }
-
-    @Override
-    public void configurePathMatch(PathMatchConfigurer configurer) {
-        this.configurers.configurePathMatch(configurer);
-    }
-
-    @Override
-    protected void addViewControllers(ViewControllerRegistry registry) {
-        this.configurers.addViewControllers(registry);
-    }
-
-
-    @Override
-    protected void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
-        this.configurers.configureDefaultServletHandling(configurer);
-    }
-
-    @Override
-    protected void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
-        this.configurers.addArgumentResolvers(argumentResolvers);
-    }
-
-    @Override
-    protected void addReturnValueHandlers(List<HandlerMethodReturnValueHandler> returnValueHandlers) {
-        this.configurers.addReturnValueHandlers(returnValueHandlers);
-    }
-
-    @Override
-    protected void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-        this.configurers.configureMessageConverters(converters);
-    }
-
-    @Override
-    protected void addFormatters(FormatterRegistry registry) {
-        this.configurers.addFormatters(registry);
-    }
-
-    @Override
-    protected Validator getValidator() {
-        return this.configurers.getValidator();
-    }
-
-    @Override
-    protected MessageCodesResolver getMessageCodesResolver() {
-        return this.configurers.getMessageCodesResolver();
-    }
-
-    @Override
-    protected void configureHandlerExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers) {
-        this.configurers.configureHandlerExceptionResolvers(exceptionResolvers);
-    }
+//    @Override
+//    protected void addInterceptors(InterceptorRegistry registry) {
+//        this.configurers.addInterceptors(registry);
+//    }
+//
+//    @Override
+//    protected void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
+//        this.configurers.configureContentNegotiation(configurer);
+//    }
+//
+//    @Override
+//    public void configurePathMatch(PathMatchConfigurer configurer) {
+//        this.configurers.configurePathMatch(configurer);
+//    }
+//
+//    @Override
+//    protected void addViewControllers(ViewControllerRegistry registry) {
+//        this.configurers.addViewControllers(registry);
+//    }
+//
+//    @Override
+//    protected void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+//        this.configurers.configureDefaultServletHandling(configurer);
+//    }
+//
+//    @Override
+//    protected void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+//        this.configurers.addArgumentResolvers(argumentResolvers);
+//    }
+//
+//    @Override
+//    protected void addReturnValueHandlers(List<HandlerMethodReturnValueHandler> returnValueHandlers) {
+//        this.configurers.addReturnValueHandlers(returnValueHandlers);
+//    }
+//
+//    @Override
+//    protected void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+//        this.configurers.configureMessageConverters(converters);
+//    }
+//
+//    @Override
+//    public void configureAsyncSupport(AsyncSupportConfigurer configurer) {
+//        this.configurers.configureAsyncSupport(configurer);
+//    }
+//
+//    @Override
+//    protected void addFormatters(FormatterRegistry registry) {
+//        this.configurers.addFormatters(registry);
+//    }
+//
+//    @Override
+//    protected Validator getValidator() {
+//        return this.configurers.getValidator();
+//    }
+//
+//    @Override
+//    protected MessageCodesResolver getMessageCodesResolver() {
+//        return this.configurers.getMessageCodesResolver();
+//    }
+//
+//    @Override
+//    protected void configureHandlerExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers) {
+//        this.configurers.configureHandlerExceptionResolvers(exceptionResolvers);
+//    }
 
 }

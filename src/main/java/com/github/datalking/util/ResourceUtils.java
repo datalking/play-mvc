@@ -100,7 +100,7 @@ public abstract class ResourceUtils {
 
 
     public static Set<Class> getClasssFromJarFile(String jarPaht, String filePaht) {
-        Set<Class> clazzs = new HashSet<Class>();
+        Set<Class> clazzs = new HashSet<>();
 
         JarFile jarFile = null;
         try {
@@ -109,11 +109,11 @@ public abstract class ResourceUtils {
             e1.printStackTrace();
         }
 
-        Set<JarEntry> jarEntryList = new HashSet<JarEntry>();
+        Set<JarEntry> jarEntryList = new HashSet<>();
 
         Enumeration<JarEntry> ee = jarFile.entries();
         while (ee.hasMoreElements()) {
-            JarEntry entry = (JarEntry) ee.nextElement();
+            JarEntry entry = ee.nextElement();
             // 过滤我们出满足我们需求的东西
             if (entry.getName().startsWith(filePaht) && entry.getName().endsWith(".class")) {
                 jarEntryList.add(entry);

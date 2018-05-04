@@ -47,7 +47,6 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
         return this.order;
     }
 
-
     public void setDefaultHandler(Object defaultHandler) {
         this.defaultHandler = defaultHandler;
     }
@@ -96,13 +95,6 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
         this.interceptors.addAll(Arrays.asList(interceptors));
     }
 
-
-    /**
-     * Initializes the interceptors.
-     *
-     * @see #extendInterceptors(java.util.List)
-     * @see #initInterceptors()
-     */
     @Override
     protected void initApplicationContext() {
         extendInterceptors(this.interceptors);

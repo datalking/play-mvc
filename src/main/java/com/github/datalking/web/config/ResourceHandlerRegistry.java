@@ -3,6 +3,10 @@ package com.github.datalking.web.config;
 import com.github.datalking.context.ApplicationContext;
 import com.github.datalking.io.ResourceLoader;
 import com.github.datalking.util.Assert;
+import com.github.datalking.web.HttpRequestHandler;
+import com.github.datalking.web.servlet.handler.AbstractHandlerMapping;
+import com.github.datalking.web.servlet.handler.SimpleUrlHandlerMapping;
+import com.github.datalking.web.support.ResourceHttpRequestHandler;
 
 import javax.servlet.ServletContext;
 import java.util.ArrayList;
@@ -49,27 +53,26 @@ public class ResourceHandlerRegistry {
         return this;
     }
 
+    protected AbstractHandlerMapping getHandlerMapping() {
+        if (registrations.isEmpty()) {
+            return null;
+        }
 
-//    protected AbstractHandlerMapping getHandlerMapping() {
-//        if (registrations.isEmpty()) {
-//            return null;
-//        }
-//
-//        Map<String, HttpRequestHandler> urlMap = new LinkedHashMap<String, HttpRequestHandler>();
-//        for (ResourceHandlerRegistration registration : registrations) {
-//            for (String pathPattern : registration.getPathPatterns()) {
-//                ResourceHttpRequestHandler requestHandler = registration.getRequestHandler();
-//                requestHandler.setServletContext(servletContext);
-//                requestHandler.setApplicationContext(applicationContext);
-//                urlMap.put(pathPattern, requestHandler);
-//            }
-//        }
-//
-//        SimpleUrlHandlerMapping handlerMapping = new SimpleUrlHandlerMapping();
-//        handlerMapping.setOrder(order);
-//        handlerMapping.setUrlMap(urlMap);
-//        return handlerMapping;
-//    }
+        Map<String, HttpRequestHandler> urlMap = new LinkedHashMap<>();
+        for (ResourceHandlerRegistration registration : registrations) {
+            for (String pathPattern : registration.getPathPatterns()) {
+                ResourceHttpRequestHandler requestHandler = registration.getRequestHandler();
+                requestHandler.setServletContext(servletContext);
+                requestHandler.setApplicationContext(applicationContext);
+                urlMap.put(pathPattern, requestHandler);
+            }
+        }
+
+        SimpleUrlHandlerMapping handlerMapping = new SimpleUrlHandlerMapping();
+        handlerMapping.setOrder(order);
+        handlerMapping.setUrlMap(urlMap);
+        return handlerMapping;
+    }
 
 
 }
