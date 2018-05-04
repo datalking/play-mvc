@@ -53,6 +53,7 @@ public class AnnotationConfigWebApplicationContext extends AbstractWebApplicatio
 //            scanner.setScopeMetadataResolver(scopeMetadataResolver);
 //        }
 
+        /// 添加显式声明的class beanDef
         if (!this.annotatedClasses.isEmpty()) {
             if (logger.isInfoEnabled()) {
 //                logger.info("Registering annotated classes: [" +
@@ -61,6 +62,7 @@ public class AnnotationConfigWebApplicationContext extends AbstractWebApplicatio
             reader.register(this.annotatedClasses.toArray(new Class<?>[this.annotatedClasses.size()]));
         }
 
+        // 扫描指定包下的beanDef
         if (!this.basePackages.isEmpty()) {
             if (logger.isInfoEnabled()) {
 //                logger.info("Scanning base packages: [" +

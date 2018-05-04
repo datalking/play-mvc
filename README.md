@@ -41,14 +41,14 @@ start from [http://localhost:8999](http://localhost:8999)
 
 ## todo
 
-- [ ] 实现DispatcherServlet 
+- [ ] 扫描 DelegatingWebMvcConfiguration中的bean
 - [ ] 支持 @PathVariable, @RequestParam 
 - [ ] 支持 Redirect 
 - [ ] 支持 文件上传 MultipartResolver 
 - [ ] 使用内置tomcat直接启动mvc应用 
 - [ ] servlet和filter支持async处理
 
-- [x] ...
+- [x] 基本实现DispatcherServlet 
 
 ## later
 

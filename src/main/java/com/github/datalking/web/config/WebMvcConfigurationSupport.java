@@ -380,7 +380,6 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
         exceptionResolvers.add(new DefaultHandlerExceptionResolver());
     }
 
-
     private static final class EmptyHandlerMapping extends AbstractHandlerMapping {
 
         @Override

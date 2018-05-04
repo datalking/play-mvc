@@ -39,7 +39,7 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
     private long startupDate;
 
     public AbstractApplicationContext() {
-        // 使用注解，不使用xml时，configLocation默认为空字符串
+        // 当使用注解而不使用xml时，configLocation默认为空字符串
         this.configLocation = "";
         this.beanFactory = new DefaultListableBeanFactory();
 

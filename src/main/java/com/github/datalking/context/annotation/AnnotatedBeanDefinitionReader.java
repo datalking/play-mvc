@@ -47,6 +47,9 @@ public class AnnotatedBeanDefinitionReader {
 
     }
 
+    /**
+     * 注册内部使用的BeanDefinition
+     */
     public Set<BeanDefinitionHolder> registerAnnotationConfigProcessors(BeanDefinitionRegistry registry) {
 
         Set<BeanDefinitionHolder> beanDefs = new LinkedHashSet<>();

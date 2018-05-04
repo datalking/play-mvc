@@ -6,6 +6,12 @@ spring笔记
 
 #### spring mvc
 
+- spring AnnotatedBeanDefinitionReader 默认注册的beanDefinition
+    - org.springframework.context.annotation.CommonAnnotationBeanPostProcessor
+    - org.springframework.context.annotation.ConfigurationClassPostProcessor
+    - org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor
+    - org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor
+
 - ServletContext与ApplicationContext相关概念
     - ServletContext：此接口定义了一系列的方法，可以很方便地与所在的容器进行一些交互，比如通过getMajorVersion与getMinorVersion来获取容器的版本信息等，
       在一个应用中(一个JVM)只有一个ServletContext, 换句话说，容器中所有的servlet都共享同一个ServletContext.
