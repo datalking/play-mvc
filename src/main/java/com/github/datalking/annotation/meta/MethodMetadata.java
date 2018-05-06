@@ -1,6 +1,8 @@
 package com.github.datalking.annotation.meta;
 
 /**
+ * 获取java方法元数据 接口
+ *
  * @author yaoo on 4/13/18
  */
 public interface MethodMetadata {

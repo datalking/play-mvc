@@ -75,10 +75,6 @@ public abstract class ClassUtils {
                 Error.class, StackTraceElement.class, StackTraceElement[].class);
     }
 
-
-    /**
-     * Register the given common classes with the ClassUtils cache.
-     */
     private static void registerCommonClasses(Class<?>... commonClasses) {
         for (Class<?> clazz : commonClasses) {
             commonClassCache.put(clazz.getName(), clazz);

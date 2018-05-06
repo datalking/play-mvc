@@ -84,7 +84,7 @@ public class ConfigurationClassPostProcessor
 
         ConfigurationClassBeanDefinitionReader reader = new ConfigurationClassBeanDefinitionReader(registry);
 
-        // 将标注@Bean注解的bean注册到beanDefinitionMap
+        // 将标注@Bean注解的bean注册到beanDefinitionMap，包括扫描mvc的beanDef，但不实例化
         reader.loadBeanDefinitions(configClasses);
 
     }

@@ -8,8 +8,8 @@ import com.github.datalking.annotation.meta.MethodMetadata;
 public class BeanMethod {
 
     protected final MethodMetadata metadata;
-    protected final ConfigurationClass configurationClass;
 
+    protected final ConfigurationClass configurationClass;
 
     public BeanMethod(MethodMetadata metadata, ConfigurationClass configurationClass) {
         this.metadata = metadata;
@@ -24,5 +24,12 @@ public class BeanMethod {
         return configurationClass;
     }
 
-
+    @Override
+    public String toString() {
+        return "BMethod{" +
+                "mName=" + metadata.getMethodName() +
+                ", mReturn=" + metadata.getReturnTypeName() +
+                ", mClass=" + metadata.getDeclaringClassName() +
+                '}';
+    }
 }

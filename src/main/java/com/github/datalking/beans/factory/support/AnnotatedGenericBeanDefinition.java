@@ -3,6 +3,7 @@ package com.github.datalking.beans.factory.support;
 import com.github.datalking.annotation.meta.AnnotationMetadata;
 import com.github.datalking.annotation.meta.StandardAnnotationMetadata;
 import com.github.datalking.beans.factory.config.AnnotatedBeanDefinition;
+import com.github.datalking.util.Assert;
 
 /**
  * 存储注解元信息的 BeanDefinition
@@ -16,6 +17,17 @@ public class AnnotatedGenericBeanDefinition extends GenericBeanDefinition implem
     public AnnotatedGenericBeanDefinition(Class<?> beanClass) {
         setBeanClassName(beanClass.getName());
         this.metadata = new StandardAnnotationMetadata(beanClass);
+    }
+
+    public AnnotatedGenericBeanDefinition(AnnotationMetadata metadata) {
+        Assert.notNull(metadata, "AnnotationMetadata must not be null");
+        if (metadata instanceof StandardAnnotationMetadata) {
+            setBeanClass(((StandardAnnotationMetadata) metadata).getIntrospectedClass());
+        }
+        else {
+            setBeanClassName(metadata.getClassName());
+        }
+        this.metadata = metadata;
     }
 
     @Override

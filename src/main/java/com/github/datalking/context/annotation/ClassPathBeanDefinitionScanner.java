@@ -4,19 +4,17 @@ import com.github.datalking.annotation.Component;
 import com.github.datalking.beans.factory.config.AnnotatedBeanDefinition;
 import com.github.datalking.beans.factory.config.BeanDefinition;
 import com.github.datalking.beans.factory.config.BeanDefinitionHolder;
-import com.github.datalking.beans.factory.support.AbstractBeanDefinition;
 import com.github.datalking.beans.factory.support.AnnotatedGenericBeanDefinition;
 import com.github.datalking.beans.factory.support.BeanDefinitionReaderUtils;
 import com.github.datalking.beans.factory.support.BeanDefinitionRegistry;
-import com.github.datalking.io.Resource;
-import com.github.datalking.util.Assert;
 import com.github.datalking.util.ResourceUtils;
 
-import java.lang.annotation.Annotation;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 import static com.github.datalking.beans.factory.support.BeanDefinitionReaderUtils.registerBeanDefinition;
+import static com.github.datalking.util.AnnoScanUtils.getAnnoClassIncludingSuper;
+import static com.github.datalking.util.ClassUtils.getCamelCaseNameFromClass;
 
 /**
  * 基于路径的BeanDefinition扫描器
@@ -110,8 +108,24 @@ public class ClassPathBeanDefinitionScanner {
      */
     private boolean isCandidateComponent(Class clazz) {
 
+        /// 忽略已注册过的bean
+        if (this.registry.containsBeanDefinition(getCamelCaseNameFromClass(clazz))) {
+            return false;
+        }
+
+        /// 判断class上直接有@Component
         if (clazz.isAnnotationPresent(Component.class)) {
             return true;
+        }
+
+        /// 判断class上的注解的注解包含@Component，如@Controller
+        Set<Class> annoAll = getAnnoClassIncludingSuper(clazz);
+        if (annoAll != null) {
+            for (Class c : annoAll) {
+                if (c.getName().equals(Component.class.getName())) {
+                    return true;
+                }
+            }
         }
 
         return false;
@@ -120,6 +134,5 @@ public class ClassPathBeanDefinitionScanner {
     public BeanDefinitionRegistry getRegistry() {
         return registry;
     }
-
 
 }

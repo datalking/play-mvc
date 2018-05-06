@@ -10,7 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * copied from  srping
+ * copied from srping
  */
 public class AntPathMatcher implements PathMatcher {
 

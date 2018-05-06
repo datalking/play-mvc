@@ -11,7 +11,6 @@ import java.util.Set;
  */
 public interface AnnotationMetadata extends ClassMetadata {
 
-
     Set<String> getAnnotationTypes();
 
     boolean hasAnnotation(String annotationName);
@@ -25,6 +24,5 @@ public interface AnnotationMetadata extends ClassMetadata {
     Annotation[] getAnnotations();
 
 //    boolean hasAnnotatedMethods(String annotationName);
-
 
 }

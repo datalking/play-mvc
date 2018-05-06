@@ -1,6 +1,7 @@
 package com.github.datalking.context.annotation;
 
 import com.github.datalking.annotation.Bean;
+import com.github.datalking.annotation.Component;
 import com.github.datalking.annotation.ComponentScan;
 import com.github.datalking.annotation.Import;
 import com.github.datalking.annotation.meta.AnnotationAttributes;
@@ -10,7 +11,11 @@ import com.github.datalking.annotation.meta.StandardAnnotationMetadata;
 import com.github.datalking.beans.factory.config.AnnotatedBeanDefinition;
 import com.github.datalking.beans.factory.config.BeanDefinition;
 import com.github.datalking.beans.factory.config.BeanDefinitionHolder;
+import com.github.datalking.beans.factory.support.AbstractAutowireCapableBeanFactory;
+import com.github.datalking.beans.factory.support.AbstractBeanDefinition;
 import com.github.datalking.beans.factory.support.BeanDefinitionRegistry;
+import com.github.datalking.util.AnnoScanUtils;
+import com.github.datalking.util.ClassUtils;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayDeque;
@@ -66,8 +71,7 @@ public class ConfigurationClassParser {
 
     private void processConfigurationClass(ConfigurationClass configClass) {
 
-        ConfigurationClass existingClass = this.configurationClasses.get(configClass);
-
+//        ConfigurationClass existingClass = this.configurationClasses.get(configClass);
 //        if (existingClass != null) {
 //            this.configurationClasses.remove(configClass);
 //        }
@@ -88,8 +92,8 @@ public class ConfigurationClassParser {
      */
     private void doProcessConfigurationClass(ConfigurationClass configClass) {
 
-        // ==== 如果configClass标注有@ComponentScan，则获取注解的属性map
-//        Set<AnnotationAttributes> componentScans = attributesForRepeatable(configClass.getMetadata(), ComponentScans.class, ComponentScan.class);
+        // ==== 如果configClass标注有@ComponentScan，则获取该注解的所有属性map
+        // Set<AnnotationAttributes> componentScans = attributesForRepeatable(configClass.getMetadata(), ComponentScans.class, ComponentScan.class);
         Set<AnnotationAttributes> componentScans = attributesForRepeatable(configClass.getMetadata(), null, ComponentScan.class);
 
         if (!componentScans.isEmpty()) {
@@ -98,29 +102,28 @@ public class ConfigurationClassParser {
                 // 通过ComponentScanAnnotationParser解析@ComponentScan注解
                 Set<BeanDefinitionHolder> scannedBeanDefinitions = this.componentScanParser.parse(componentScan, configClass.getMetadata().getClassName());
 
-//                for (BeanDefinitionHolder holder : scannedBeanDefinitions) {
-//
-//                    AbstractBeanDefinition bd = (AbstractBeanDefinition) holder.getBeanDefinition();
-//
-//                    Class clazz = ((AbstractAutowireCapableBeanFactory) registry).doResolveBeanClass(bd);
-//
-//                    // 将配置的各个包下的Component类扫描出来 full lite  todo递归中止条件
-//                    if (clazz.isAnnotationPresent(Component.class)) {
-//                        parse(clazz, holder.getBeanName());
-//                    }
-//
-//                }
+                for (BeanDefinitionHolder holder : scannedBeanDefinitions) {
+
+                    AbstractBeanDefinition bd = (AbstractBeanDefinition) holder.getBeanDefinition();
+
+                    Class clazz = ((AbstractAutowireCapableBeanFactory) registry).doResolveBeanClass(bd);
+
+                    // 将配置的各个包下的Component类扫描出来 full lite  todo递归中止条件
+                    if (AnnoScanUtils.isCandidateComponent(clazz)) {
+
+                        parse(clazz, holder.getBeanName());
+                    }
+
+                }
             }
         }
 
 
         Set<ConfigurationClass> imports = getImports(configClass);
-        // 循环处理注解中含有@import的注解
-        processImports(configClass, imports);
-
-
-        // 循环处理注解中含有@import的类
-        //processImports(configClass, getImports(configClass), true);
+        if (imports != null && imports.size() > 0) {
+            // 循环处理注解中含有@import的类，如@EnableWebMvc，@EnableAspectJAutoProxy
+            processImports(configClass, imports);
+        }
 
         // ==== 扫描@Bean
         Set<MethodMetadata> beanMethods = retrieveBeanMethodMetadata(configClass);
@@ -129,9 +132,11 @@ public class ConfigurationClassParser {
             configClass.addBeanMethod(new BeanMethod(methodMetadata, configClass));
         }
 
-
     }
 
+    /**
+     * 将@Import的类加入beanDefinitionMap
+     */
     private void processImports(ConfigurationClass configClass, Collection<ConfigurationClass> importCandidates) {
 
         if (importCandidates.isEmpty()) {
@@ -140,26 +145,31 @@ public class ConfigurationClassParser {
 
         for (ConfigurationClass c : importCandidates) {
             Class curClass = ((StandardAnnotationMetadata) c.getMetadata()).getIntrospectedClass();
-            ImportBeanDefinitionRegistrar obj = null;
             if (ImportBeanDefinitionRegistrar.class.isAssignableFrom(curClass)) {
+                ImportBeanDefinitionRegistrar obj = null;
                 try {
                     obj = (ImportBeanDefinitionRegistrar) curClass.newInstance();
-                } catch (InstantiationException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
+                } catch (InstantiationException | IllegalAccessException e) {
                     e.printStackTrace();
                 }
+                // 将@Import的class加入configClass的map
+                configClass.addImportBeanDefinitionRegistrar(obj, c.getMetadata());
+
+            } else {
+                /// 作为 @Configuration class处理，添加到configurationClasses map
+                processConfigurationClass(c);
+
             }
 
-            // 将@Import的class加入configClass的map
-            configClass.addImportBeanDefinitionRegistrar(obj, c.getMetadata());
 
         }
 
 
     }
 
-
+    /**
+     * 获取@Import注解指定的类
+     */
     private Set<ConfigurationClass> getImports(ConfigurationClass confClass) {
         Set<ConfigurationClass> imports = new LinkedHashSet<>();
         Set<Class> visited = new LinkedHashSet<>();
@@ -183,7 +193,9 @@ public class ConfigurationClassParser {
                 Class<?>[] importedClass = ac.getClazz().getAnnotation(Import.class).value();
 
                 for (Class c : importedClass) {
-                    imports.add(new ConfigurationClass(c, c.getSimpleName()));
+                    ConfigurationClass cc = new ConfigurationClass(c, ClassUtils.getCamelCaseNameFromClass(c));
+                    cc.setImported(true);
+                    imports.add(cc);
                 }
 
             } else {

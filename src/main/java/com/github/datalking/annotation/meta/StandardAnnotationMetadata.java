@@ -53,7 +53,8 @@ public class StandardAnnotationMetadata extends StandardClassMetadata implements
     @Override
     public Set<MethodMetadata> getAnnotatedMethods(String annotationName) {
 
-        Method[] methods = getIntrospectedClass().getDeclaredMethods();
+//        Method[] methods = getIntrospectedClass().getDeclaredMethods();
+        Method[] methods = getIntrospectedClass().getMethods();
         Set<MethodMetadata> annotatedMethods = new LinkedHashSet<>();
 
         String basePackage = "";
@@ -79,7 +80,8 @@ public class StandardAnnotationMetadata extends StandardClassMetadata implements
 
     public Set<MethodMetadata> getAnnotatedMethods(Class<?> clazz) {
 
-        Method[] methods = getIntrospectedClass().getDeclaredMethods();
+//        Method[] methods = getIntrospectedClass().getDeclaredMethods();
+        Method[] methods = getIntrospectedClass().getMethods();
         Set<MethodMetadata> annotatedMethods = new LinkedHashSet<>();
 
         for (Method method : methods) {

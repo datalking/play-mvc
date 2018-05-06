@@ -7,6 +7,7 @@ import com.github.datalking.util.Assert;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -57,10 +58,10 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
             //存储beanDefinition到map
             this.beanDefinitionMap.put(beanName, beanDefinition);
 
-            List<String> updatedDefinitions = new ArrayList<>(this.beanDefinitionNames.size() + 1);
+            Set<String> updatedDefinitions = new HashSet<>(this.beanDefinitionNames.size() + 1);
             updatedDefinitions.addAll(this.beanDefinitionNames);
             updatedDefinitions.add(beanName);
-            this.beanDefinitionNames = updatedDefinitions;
+            this.beanDefinitionNames = new ArrayList<>(updatedDefinitions);
         }
 
     }

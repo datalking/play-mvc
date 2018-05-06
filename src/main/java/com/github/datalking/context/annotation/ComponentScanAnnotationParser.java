@@ -35,6 +35,7 @@ public class ComponentScanAnnotationParser {
 
         // 获取@ComponentScan注解中配置的扫描包
         String[] basePackagesArray = componentScan.getStringArray("basePackages");
+        // 为空时代表只有1个包
         String delimiter = "";
 
         // 将basePackages配置的多个包用 逗号/分号 分隔 todo 更优雅的解决方法

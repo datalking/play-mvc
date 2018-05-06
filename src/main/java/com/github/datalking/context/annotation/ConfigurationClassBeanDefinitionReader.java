@@ -2,6 +2,8 @@ package com.github.datalking.context.annotation;
 
 import com.github.datalking.annotation.meta.AnnotationMetadata;
 import com.github.datalking.annotation.meta.MethodMetadata;
+import com.github.datalking.beans.factory.config.BeanDefinitionHolder;
+import com.github.datalking.beans.factory.support.AnnotatedGenericBeanDefinition;
 import com.github.datalking.beans.factory.support.BeanDefinitionRegistry;
 import com.github.datalking.beans.factory.support.ConfigurationClassBeanDefinition;
 
@@ -33,6 +35,10 @@ public class ConfigurationClassBeanDefinitionReader {
 
     private void loadBeanDefinitionsForConfigurationClass(ConfigurationClass configClass) {
 
+        if (configClass.isImported()) {
+            registerBeanDefinitionForImportedConfigurationClass(configClass);
+        }
+
         for (BeanMethod beanMethod : configClass.getBeanMethods()) {
 
             // 查找带有@Bean注解的方法，并注册BeanDefinition
@@ -42,6 +48,18 @@ public class ConfigurationClassBeanDefinitionReader {
         // 查找@Import注解上的bean定义，并注册BeanDefinition
         loadBeanDefinitionsFromRegistrars(configClass.getImportBeanDefinitionRegistrars());
 
+    }
+
+    private void registerBeanDefinitionForImportedConfigurationClass(ConfigurationClass configClass) {
+        AnnotationMetadata metadata = configClass.getMetadata();
+        AnnotatedGenericBeanDefinition configBeanDef = new AnnotatedGenericBeanDefinition(metadata);
+
+//        ScopeMetadata scopeMetadata = scopeMetadataResolver.resolveScopeMetadata(configBeanDef);
+//        configBeanDef.setScope(scopeMetadata.getScopeName());
+        String configBeanName = configClass.getBeanName();
+        BeanDefinitionHolder definitionHolder = new BeanDefinitionHolder(configBeanDef, configBeanName);
+        this.registry.registerBeanDefinition(definitionHolder.getBeanName(), definitionHolder.getBeanDefinition());
+//        configClass.setBeanName(configBeanName);
 
     }
 
