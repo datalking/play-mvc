@@ -22,7 +22,6 @@ import com.github.datalking.web.mvc.method.ResponseStatusExceptionResolver;
 import com.github.datalking.web.servlet.HandlerExceptionResolver;
 import com.github.datalking.web.servlet.HandlerMapping;
 import com.github.datalking.web.servlet.handler.AbstractHandlerMapping;
-import com.github.datalking.web.servlet.handler.ConversionServiceExposingInterceptor;
 import com.github.datalking.web.servlet.handler.HandlerExceptionResolverComposite;
 import com.github.datalking.web.support.DefaultHandlerExceptionResolver;
 import com.github.datalking.web.support.HandlerMethodArgumentResolver;
@@ -38,19 +37,18 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 在代码中配置mvc的主要类
+ * 在java代码中配置mvc的主要实现类
  *
  * @author yaoo on 4/25/18
  */
 public class WebMvcConfigurationSupport implements ApplicationContextAware, ServletContextAware {
 
-    private static final boolean jaxb2Present = ClassUtils.isPresent(
-            "javax.xml.bind.Binder",
-            WebMvcConfigurationSupport.class.getClassLoader());
+    private static ClassLoader thisClassLoader = WebMvcConfigurationSupport.class.getClassLoader();
 
-    private static final boolean jackson2Present = ClassUtils.isPresent(
-            "com.fasterxml.jackson.databind.ObjectMapper",
-            WebMvcConfigurationSupport.class.getClassLoader()) && ClassUtils.isPresent("com.fasterxml.jackson.core.JsonGenerator", WebMvcConfigurationSupport.class.getClassLoader());
+    private static final boolean jaxb2Present = ClassUtils.isPresent("javax.xml.bind.Binder", thisClassLoader);
+
+    private static final boolean jackson2Present = ClassUtils.isPresent("com.fasterxml.jackson.databind.ObjectMapper", thisClassLoader)
+            && ClassUtils.isPresent("com.fasterxml.jackson.core.JsonGenerator", thisClassLoader);
 
     private ApplicationContext applicationContext;
 

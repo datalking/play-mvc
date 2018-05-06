@@ -90,16 +90,22 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
         // 暂时用来记录启动时间
         prepareRefresh();
 
+        // 读取xml配置文件和直接输入的java配置
+        obtainFreshBeanFactory();
+
+        // beanFactory准备工作，如注册环境变量相关bean和默认beanPostProcessor
+        prepareBeanFactory(beanFactory);
+
         try {
 
-            // 读取xml配置文件
-            obtainFreshBeanFactory();
+            // 默认为空方法，web环境下会手动注册与ServletContext和ServletConfig实例
+            postProcessBeanFactory(beanFactory);
 
             // 执行各种BeanFactoryPostProcessor，如扫描@Configuration、@Bean、@ComponentScan
             invokeBeanFactoryPostProcessors(beanFactory);
 
             // 注册各种BeanPostProcessor，只注册，真正的调用是在getBean
-            // 实例化各种内部bean，如AnnotationAwareAspectJAutoProxyCreator
+            // 实例化各种内部bean，如AspectJAutoProxyCreator
             registerBeanPostProcessors(beanFactory);
 
             // 通过调用getBean()创建非懒加载而是需要立即实例化的bean
@@ -119,17 +125,33 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
 
     }
 
-    private void obtainFreshBeanFactory() throws Exception {
+    protected void obtainFreshBeanFactory() {
 
         /// 读取xml配置并解析成BeanDefinition
         if (configLocation != null && !configLocation.trim().equals("")) {
             BeanDefinitionReader xmlBeanDefinitionReader = new XmlBeanDefinitionReader(((BeanDefinitionRegistry) getBeanFactory()));
-            xmlBeanDefinitionReader.loadBeanDefinitions(configLocation);
+
+            try {
+                xmlBeanDefinitionReader.loadBeanDefinitions(configLocation);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         }
 
         // 读取Java注解配置并解析成BeanDefinition
         loadBeanDefinitions(beanFactory);
 
+    }
+
+    protected void prepareBeanFactory(ConfigurableListableBeanFactory beanFactory) {
+
+        beanFactory.addBeanPostProcessor(new ApplicationContextAwareProcessor(this));
+
+    }
+
+
+    protected void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
     }
 
     protected void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory) {
@@ -139,11 +161,11 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
 
     }
 
-    private void registerBeanPostProcessors(ConfigurableListableBeanFactory beanFactory) {
+    protected void registerBeanPostProcessors(ConfigurableListableBeanFactory beanFactory) {
         PostProcessorRegistrationDelegate.registerBeanPostProcessors(beanFactory, this);
     }
 
-    private void finishBeanFactoryInitialization(ConfigurableListableBeanFactory beanFactory) throws Exception {
+    protected void finishBeanFactoryInitialization(ConfigurableListableBeanFactory beanFactory) throws Exception {
 
         //手动调用getBean()方法来触发实例化bean
         beanFactory.preInstantiateSingletons();
@@ -163,7 +185,6 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
         return this.active;
     }
 
-
     public void setParent(ApplicationContext parent) {
         this.parent = parent;
 //        if (parent != null) {
@@ -173,7 +194,6 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
 //            }
 //        }
     }
-
 
     public void close() {
         doClose();

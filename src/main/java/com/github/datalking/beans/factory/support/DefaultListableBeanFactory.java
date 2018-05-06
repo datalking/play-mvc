@@ -23,14 +23,12 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFactory
         implements ConfigurableListableBeanFactory, BeanDefinitionRegistry, Serializable {
 
-    /**
-     * 所有BeanDefinition
-     */
+    // 所有BeanDefinition
     private final Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>(256);
-    /**
-     * 所有bean名称
-     */
+    // 所有bean名称
     private volatile List<String> beanDefinitionNames = new ArrayList<>(256);
+    // 手动注册的bean实例名称
+    private volatile Set<String> manualSingletonNames = new LinkedHashSet<>(16);
 
 
     //所有单例和非单例的bean
@@ -64,6 +62,26 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
             this.beanDefinitionNames = new ArrayList<>(updatedDefinitions);
         }
 
+    }
+
+    @Override
+    public void registerSingleton(String beanName, Object singletonObject) throws IllegalStateException {
+        super.registerSingleton(beanName, singletonObject);
+
+        if (hasBeanCreationStarted()) {
+            synchronized (this.beanDefinitionMap) {
+                if (!this.beanDefinitionMap.containsKey(beanName)) {
+                    Set<String> updatedSingletons = new LinkedHashSet<>(this.manualSingletonNames.size() + 1);
+                    updatedSingletons.addAll(this.manualSingletonNames);
+                    updatedSingletons.add(beanName);
+                    this.manualSingletonNames = updatedSingletons;
+                }
+            }
+        } else {
+            if (!this.beanDefinitionMap.containsKey(beanName)) {
+                this.manualSingletonNames.add(beanName);
+            }
+        }
     }
 
 //    @Override

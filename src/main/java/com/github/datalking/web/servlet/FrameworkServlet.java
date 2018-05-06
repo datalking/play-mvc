@@ -90,8 +90,7 @@ public abstract class FrameworkServlet extends HttpServletBean {
         /// 打印容器启动时间
         if (this.logger.isInfoEnabled()) {
             long elapsedTime = System.currentTimeMillis() - startTime;
-            this.logger.info("FrameworkServlet '" + getServletName() + "': initialization completed in " +
-                    elapsedTime + " ms");
+            this.logger.info("FrameworkServlet '" + getServletName() + "': initialization completed in " + elapsedTime + " ms");
         }
     }
 
@@ -407,7 +406,7 @@ public abstract class FrameworkServlet extends HttpServletBean {
     }
 
     /**
-     * 调用refresh()
+     * 调用AbstractApplicationContext类的refresh()
      */
     public void refresh() {
         WebApplicationContext wac = getWebApplicationContext();

@@ -14,4 +14,12 @@ public class HomepageController {
         return "home";
     }
 
+//    @RequestMapping("/str")
+//    public String getSimpleStr() {
+//
+//        System.out.println("before response /str");
+//
+//        return "str";
+//    }
+
 }

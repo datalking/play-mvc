@@ -13,7 +13,7 @@ public interface AutowireCapableBeanFactory extends BeanFactory {
 
     <T> T createBean(Class<T> beanClass) throws Exception;
 
-    //    Object applyBeanPostProcessorsAfterInitialization(Object existingBean, String beanName);
+//    Object applyBeanPostProcessorsAfterInitialization(Object existingBean, String beanName);
 //    Object applyBeanPostProcessorsBeforeInitialization(Object existingBean, String beanName);
 //    void applyBeanPropertyValues(Object existingBean, String beanName);
 //    Object autowire(Class<?> beanClass, int autowireMode, boolean dependencyCheck);

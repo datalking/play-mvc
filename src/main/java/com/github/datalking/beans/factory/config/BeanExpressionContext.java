@@ -3,6 +3,8 @@ package com.github.datalking.beans.factory.config;
 import com.github.datalking.util.Assert;
 
 /**
+ * 计算一个BeanDefinition内部的表达式的容器对象
+ *
  * @author yaoo on 4/29/18
  */
 public class BeanExpressionContext {
@@ -25,7 +27,6 @@ public class BeanExpressionContext {
         return this.scope;
     }
 
-
     public boolean containsObject(String key) {
         return (this.beanFactory.containsBean(key) ||
                 (this.scope != null && this.scope.resolveContextualObject(key) != null));
@@ -40,7 +41,6 @@ public class BeanExpressionContext {
             return null;
         }
     }
-
 
     @Override
     public boolean equals(Object other) {

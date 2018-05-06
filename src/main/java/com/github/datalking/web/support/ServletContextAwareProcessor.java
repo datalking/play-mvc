@@ -18,11 +18,9 @@ public class ServletContextAwareProcessor implements BeanPostProcessor {
         this(servletContext, null);
     }
 
-
     public ServletContextAwareProcessor(ServletConfig servletConfig) {
         this(null, servletConfig);
     }
-
 
     public ServletContextAwareProcessor(ServletContext servletContext, ServletConfig servletConfig) {
         this.servletContext = servletContext;
@@ -31,7 +29,6 @@ public class ServletContextAwareProcessor implements BeanPostProcessor {
             this.servletContext = servletConfig.getServletContext();
         }
     }
-
 
     public Object postProcessBeforeInitialization(Object bean, String beanName)  {
         if (this.servletContext != null && bean instanceof ServletContextAware) {

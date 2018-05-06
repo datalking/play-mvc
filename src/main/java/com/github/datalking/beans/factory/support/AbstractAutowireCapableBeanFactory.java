@@ -34,7 +34,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
     @Override
     @SuppressWarnings("unchecked")
     public <T> T createBean(Class<T> beanClass) {
-        BeanDefinition bd = new RootBeanDefinition();
+        BeanDefinition bd = new RootBeanDefinition(beanClass);
         return (T) createBean(beanClass.getName(), (RootBeanDefinition) bd, null);
     }
 
@@ -172,7 +172,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         //ArgumentsHolder argsHolderToUse = null;
         //Object[] argsToUse = null;
 
-        Method[] maybeFactoryMethods = factoryClass.getDeclaredMethods();
+//        Method[] maybeFactoryMethods = factoryClass.getDeclaredMethods();
+        Method[] maybeFactoryMethods = factoryClass.getMethods();
         for (Method m : maybeFactoryMethods) {
             if (m.getName().equals(beanName)) {
                 factoryMethodToUse = m;
@@ -187,11 +188,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             }
         }
 
-
         Object beanInstance = null;
 
         try {
-            //beanInstance = this.beanFactory.getInstantiationStrategy().instantiate(mbd, beanName, this.beanFactory, factoryBean, factoryMethodToUse, argsToUse);
+//beanInstance = this.beanFactory.getInstantiationStrategy().instantiate(mbd, beanName, this.beanFactory, factoryBean, factoryMethodToUse, argsToUse);
 
             beanInstance = factoryMethodToUse.invoke(factoryBean);
         } catch (IllegalAccessException | InvocationTargetException e) {

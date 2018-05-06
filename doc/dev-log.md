@@ -1,7 +1,7 @@
 # dev-log
 
 - mvc finishBeanFactoryInitialization(beanFactory);  
-defaultServletHandlerMapping找不到factoryMethodToUse    
+defaultServletHandlerMapping 找不到factoryMethodToUse    
 mvcUrlPathHelper找不到factoryMethodToUse  
 simpleControllerHandlerAdapter找不到factoryMethodToUse  
 resourceHandlerMapping找不到factoryMethodToUse  

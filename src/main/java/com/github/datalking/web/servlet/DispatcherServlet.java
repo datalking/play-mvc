@@ -102,6 +102,7 @@ public class DispatcherServlet extends FrameworkServlet {
         super();
     }
 
+    // 默认调用此构造函数
     public DispatcherServlet(WebApplicationContext webApplicationContext) {
         super(webApplicationContext);
     }
@@ -443,13 +444,14 @@ public class DispatcherServlet extends FrameworkServlet {
 
     private void initRequestToViewNameTranslator(ApplicationContext context) {
         try {
+            // 下面的bean默认不存在，会进入catch块
             this.viewNameTranslator = (RequestToViewNameTranslator) context.getBean(REQUEST_TO_VIEW_NAME_TRANSLATOR_BEAN_NAME);
             if (logger.isDebugEnabled()) {
                 logger.debug("Using RequestToViewNameTranslator [" + this.viewNameTranslator + "]");
             }
         } catch (NoSuchBeanDefinitionException ex) {
-            ex.printStackTrace();
-            // We need to use the default.
+            //ex.printStackTrace();
+            // 使用默认的RequestToViewNameTranslator
             this.viewNameTranslator = getDefaultStrategy(context, RequestToViewNameTranslator.class);
             if (logger.isDebugEnabled()) {
                 logger.debug("Unable to locate RequestToViewNameTranslator with name '" +
@@ -491,10 +493,12 @@ public class DispatcherServlet extends FrameworkServlet {
         String value = defaultStrategies.getProperty(key);
         if (value != null) {
             String[] classNames = StringUtils.commaDelimitedListToStringArray(value);
-            List<T> strategies = new ArrayList<T>(classNames.length);
+            List<T> strategies = new ArrayList<>(classNames.length);
             for (String className : classNames) {
                 try {
                     Class<?> clazz = ClassUtils.forName(className, DispatcherServlet.class.getClassLoader());
+
+                    // ==== 创建默认bean，并注册到beanFactory
                     Object strategy = createDefaultStrategy(context, clazz);
                     strategies.add((T) strategy);
                 } catch (ClassNotFoundException | LinkageError ex) {
@@ -523,7 +527,7 @@ public class DispatcherServlet extends FrameworkServlet {
 
     protected <T> T getDefaultStrategy(ApplicationContext context, Class<T> strategyInterface) {
         List<T> strategies = getDefaultStrategies(context, strategyInterface);
-        if (strategies.size() != 1) {
+        if (strategies.size() == 0 || strategies.size() != 1) {
 
             try {
                 throw new Exception("DispatcherServlet needs exactly 1 strategy for interface [" + strategyInterface.getName() + "]");

@@ -2,10 +2,15 @@ package com.github.datalking.web.context;
 
 import com.github.datalking.beans.factory.config.ConfigurableListableBeanFactory;
 import com.github.datalking.context.support.AbstractApplicationContext;
+import com.github.datalking.util.web.WebApplicationContextUtils;
 import com.github.datalking.web.support.ServletContextAwareProcessor;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author yaoo on 4/25/18
@@ -53,7 +58,6 @@ public abstract class AbstractWebApplicationContext
         return this.namespace;
     }
 
-
     public String getApplicationName() {
         if (this.servletContext == null) {
             return "";
@@ -66,15 +70,57 @@ public abstract class AbstractWebApplicationContext
         }
     }
 
-    //@Override
+    @Override
     protected void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
         beanFactory.addBeanPostProcessor(new ServletContextAwareProcessor(this.servletContext, this.servletConfig));
 //        beanFactory.ignoreDependencyInterface(ServletContextAware.class);
 //        beanFactory.ignoreDependencyInterface(ServletConfigAware.class);
 
         //WebApplicationContextUtils.registerWebApplicationScopes(beanFactory, this.servletContext);
-        // WebApplicationContextUtils.registerEnvironmentBeans(beanFactory, this.servletContext, this.servletConfig);
+        // 将servletContext和servletConfig注册到singletonObjects
+        registerEnvironmentBeans(beanFactory, this.servletContext, this.servletConfig);
     }
 
+    private void registerEnvironmentBeans(ConfigurableListableBeanFactory bf, ServletContext servletContext, ServletConfig servletConfig) {
+
+        if (servletContext != null && !bf.containsBean(WebApplicationContext.SERVLET_CONTEXT_BEAN_NAME)) {
+            bf.registerSingleton(WebApplicationContext.SERVLET_CONTEXT_BEAN_NAME, servletContext);
+        }
+
+        if (servletConfig != null && !bf.containsBean(ConfigurableWebApplicationContext.SERVLET_CONFIG_BEAN_NAME)) {
+            bf.registerSingleton(ConfigurableWebApplicationContext.SERVLET_CONFIG_BEAN_NAME, servletConfig);
+        }
+
+        if (!bf.containsBean(WebApplicationContext.CONTEXT_PARAMETERS_BEAN_NAME)) {
+            Map<String, String> parameterMap = new HashMap<>();
+            if (servletContext != null) {
+                Enumeration<?> paramNameEnum = servletContext.getInitParameterNames();
+                while (paramNameEnum.hasMoreElements()) {
+                    String paramName = (String) paramNameEnum.nextElement();
+                    parameterMap.put(paramName, servletContext.getInitParameter(paramName));
+                }
+            }
+            if (servletConfig != null) {
+                Enumeration<?> paramNameEnum = servletConfig.getInitParameterNames();
+                while (paramNameEnum.hasMoreElements()) {
+                    String paramName = (String) paramNameEnum.nextElement();
+                    parameterMap.put(paramName, servletConfig.getInitParameter(paramName));
+                }
+            }
+            bf.registerSingleton(WebApplicationContext.CONTEXT_PARAMETERS_BEAN_NAME, Collections.unmodifiableMap(parameterMap));
+        }
+
+        if (!bf.containsBean(WebApplicationContext.CONTEXT_ATTRIBUTES_BEAN_NAME)) {
+            Map<String, Object> attributeMap = new HashMap<>();
+            if (servletContext != null) {
+                Enumeration<?> attrNameEnum = servletContext.getAttributeNames();
+                while (attrNameEnum.hasMoreElements()) {
+                    String attrName = (String) attrNameEnum.nextElement();
+                    attributeMap.put(attrName, servletContext.getAttribute(attrName));
+                }
+            }
+            bf.registerSingleton(WebApplicationContext.CONTEXT_ATTRIBUTES_BEAN_NAME, Collections.unmodifiableMap(attributeMap));
+        }
+    }
 
 }

@@ -35,7 +35,6 @@ public abstract class WebApplicationContextUtils {
         return (WebApplicationContext) attr;
     }
 
-
     public static WebApplicationContext getRequiredWebApplicationContext(ServletContext sc) throws IllegalStateException {
         WebApplicationContext wac = getWebApplicationContext(sc);
         if (wac == null) {

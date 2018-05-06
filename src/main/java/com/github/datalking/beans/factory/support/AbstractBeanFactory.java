@@ -106,9 +106,7 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
         ///如果name对应的bean实例不存在，则新建bean
 
         /// 标记为已经创建
-        if (!this.alreadyCreated.contains(name)) {
-            this.alreadyCreated.add(name);
-        }
+        markBeanAsCreated(name);
 
         final RootBeanDefinition bd = getMergedLocalBeanDefinition(name);
 //        RootBeanDefinition bd = (RootBeanDefinition) getBeanDefinition(name);
@@ -126,6 +124,15 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
         return (T) targetBean;
     }
 
+    protected void markBeanAsCreated(String beanName) {
+        if (!this.alreadyCreated.contains(beanName)) {
+            this.alreadyCreated.add(beanName);
+        }
+    }
+
+    protected boolean hasBeanCreationStarted() {
+        return !this.alreadyCreated.isEmpty();
+    }
 
     protected RootBeanDefinition getMergedLocalBeanDefinition(String beanName) {
         RootBeanDefinition mbd = this.mergedBeanDefinitions.get(beanName);
