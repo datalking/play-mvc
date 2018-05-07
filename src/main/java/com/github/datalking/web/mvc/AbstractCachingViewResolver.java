@@ -1,11 +1,11 @@
 package com.github.datalking.web.mvc;
 
 import com.github.datalking.web.context.WebApplicationObjectSupport;
+import com.github.datalking.web.servlet.ViewResolver;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.LinkedHashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -68,7 +68,7 @@ public abstract class AbstractCachingViewResolver extends WebApplicationObjectSu
         return this.cacheUnresolved;
     }
 
-
+    @Override
     public View resolveViewName(String viewName) {
         if (!isCache()) {
             return createView(viewName);
@@ -79,7 +79,7 @@ public abstract class AbstractCachingViewResolver extends WebApplicationObjectSu
                 synchronized (this.viewCreationCache) {
                     view = this.viewCreationCache.get(cacheKey);
                     if (view == null) {
-                        // Ask the subclass to create the View object.
+                        // 调用子类的方法创建JstlView
                         view = createView(viewName);
                         if (view == null && this.cacheUnresolved) {
                             view = UNRESOLVED_VIEW;

@@ -42,9 +42,7 @@ public class UrlBasedViewResolver extends AbstractCachingViewResolver implements
 
     public void setViewClass(Class<?> viewClass) {
         if (viewClass == null || !requiredViewClass().isAssignableFrom(viewClass)) {
-            throw new IllegalArgumentException(
-                    "Given view class [" + (viewClass != null ? viewClass.getName() : null) +
-                            "] is not of type [" + requiredViewClass().getName() + "]");
+            throw new IllegalArgumentException("Given view class [" + (viewClass != null ? viewClass.getName() : null) + "] is not of type [" + requiredViewClass().getName() + "]");
         }
         this.viewClass = viewClass;
     }
@@ -52,6 +50,7 @@ public class UrlBasedViewResolver extends AbstractCachingViewResolver implements
     protected Class<?> getViewClass() {
         return this.viewClass;
     }
+
     protected Class<?> requiredViewClass() {
         return AbstractUrlBasedView.class;
     }
@@ -108,6 +107,7 @@ public class UrlBasedViewResolver extends AbstractCachingViewResolver implements
     public void setAttributes(Properties props) {
         CollectionUtils.mergePropertiesIntoMap(props, this.staticAttributes);
     }
+
     public void setAttributesMap(Map<String, ?> attributes) {
         if (attributes != null) {
             this.staticAttributes.putAll(attributes);
@@ -125,9 +125,11 @@ public class UrlBasedViewResolver extends AbstractCachingViewResolver implements
     protected Boolean getExposePathVariables() {
         return this.exposePathVariables;
     }
+
     public void setViewNames(String... viewNames) {
         this.viewNames = viewNames;
     }
+
     protected String[] getViewNames() {
         return this.viewNames;
     }
@@ -141,7 +143,6 @@ public class UrlBasedViewResolver extends AbstractCachingViewResolver implements
         return this.order;
     }
 
-
     @Override
     protected void initApplicationContext() {
         super.initApplicationContext();
@@ -149,6 +150,7 @@ public class UrlBasedViewResolver extends AbstractCachingViewResolver implements
             throw new IllegalArgumentException("Property 'viewClass' is required");
         }
     }
+
     @Override
     protected Object getCacheKey(String viewName) {
         return viewName;
@@ -156,7 +158,7 @@ public class UrlBasedViewResolver extends AbstractCachingViewResolver implements
 
     // todo redirect
     @Override
-    protected View createView(String viewName)  {
+    protected View createView(String viewName) {
         // If this resolver is not supposed to handle the given view,
         // return null to pass on to the next resolver in the chain.
         if (!canHandle(viewName)) {
@@ -184,17 +186,17 @@ public class UrlBasedViewResolver extends AbstractCachingViewResolver implements
     }
 
     @Override
-    protected View loadView(String viewName)  {
+    protected View loadView(String viewName) {
         AbstractUrlBasedView view = buildView(viewName);
         View result = applyLifecycleMethods(viewName, view);
-        return  result ;
+        return result;
     }
 
     private View applyLifecycleMethods(String viewName, AbstractView view) {
         return (View) getApplicationContext().getAutowireCapableBeanFactory().initializeBean(view, viewName);
     }
 
-    protected AbstractUrlBasedView buildView(String viewName)  {
+    protected AbstractUrlBasedView buildView(String viewName) {
 
         Object obj = null;
         try {
@@ -204,28 +206,22 @@ public class UrlBasedViewResolver extends AbstractCachingViewResolver implements
         }
 
         AbstractUrlBasedView view = (AbstractUrlBasedView) obj;
-        view.setUrl(getPrefix() + viewName + getSuffix());
-
-        String contentType = getContentType();
-        if (contentType != null) {
-            view.setContentType(contentType);
-        }
-
-        view.setRequestContextAttribute(getRequestContextAttribute());
-        view.setAttributesMap(getAttributesMap());
-
-        Boolean exposePathVariables = getExposePathVariables();
-        if (exposePathVariables != null) {
-            view.setExposePathVariables(exposePathVariables);
+        if (view != null) {
+            view.setUrl(getPrefix() + viewName + getSuffix());
+            String contentType = getContentType();
+            if (contentType != null) {
+                view.setContentType(contentType);
+            }
+            view.setRequestContextAttribute(getRequestContextAttribute());
+            view.setAttributesMap(getAttributesMap());
+            Boolean exposePathVariables = getExposePathVariables();
+            if (exposePathVariables != null) {
+                view.setExposePathVariables(exposePathVariables);
+            }
         }
 
         return view;
     }
-
-
-
-
-
 
 
 }

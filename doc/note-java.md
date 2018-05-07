@@ -7,6 +7,10 @@ java笔记
 
 ## java web
 
+- 部署之后修改jsp文件仍然会改变网页内容
+
+- RequestDispatcher是一个Web资源的包装器,可以用来把当前request传递到该资源,或者把新的资源包括到当前响应中
+
 - Servlet 3.0标准中含有一个 ServletContainerInitializer 接口，所有实现了这个接口的类会在容器启动的时候得到一个通知，并且会调用其 onStartup()方法
 - SpringServletContainerInitializer类，实现了ServletContainerInitializer
 - 当容器启动时，会到应用程序中搜索所有实现或继承了 WebApplicationInitializer类型的类，并且将这些类作为参数传递给 SpringServletContainerInitializer.onStratup()方法

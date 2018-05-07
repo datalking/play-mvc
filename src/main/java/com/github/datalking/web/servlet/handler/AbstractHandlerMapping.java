@@ -153,7 +153,10 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
         return (count > 0 ? this.mappedInterceptors.toArray(new MappedInterceptor[count]) : null);
     }
 
-
+    /**
+     * 匹配handlerMapping
+     */
+    @Override
     public final HandlerExecutionChain getHandler(HttpServletRequest request) {
 
         Object handler = null;
@@ -169,7 +172,7 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
         if (handler == null) {
             return null;
         }
-        // Bean name or resolved handler?
+        // 如果是字符串，则获取bean对象
         if (handler instanceof String) {
             String handlerName = (String) handler;
             handler = getApplicationContext().getBean(handlerName);

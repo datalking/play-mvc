@@ -433,6 +433,9 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
         return true;
     }
 
+    /**
+     * 转发执行执行请求对应的方法
+     */
     @Override
     protected final ModelAndView handleInternal(HttpServletRequest request,
                                                 HttpServletResponse response,
@@ -482,7 +485,9 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
         return sessionAttrHandler;
     }
 
-
+    /**
+     * 实际执行执行请求对应的方法
+     */
     private ModelAndView invokeHandleMethod(HttpServletRequest request,
                                             HttpServletResponse response,
                                             HandlerMethod handlerMethod) throws Exception {
@@ -491,11 +496,11 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 
         WebDataBinderFactory binderFactory = getDataBinderFactory(handlerMethod);
         ModelFactory modelFactory = getModelFactory(handlerMethod, binderFactory);
-        ServletInvocableHandlerMethod requestMappingMethod = createRequestMappingMethod(handlerMethod, binderFactory);
+        ServletInvocableHandlerMethod invocableMethod = createRequestMappingMethod(handlerMethod, binderFactory);
 
         ModelAndViewContainer mavContainer = new ModelAndViewContainer();
         mavContainer.addAllAttributes(RequestContextUtils.getInputFlashMap(request));
-        modelFactory.initModel(webRequest, mavContainer, requestMappingMethod);
+        modelFactory.initModel(webRequest, mavContainer, invocableMethod);
         mavContainer.setIgnoreDefaultModelOnRedirect(this.ignoreDefaultModelOnRedirect);
 
 //        AsyncWebRequest asyncWebRequest = WebAsyncUtils.createAsyncWebRequest(request, response);
@@ -518,12 +523,14 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 //            requestMappingMethod = requestMappingMethod.wrapConcurrentResult(result);
 //        }
 
-        requestMappingMethod.invokeAndHandle(webRequest, mavContainer);
+        // ==== 调用处理请求的方法，处理结果放入mavContainer
+        invocableMethod.invokeAndHandle(webRequest, mavContainer);
 
 //        if (asyncManager.isConcurrentHandlingStarted()) {
 //            return null;
 //        }
 
+        // 请求处理结果数据转换成视图
         return getModelAndView(mavContainer, modelFactory, webRequest);
     }
 
@@ -606,6 +613,9 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
         return new ServletRequestDataBinderFactory(binderMethods, getWebBindingInitializer());
     }
 
+    /**
+     * 将mavContainer中的数据转换成视图
+     */
     private ModelAndView getModelAndView(ModelAndViewContainer mavContainer,
                                          ModelFactory modelFactory,
                                          WebRequest webRequest) throws Exception {

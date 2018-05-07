@@ -32,22 +32,23 @@ public class HandlerMethodReturnValueHandlerComposite implements HandlerMethodRe
                                   ModelAndViewContainer mavContainer,
                                   WebRequest webRequest) throws Exception {
 
+        // 获取返回值处理器，jsp时使用 ViewNameMethodReturnValueHandler
         HandlerMethodReturnValueHandler handler = getReturnValueHandler(returnType);
+
         Assert.notNull(handler, "Unknown return value type [" + returnType.getParameterType().getName() + "]");
 
+        // 处理返回值
         handler.handleReturnValue(returnValue, returnType, mavContainer, webRequest);
     }
 
 
     private HandlerMethodReturnValueHandler getReturnValueHandler(MethodParameter returnType) {
         for (HandlerMethodReturnValueHandler returnValueHandler : returnValueHandlers) {
-            if (logger.isTraceEnabled()) {
-                logger.trace("Testing if return value handler [" + returnValueHandler + "] supports [" +
-                        returnType.getGenericParameterType() + "]");
-            }
+
             if (returnValueHandler.supportsReturnType(returnType)) {
                 return returnValueHandler;
             }
+
         }
         return null;
     }

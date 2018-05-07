@@ -8,11 +8,15 @@ import com.github.datalking.web.context.request.WebRequest;
  */
 public class ViewNameMethodReturnValueHandler implements HandlerMethodReturnValueHandler {
 
+    @Override
     public boolean supportsReturnType(MethodParameter returnType) {
+
         Class<?> paramType = returnType.getParameterType();
+
         return (void.class.equals(paramType) || String.class.equals(paramType));
     }
 
+    @Override
     public void handleReturnValue(Object returnValue,
                                   MethodParameter returnType,
                                   ModelAndViewContainer mavContainer,
@@ -21,18 +25,17 @@ public class ViewNameMethodReturnValueHandler implements HandlerMethodReturnValu
         if (returnValue == null) {
             return;
         } else if (returnValue instanceof String) {
-            String viewName = (String) returnValue;
+            String viewName = returnValue.toString();
             mavContainer.setViewName(viewName);
+
             if (isRedirectViewName(viewName)) {
                 mavContainer.setRedirectModelScenario(true);
             }
+
         } else {
-            // should not happen
-            throw new UnsupportedOperationException("Unexpected return type: " +
-                    returnType.getParameterType().getName() + " in method: " + returnType.getMethod());
+            throw new UnsupportedOperationException("Unexpected return type: " + returnType.getParameterType().getName() + " in method: " + returnType.getMethod());
         }
     }
-
 
     protected boolean isRedirectViewName(String viewName) {
         return viewName.startsWith("redirect:");

@@ -5,7 +5,7 @@
     <parent>
         <artifactId>play-mvc</artifactId>
         <groupId>com.github.datalking</groupId>
-        <version>0.0.2</version>
+        <version>0.0.3</version>
     </parent>
 
     <artifactId>test-mvc</artifactId>
@@ -25,7 +25,7 @@
         <dependency>
             <groupId>com.github.datalking</groupId>
             <artifactId>play-mvc</artifactId>
-            <version>0.0.2</version>
+            <version>0.0.3</version>
             <!--<scope>compile</scope>-->
         </dependency>
         <!--tomcat-->

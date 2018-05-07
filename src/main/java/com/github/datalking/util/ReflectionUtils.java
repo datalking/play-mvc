@@ -21,11 +21,13 @@ public abstract class ReflectionUtils {
                 continue;
             }
             try {
+                // 匹配到方法，则执行
                 mc.doWith(method);
             } catch (IllegalAccessException ex) {
                 throw new IllegalStateException("Not allowed to access method '" + method.getName() + "': " + ex);
             }
         }
+
         if (clazz.getSuperclass() != null) {
             doWithMethods(clazz.getSuperclass(), mc, mf);
         } else if (clazz.isInterface()) {
@@ -33,8 +35,8 @@ public abstract class ReflectionUtils {
                 doWithMethods(superIfc, mc, mf);
             }
         }
-    }
 
+    }
 
     public interface MethodFilter {
 

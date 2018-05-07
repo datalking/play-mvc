@@ -6,7 +6,7 @@ import com.github.datalking.annotation.Configuration;
 import com.github.datalking.annotation.web.EnableWebMvc;
 import com.github.datalking.web.config.WebMvcConfigurerAdapter;
 import com.github.datalking.web.mvc.InternalResourceViewResolver;
-import com.github.datalking.web.mvc.ViewResolver;
+import com.github.datalking.web.servlet.ViewResolver;
 
 @Configuration
 @EnableWebMvc

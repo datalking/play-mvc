@@ -18,7 +18,6 @@ public abstract class AbstractUrlBasedView extends AbstractView implements Initi
         this.url = url;
     }
 
-
     public void setUrl(String url) {
         this.url = url;
     }
@@ -37,7 +36,7 @@ public abstract class AbstractUrlBasedView extends AbstractView implements Initi
         return true;
     }
 
-    public boolean checkResource(Locale locale) throws Exception {
+    public boolean checkResource(Locale locale) {
         return true;
     }
 

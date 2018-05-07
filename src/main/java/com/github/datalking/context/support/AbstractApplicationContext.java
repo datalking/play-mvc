@@ -9,17 +9,23 @@ import com.github.datalking.beans.factory.support.DefaultListableBeanFactory;
 import com.github.datalking.beans.factory.xml.XmlBeanDefinitionReader;
 import com.github.datalking.context.ApplicationContext;
 import com.github.datalking.context.ConfigurableApplicationContext;
+import com.github.datalking.context.MessageSource;
+import com.github.datalking.context.MessageSourceResolvable;
+import com.github.datalking.context.message.DelegatingMessageSource;
 import com.github.datalking.util.Assert;
 import com.github.datalking.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
  * ApplicationContext 抽象类
  */
 public abstract class AbstractApplicationContext implements ConfigurableApplicationContext {
+
+    public static final String MESSAGE_SOURCE_BEAN_NAME = "messageSource";
 
     protected DefaultListableBeanFactory beanFactory;
 
@@ -37,6 +43,8 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
     private boolean active = false;
 
     private long startupDate;
+
+    private MessageSource messageSource;
 
     public AbstractApplicationContext() {
         // 当使用注解而不使用xml时，configLocation默认为空字符串
@@ -108,6 +116,8 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
             // 实例化各种内部bean，如AspectJAutoProxyCreator
             registerBeanPostProcessors(beanFactory);
 
+            initMessageSource();
+
             // 通过调用getBean()创建非懒加载而是需要立即实例化的bean
             finishBeanFactoryInitialization(beanFactory);
 
@@ -163,6 +173,18 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
 
     protected void registerBeanPostProcessors(ConfigurableListableBeanFactory beanFactory) {
         PostProcessorRegistrationDelegate.registerBeanPostProcessors(beanFactory, this);
+    }
+
+    protected void initMessageSource() {
+
+//        if (beanFactory.containsLocalBean(MESSAGE_SOURCE_BEAN_NAME)) {
+        if (beanFactory.containsBeanDefinition(MESSAGE_SOURCE_BEAN_NAME)) {
+            this.messageSource = (MessageSource) beanFactory.getBean(MESSAGE_SOURCE_BEAN_NAME);
+        } else {
+            DelegatingMessageSource dms = new DelegatingMessageSource();
+            this.messageSource = (MessageSource) dms;
+            beanFactory.registerSingleton(MESSAGE_SOURCE_BEAN_NAME, this.messageSource);
+        }
     }
 
     protected void finishBeanFactoryInitialization(ConfigurableListableBeanFactory beanFactory) throws Exception {
@@ -297,6 +319,30 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
     @Override
     public <T> Map<String, T> getBeansOfType(Class<T> type) {
         return getBeanFactory().getBeansOfType(type);
+    }
+
+    // ======== MessageSource interface ========
+
+    @Override
+    public String getMessage(String code, Object args[], String defaultMessage, Locale locale) {
+        return getMessageSource().getMessage(code, args, defaultMessage, locale);
+    }
+
+    @Override
+    public String getMessage(String code, Object args[], Locale locale) {
+        return getMessageSource().getMessage(code, args, locale);
+    }
+
+    @Override
+    public String getMessage(MessageSourceResolvable resolvable, Locale locale) {
+        return getMessageSource().getMessage(resolvable, locale);
+    }
+
+    private MessageSource getMessageSource() throws IllegalStateException {
+        if (this.messageSource == null) {
+            throw new IllegalStateException("MessageSource not initialized - call 'refresh' before accessing messages via the context: " + this);
+        }
+        return this.messageSource;
     }
 
     protected abstract void loadBeanDefinitions(DefaultListableBeanFactory beanFactory);

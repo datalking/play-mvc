@@ -1,6 +1,7 @@
 package com.github.datalking.web.support;
 
 import com.github.datalking.annotation.web.ResponseStatus;
+import com.github.datalking.common.MethodParameter;
 import com.github.datalking.util.ClassUtils;
 import com.github.datalking.util.StringUtils;
 import com.github.datalking.web.http.HttpStatus;
@@ -51,6 +52,7 @@ public class ServletInvocableHandlerMethod extends InvocableHandlerMethod {
                                       ModelAndViewContainer mavContainer,
                                       Object... providedArgs) throws Exception {
 
+        // ==== 调用处理请求的方法
         Object returnValue = invokeForRequest(webRequest, mavContainer, providedArgs);
 
         setResponseStatus(webRequest);
@@ -68,7 +70,8 @@ public class ServletInvocableHandlerMethod extends InvocableHandlerMethod {
         mavContainer.setRequestHandled(false);
 
         try {
-            this.returnValueHandlers.handleReturnValue(returnValue, getReturnValueType(returnValue), mavContainer, webRequest);
+            MethodParameter returnValType = getReturnValueType(returnValue);
+            this.returnValueHandlers.handleReturnValue(returnValue, returnValType, mavContainer, webRequest);
         } catch (Exception ex) {
             if (logger.isTraceEnabled()) {
                 logger.trace(getReturnValueHandlingErrorMessage("Error handling return value", returnValue), ex);

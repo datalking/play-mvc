@@ -11,22 +11,35 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
+ * 方法选择 工具类
+ *
  * @author yaoo on 4/28/18
  */
 public abstract class HandlerMethodSelector {
 
+    /**
+     * 返回handlerType中符合handlerMethodFilter的方法set
+     */
     public static Set<Method> selectMethods(final Class<?> handlerType, final MethodFilter handlerMethodFilter) {
-        final Set<Method> handlerMethods = new LinkedHashSet<>();
+
+        Set<Method> handlerMethods = new LinkedHashSet<>();
         Set<Class<?>> handlerTypes = new LinkedHashSet<>();
+
         Class<?> specificHandlerType = null;
+
         if (!Proxy.isProxyClass(handlerType)) {
             handlerTypes.add(handlerType);
             specificHandlerType = handlerType;
         }
+
         handlerTypes.addAll(Arrays.asList(handlerType.getInterfaces()));
+
         for (Class<?> currentHandlerType : handlerTypes) {
+
             final Class<?> targetClass = (specificHandlerType != null ? specificHandlerType : currentHandlerType);
+
             ReflectionUtils.doWithMethods(currentHandlerType, new ReflectionUtils.MethodCallback() {
+
                 public void doWith(Method method) {
                     Method specificMethod = ClassUtils.getMostSpecificMethod(method, targetClass);
 //                    Method bridgedMethod = BridgeMethodResolver.findBridgedMethod(specificMethod);
@@ -38,6 +51,7 @@ public abstract class HandlerMethodSelector {
                 }
             }, ReflectionUtils.USER_DECLARED_METHODS);
         }
+
         return handlerMethods;
     }
 

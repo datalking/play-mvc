@@ -8,7 +8,6 @@ import com.github.datalking.util.web.WebUtils;
 import com.github.datalking.web.context.WebApplicationContext;
 import com.github.datalking.web.mvc.ModelAndView;
 import com.github.datalking.web.mvc.View;
-import com.github.datalking.web.mvc.ViewResolver;
 import com.github.datalking.web.servlet.flash.FlashMapManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +28,7 @@ import java.util.Properties;
 
 /**
  * http请求的中心控制器
- * 每次请求都会调用 doService() > doDispatch()
+ * 每一个请求都会调用 doService() > doDispatch()
  *
  * @author yaoo on 4/25/18
  */
@@ -128,7 +127,7 @@ public class DispatcherServlet extends FrameworkServlet {
     }
 
     /**
-     * 初始化http request处理器
+     * 初始化http请求参数解析、返回值处理、视图渲染等各种处理器
      * <p>
      * 覆盖父类方法，作为initWebApplicationContext()的一小步
      */
@@ -148,7 +147,7 @@ public class DispatcherServlet extends FrameworkServlet {
     }
 
     /**
-     * 实际请求处理方法
+     * 实际请求处理方法，每一个请求都会经过这个方法处理
      * <p>
      * 覆盖父类方法
      */
@@ -159,7 +158,7 @@ public class DispatcherServlet extends FrameworkServlet {
             logger.debug("DispatcherServlet with name '" + getServletName() + "'" + " processing " + request.getMethod() + " request for [" + getRequestUri(request) + "]");
         }
 
-        // Keep a snapshot of the request attributes in case of an include, to be able to restore the original attributes after the include.
+        // 保存include情况下请求属性的快照
         Map<String, Object> attributesSnapshot = null;
         if (WebUtils.isIncludeRequest(request)) {
             attributesSnapshot = new HashMap<>();
@@ -208,11 +207,11 @@ public class DispatcherServlet extends FrameworkServlet {
         //
         HandlerExecutionChain handlerExecutionChain = null;
 
-        boolean multipartRequestParsed = false;
-
+//        boolean multipartRequestParsed = false;
 //        WebAsyncManager asyncManager = WebAsyncUtils.getAsyncManager(request);
 
         try {
+            // 响应的视图
             ModelAndView mv = null;
             Exception dispatchException = null;
 
@@ -247,23 +246,23 @@ public class DispatcherServlet extends FrameworkServlet {
                     return;
                 }
 
-                // 执行请求处理方法
+                // ==== 实际执行请求处理方法
                 mv = ha.handle(processedRequest, response, handlerExecutionChain.getHandler());
 
 //                if (asyncManager.isConcurrentHandlingStarted()) {
 //                    return;
 //                }
 
-                // 视图名翻译
+                // 视图名翻译，只有当view名不存在时才执行
                 applyDefaultViewName(request, mv);
 
-                // 后置处理器
+                // 执行intercept的后置处理器
                 handlerExecutionChain.applyPostHandle(processedRequest, response, mv);
             } catch (Exception ex) {
                 dispatchException = ex;
             }
 
-            // 处理返回结果
+            // 处理返回结果，主要是视图渲染
             processDispatchResult(processedRequest, response, handlerExecutionChain, mv, dispatchException);
 
         } catch (Exception ex) {
@@ -285,9 +284,12 @@ public class DispatcherServlet extends FrameworkServlet {
         }
     }
 
+
     private void applyDefaultViewName(HttpServletRequest request, ModelAndView mv) throws Exception {
+        /// 只有当ModelAndView非空，且没有view时，才需要翻译
         if (mv != null && !mv.hasView()) {
-            mv.setViewName(getDefaultViewName(request));
+            String vname = getDefaultViewName(request);
+            mv.setViewName(vname);
         }
     }
 
@@ -314,9 +316,11 @@ public class DispatcherServlet extends FrameworkServlet {
         if (mv != null && !mv.wasCleared()) {
             // ==== 渲染视图
             render(mv, request, response);
+
             if (errorView) {
                 WebUtils.clearErrorRequestAttributes(request);
             }
+
         } else {
             if (logger.isDebugEnabled()) {
                 logger.debug("Null ModelAndView returned to DispatcherServlet with name '" + getServletName() +
@@ -441,7 +445,6 @@ public class DispatcherServlet extends FrameworkServlet {
         }
     }
 
-
     private void initRequestToViewNameTranslator(ApplicationContext context) {
         try {
             // 下面的bean默认不存在，会进入catch块
@@ -524,7 +527,6 @@ public class DispatcherServlet extends FrameworkServlet {
 
     }
 
-
     protected <T> T getDefaultStrategy(ApplicationContext context, Class<T> strategyInterface) {
         List<T> strategies = getDefaultStrategies(context, strategyInterface);
         if (strategies.size() == 0 || strategies.size() != 1) {
@@ -549,6 +551,8 @@ public class DispatcherServlet extends FrameworkServlet {
             if (logger.isTraceEnabled()) {
                 logger.trace("Testing handler map [" + hm + "] in DispatcherServlet with name '" + getServletName() + "'");
             }
+
+            // 默认使用 RequestMappingHandlerMapping 处理
             HandlerExecutionChain handler = hm.getHandler(request);
             if (handler != null) {
                 return handler;
@@ -562,6 +566,8 @@ public class DispatcherServlet extends FrameworkServlet {
             if (logger.isTraceEnabled()) {
                 logger.trace("Testing handler adapter [" + ha + "]");
             }
+
+            // 默认使用RequestMappingHandlerAdapter
             if (ha.supports(handler)) {
                 return ha;
             }
@@ -582,11 +588,17 @@ public class DispatcherServlet extends FrameworkServlet {
      */
     protected void render(ModelAndView mv, HttpServletRequest request, HttpServletResponse response) throws Exception {
         View view;
+
+        Map<String, Object> model = mv.getModelInternal();
+
         if (mv.isReference()) {
-            view = resolveViewName(mv.getViewName(), mv.getModelInternal(), request);
+
+            // ==== 默认解析成jstlView
+            view = resolveViewName(mv.getViewName(), model, request);
             if (view == null) {
                 throw new ServletException("Could not resolve view with name '" + mv.getViewName() + "' in servlet with name '" + getServletName() + "'");
             }
+
         } else {
             view = mv.getView();
             if (view == null) {
@@ -594,11 +606,10 @@ public class DispatcherServlet extends FrameworkServlet {
             }
         }
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("Rendering view [" + view + "] in DispatcherServlet with name '" + getServletName() + "'");
-        }
         try {
-            view.render(mv.getModelInternal(), request, response);
+
+            // ==== 渲染视图
+            view.render(model, request, response);
         } catch (Exception ex) {
             if (logger.isDebugEnabled()) {
                 logger.debug("Error rendering view [" + view + "] in DispatcherServlet with name '" +
@@ -625,7 +636,6 @@ public class DispatcherServlet extends FrameworkServlet {
                 request.setAttribute(EXCEPTION_ATTRIBUTE, ex);
                 return null;
             }
-            // We might still need view name translation for a plain error model...
             if (!exMv.hasView()) {
                 exMv.setViewName(getDefaultViewName(request));
             }
@@ -639,11 +649,11 @@ public class DispatcherServlet extends FrameworkServlet {
         throw ex;
     }
 
-    protected String getDefaultViewName(HttpServletRequest request) throws Exception {
+    protected String getDefaultViewName(HttpServletRequest request) {
         return this.viewNameTranslator.getViewName(request);
     }
 
-    protected View resolveViewName(String viewName, Map<String, Object> model, HttpServletRequest request) throws Exception {
+    protected View resolveViewName(String viewName, Map<String, Object> model, HttpServletRequest request) {
 
         for (ViewResolver viewResolver : this.viewResolvers) {
             View view = viewResolver.resolveViewName(viewName);
@@ -651,28 +661,28 @@ public class DispatcherServlet extends FrameworkServlet {
                 return view;
             }
         }
+
         return null;
     }
 
     private void triggerAfterCompletion(HttpServletRequest request,
                                         HttpServletResponse response,
-                                        HandlerExecutionChain mappedHandler,
+                                        HandlerExecutionChain handlerExecutionChain,
                                         Exception ex) throws Exception {
 
-        if (mappedHandler != null) {
-            mappedHandler.triggerAfterCompletion(request, response, ex);
+        if (handlerExecutionChain != null) {
+            handlerExecutionChain.triggerAfterCompletion(request, response, ex);
         }
         throw ex;
     }
 
     private void triggerAfterCompletionWithError(HttpServletRequest request,
                                                  HttpServletResponse response,
-                                                 HandlerExecutionChain mappedHandler,
+                                                 HandlerExecutionChain handlerExecutionChain,
                                                  Error error) throws Exception {
-
         Exception ex = new Exception("Handler processing failed", error);
-        if (mappedHandler != null) {
-            mappedHandler.triggerAfterCompletion(request, response, ex);
+        if (handlerExecutionChain != null) {
+            handlerExecutionChain.triggerAfterCompletion(request, response, ex);
         }
         throw ex;
     }

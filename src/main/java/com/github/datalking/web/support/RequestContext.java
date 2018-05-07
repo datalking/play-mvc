@@ -1,5 +1,6 @@
 package com.github.datalking.web.support;
 
+import com.github.datalking.context.MessageSource;
 import com.github.datalking.util.web.UriTemplate;
 import com.github.datalking.util.web.UrlPathHelper;
 import com.github.datalking.util.web.WebApplicationContextUtils;
@@ -15,6 +16,8 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
+ * 存放request的上下文状态
+ *
  * @author yaoo on 4/26/18
  */
 public class RequestContext {
@@ -95,16 +98,26 @@ public class RequestContext {
     }
 
 
-
-
-
     protected Locale getFallbackLocale() {
         return getRequest().getLocale();
     }
 
-    protected final HttpServletRequest getRequest() {
+    public final HttpServletRequest getRequest() {
         return this.request;
     }
+
+    public final ServletContext getServletContext() {
+        return this.webApplicationContext.getServletContext();
+    }
+
+    public final WebApplicationContext getWebApplicationContext() {
+        return this.webApplicationContext;
+    }
+
+    public final MessageSource getMessageSource() {
+        return this.webApplicationContext;
+    }
+
 
     private WebApplicationContext getWebApplicationContext(ServletRequest request, ServletContext servletContext) throws IllegalStateException {
 
@@ -116,15 +129,6 @@ public class RequestContext {
             webApplicationContext = WebApplicationContextUtils.getRequiredWebApplicationContext(servletContext);
         }
         return webApplicationContext;
-    }
-
-
-    protected final ServletContext getServletContext() {
-        return this.webApplicationContext.getServletContext();
-    }
-
-    public final WebApplicationContext getWebApplicationContext() {
-        return this.webApplicationContext;
     }
 
     public final Map<String, Object> getModel() {
@@ -180,15 +184,10 @@ public class RequestContext {
     protected Object getModelObject(String modelName) {
         if (this.model != null) {
             return this.model.get(modelName);
-        }
-        else {
+        } else {
             return this.request.getAttribute(modelName);
         }
     }
-
-
-
-
 
 
 }

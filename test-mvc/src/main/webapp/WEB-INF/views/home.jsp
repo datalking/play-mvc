@@ -5,6 +5,6 @@
 </head>
 <body>
 <h1>test-mvc-webapp</h1>
-<h2>here is home page</h2>
+<h2>It's home page</h2>
 </body>
 </html>

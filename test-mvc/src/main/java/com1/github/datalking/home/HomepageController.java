@@ -2,6 +2,7 @@ package com1.github.datalking.home;
 
 import com.github.datalking.annotation.Controller;
 import com.github.datalking.annotation.web.RequestMapping;
+import com.github.datalking.annotation.web.ResponseBody;
 
 @Controller
 public class HomepageController {
@@ -14,12 +15,13 @@ public class HomepageController {
         return "home";
     }
 
-//    @RequestMapping("/str")
-//    public String getSimpleStr() {
-//
-//        System.out.println("before response /str");
-//
-//        return "str";
-//    }
+    @ResponseBody
+    @RequestMapping("/str")
+    public String getSimpleStr() {
+
+        System.out.println("before response /str");
+
+        return "home";
+    }
 
 }

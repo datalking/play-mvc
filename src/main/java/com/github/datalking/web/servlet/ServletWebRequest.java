@@ -151,7 +151,7 @@ public class ServletWebRequest extends ServletRequestAttributes implements WebRe
         return this.notModified;
     }
 
-    //@Override
+    @Override
     public boolean checkNotModified(String etag) {
         if (StringUtils.hasLength(etag) && !this.notModified &&
                 (this.response == null || !this.response.containsHeader(HEADER_ETAG))) {
@@ -200,7 +200,7 @@ public class ServletWebRequest extends ServletRequestAttributes implements WebRe
 
     @Override
     public String toString() {
-        return "ServletWebRequest: " + getDescription(true);
+        return "ServletWebReq: " + getDescription(true);
     }
 
 }

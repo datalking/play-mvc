@@ -7,22 +7,24 @@ import com.github.datalking.util.ClassUtils;
  */
 public class InternalResourceViewResolver extends UrlBasedViewResolver {
 
-//    private static final boolean jstlPresent = ClassUtils.isPresent(
-//            "javax.servlet.jsp.jstl.core.Config",
-//            InternalResourceViewResolver.class.getClassLoader());
+    private static final boolean jstlPresent = ClassUtils.isPresent(
+            "javax.servlet.jsp.jstl.core.Config",
+            InternalResourceViewResolver.class.getClassLoader());
 
     private Boolean alwaysInclude;
 
-    private Boolean exposeContextBeansAsAttributes;
-
-    private String[] exposedContextBeanNames;
-
     public InternalResourceViewResolver() {
         Class<?> viewClass = requiredViewClass();
-//        if (viewClass.equals(InternalResourceView.class) && jstlPresent) {
-//            viewClass = JstlView.class;
-//        }
+        if (viewClass.equals(InternalResourceView.class) && jstlPresent) {
+            viewClass = JstlView.class;
+        }
         setViewClass(viewClass);
+    }
+
+    public InternalResourceViewResolver(String prefix, String suffix) {
+        this();
+        setPrefix(prefix);
+        setSuffix(suffix);
     }
 
     @Override
@@ -34,26 +36,11 @@ public class InternalResourceViewResolver extends UrlBasedViewResolver {
         this.alwaysInclude = alwaysInclude;
     }
 
-    public void setExposeContextBeansAsAttributes(boolean exposeContextBeansAsAttributes) {
-        this.exposeContextBeansAsAttributes = exposeContextBeansAsAttributes;
-    }
-
-
-    public void setExposedContextBeanNames(String... exposedContextBeanNames) {
-        this.exposedContextBeanNames = exposedContextBeanNames;
-    }
-
     @Override
     protected AbstractUrlBasedView buildView(String viewName) {
         InternalResourceView view = (InternalResourceView) super.buildView(viewName);
         if (this.alwaysInclude != null) {
             view.setAlwaysInclude(this.alwaysInclude);
-        }
-        if (this.exposeContextBeansAsAttributes != null) {
-            view.setExposeContextBeansAsAttributes(this.exposeContextBeansAsAttributes);
-        }
-        if (this.exposedContextBeanNames != null) {
-            view.setExposedContextBeanNames(this.exposedContextBeanNames);
         }
         view.setPreventDispatchLoop(true);
         return view;

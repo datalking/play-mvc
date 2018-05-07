@@ -8,6 +8,7 @@ import com.github.datalking.web.servlet.RequestToViewNameTranslator;
 import javax.servlet.http.HttpServletRequest;
 
 /**
+ *
  * @author yaoo on 4/28/18
  */
 public class DefaultRequestToViewNameTranslator implements RequestToViewNameTranslator {
@@ -69,6 +70,9 @@ public class DefaultRequestToViewNameTranslator implements RequestToViewNameTran
         this.urlPathHelper = urlPathHelper;
     }
 
+    /**
+     * 获取视图名的请求路径
+     */
     public String getViewName(HttpServletRequest request) {
         String lookupPath = this.urlPathHelper.getLookupPathForRequest(request);
         return (this.prefix + transformPath(lookupPath) + this.suffix);

@@ -30,7 +30,6 @@ public class RequestMappingInfo implements RequestCondition<RequestMappingInfo> 
 
     private final RequestConditionHolder customConditionHolder;
 
-
     public RequestMappingInfo(PatternsRequestCondition patterns,
                               RequestMethodsRequestCondition methods,
                               ParamsRequestCondition params,
@@ -49,15 +48,18 @@ public class RequestMappingInfo implements RequestCondition<RequestMappingInfo> 
     }
 
     public RequestMappingInfo(RequestMappingInfo info, RequestCondition<?> customRequestCondition) {
-        this(info.patternsCondition, info.methodsCondition, info.paramsCondition, info.headersCondition,
-                info.consumesCondition, info.producesCondition, customRequestCondition);
+        this(info.patternsCondition,
+                info.methodsCondition,
+                info.paramsCondition,
+                info.headersCondition,
+                info.consumesCondition,
+                info.producesCondition,
+                customRequestCondition);
     }
-
 
     public PatternsRequestCondition getPatternsCondition() {
         return this.patternsCondition;
     }
-
 
     public RequestMethodsRequestCondition getMethodsCondition() {
         return this.methodsCondition;
@@ -71,16 +73,13 @@ public class RequestMappingInfo implements RequestCondition<RequestMappingInfo> 
         return this.headersCondition;
     }
 
-
     public ConsumesRequestCondition getConsumesCondition() {
         return this.consumesCondition;
     }
 
-
     public ProducesRequestCondition getProducesCondition() {
         return this.producesCondition;
     }
-
 
     public RequestCondition<?> getCustomCondition() {
         return this.customConditionHolder.getCondition();

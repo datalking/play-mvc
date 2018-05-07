@@ -5,7 +5,7 @@
     <artifactId>play-mvc</artifactId>
     <groupId>com.github.datalking</groupId>
     <packaging>pom</packaging>
-    <version>0.0.2</version>
+    <version>0.0.3</version>
     <name>play-mvc</name>
     <description>simple mvc framework based on java servlet.</description>
     <url>https://github.com/uptonking/play-mvc</url>
@@ -41,6 +41,12 @@
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <version>3.1.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+            <version>1.2</version>
             <scope>provided</scope>
         </dependency>
         <!--logging-->

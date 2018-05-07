@@ -52,10 +52,13 @@ public class InvocableHandlerMethod extends HandlerMethod {
         this.parameterNameDiscoverer = parameterNameDiscoverer;
     }
 
-    public final Object invokeForRequest(WebRequest request, ModelAndViewContainer mavContainer,
+    public final Object invokeForRequest(WebRequest request,
+                                         ModelAndViewContainer mavContainer,
                                          Object... providedArgs) throws Exception {
 
+        // ==== 请求参数解析
         Object[] args = getMethodArgumentValues(request, mavContainer, providedArgs);
+
         if (logger.isTraceEnabled()) {
             StringBuilder sb = new StringBuilder("Invoking [");
             sb.append(getBeanType().getSimpleName()).append(".");
@@ -63,15 +66,22 @@ public class InvocableHandlerMethod extends HandlerMethod {
             sb.append(Arrays.asList(args));
             logger.trace(sb.toString());
         }
+
+        // ==== 实际执行处理请求的方法
         Object returnValue = doInvoke(args);
+
         if (logger.isTraceEnabled()) {
             logger.trace("Method [" + getMethod().getName() + "] returned [" + returnValue + "]");
         }
+
         return returnValue;
     }
 
-
-    private Object[] getMethodArgumentValues(WebRequest request, ModelAndViewContainer mavContainer,
+    /**
+     * 解析请求参数
+     */
+    private Object[] getMethodArgumentValues(WebRequest request,
+                                             ModelAndViewContainer mavContainer,
                                              Object... providedArgs) throws Exception {
 
         MethodParameter[] parameters = getMethodParameters();
@@ -130,20 +140,21 @@ public class InvocableHandlerMethod extends HandlerMethod {
         return null;
     }
 
-
     /**
-     * Invoke the handler method with the given argument values.
+     * 实际执行处理请求的方法
      */
     protected Object doInvoke(Object... args) throws Exception {
-        ReflectionUtils.makeAccessible(getBridgedMethod());
+        Method bm = getBridgedMethod();
+        ReflectionUtils.makeAccessible(bm);
         try {
-            return getBridgedMethod().invoke(getBean(), args);
+            Object obj = getBean();
+            // ==== 通过java反射调用对象的方法，即调用Controller中匹配的方法
+            return bm.invoke(obj, args);
         } catch (IllegalArgumentException ex) {
-            assertTargetBean(getBridgedMethod(), getBean(), args);
+            assertTargetBean(bm, getBean(), args);
             String message = (ex.getMessage() != null ? ex.getMessage() : "Illegal argument");
             throw new IllegalStateException(getInvocationErrorMessage(message, args), ex);
         } catch (InvocationTargetException ex) {
-            // Unwrap for HandlerExceptionResolvers ...
             Throwable targetException = ex.getTargetException();
             if (targetException instanceof RuntimeException) {
                 throw (RuntimeException) targetException;
@@ -157,7 +168,6 @@ public class InvocableHandlerMethod extends HandlerMethod {
             }
         }
     }
-
 
     private void assertTargetBean(Method method, Object targetBean, Object[] args) {
         Class<?> methodDeclaringClass = method.getDeclaringClass();

@@ -20,10 +20,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 默认执行url与bean匹配的类
+ *
  * @author yaoo on 4/28/18
  */
-public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMapping
-        implements EmbeddedValueResolverAware {
+public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMapping implements EmbeddedValueResolverAware {
 
     private boolean useSuffixPatternMatch = true;
 
@@ -60,6 +61,9 @@ public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMappi
         this.embeddedValueResolver = resolver;
     }
 
+    /**
+     * 这里扫描bean中requestMapping配置的url与方法
+     */
     @Override
     public void afterPropertiesSet() {
         if (this.useRegisteredSuffixPatternMatch) {
@@ -89,25 +93,36 @@ public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMappi
         return this.fileExtensions;
     }
 
-
+    /**
+     * 判断bean是否是handlerMapping的bean
+     */
     @Override
     protected boolean isHandler(Class<?> beanType) {
         return ((AnnotationUtils.findAnnotation(beanType, Controller.class) != null) ||
                 (AnnotationUtils.findAnnotation(beanType, RequestMapping.class) != null));
     }
 
+    /**
+     * 获取method上的@RequestMapping内容
+     */
     @Override
     protected RequestMappingInfo getMappingForMethod(Method method, Class<?> handlerType) {
+
         RequestMappingInfo info = null;
         RequestMapping methodAnnotation = AnnotationUtils.findAnnotation(method, RequestMapping.class);
+
         if (methodAnnotation != null) {
 
             RequestCondition<?> methodCondition = getCustomMethodCondition(method);
+
             info = createRequestMappingInfo(methodAnnotation, methodCondition);
+
             RequestMapping typeAnnotation = AnnotationUtils.findAnnotation(handlerType, RequestMapping.class);
 
             if (typeAnnotation != null) {
+
                 RequestCondition<?> typeCondition = getCustomTypeCondition(handlerType);
+
                 info = createRequestMappingInfo(typeAnnotation, typeCondition).combine(info);
             }
         }
@@ -124,6 +139,7 @@ public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMappi
 
 
     protected RequestMappingInfo createRequestMappingInfo(RequestMapping annotation, RequestCondition<?> customCondition) {
+
         String[] patterns = resolveEmbeddedValuesInPatterns(annotation.value());
 
         return new RequestMappingInfo(

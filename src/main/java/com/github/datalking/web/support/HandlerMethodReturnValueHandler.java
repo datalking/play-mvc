@@ -15,5 +15,4 @@ public interface HandlerMethodReturnValueHandler {
                            ModelAndViewContainer mavContainer,
                            WebRequest webRequest) throws Exception;
 
-
 }

@@ -125,32 +125,27 @@ public abstract class AbstractView extends WebApplicationObjectSupport implement
     @Override
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) {
         if (logger.isTraceEnabled()) {
-            logger.trace("Rendering view with name '" + this.beanName + "' with model " + model +
-                    " and static attributes " + this.staticAttributes);
+            logger.trace("Rendering view with name '" + this.beanName + "' with model " + model + " and static attributes " + this.staticAttributes);
         }
 
+        // 静态属性合并
         Map<String, Object> mergedModel = createMergedOutputModel(model, request, response);
+        // 处理下载内容，默认执行nothing
         prepareResponse(request, response);
-        try {
-            renderMergedOutputModel(mergedModel, request, response);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        // 渲染视图
+        renderMergedOutputModel(mergedModel, request, response);
     }
 
 
     protected Map<String, Object> createMergedOutputModel(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) {
 
-        @SuppressWarnings("unchecked")
-        Map<String, Object> pathVars = (this.exposePathVariables ?
-                (Map<String, Object>) request.getAttribute(View.PATH_VARIABLES) : null);
-
+        Map<String, Object> pathVars = (this.exposePathVariables ? (Map<String, Object>) request.getAttribute(View.PATH_VARIABLES) : null);
         // Consolidate static and dynamic model attributes.
         int size = this.staticAttributes.size();
         size += (model != null ? model.size() : 0);
         size += (pathVars != null ? pathVars.size() : 0);
 
-        Map<String, Object> mergedModel = new LinkedHashMap<String, Object>(size);
+        Map<String, Object> mergedModel = new LinkedHashMap<>(size);
         mergedModel.putAll(this.staticAttributes);
         if (pathVars != null) {
             mergedModel.putAll(pathVars);
@@ -159,7 +154,6 @@ public abstract class AbstractView extends WebApplicationObjectSupport implement
             mergedModel.putAll(model);
         }
 
-        // Expose RequestContext?
         if (this.requestContextAttribute != null) {
             mergedModel.put(this.requestContextAttribute, createRequestContext(request, response, mergedModel));
         }
@@ -173,6 +167,7 @@ public abstract class AbstractView extends WebApplicationObjectSupport implement
     }
 
     protected void prepareResponse(HttpServletRequest request, HttpServletResponse response) {
+        // 默认为false
         if (generatesDownloadContent()) {
             response.setHeader("Pragma", "private");
             response.setHeader("Cache-Control", "private, must-revalidate");
@@ -183,10 +178,9 @@ public abstract class AbstractView extends WebApplicationObjectSupport implement
         return false;
     }
 
-    protected abstract void renderMergedOutputModel(Map<String, Object> model, HttpServletRequest request, HttpServletResponse response) throws Exception;
+    protected abstract void renderMergedOutputModel(Map<String, Object> model, HttpServletRequest request, HttpServletResponse response);
 
-
-    protected void exposeModelAsRequestAttributes(Map<String, Object> model, HttpServletRequest request) throws Exception {
+    protected void exposeModelAsRequestAttributes(Map<String, Object> model, HttpServletRequest request) {
         for (Map.Entry<String, Object> entry : model.entrySet()) {
             String modelName = entry.getKey();
             Object modelValue = entry.getValue();

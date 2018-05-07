@@ -14,6 +14,6 @@ public interface MessageSource {
 
     String getMessage(String code, Object[] args, Locale locale);
 
-//    String getMessage(MessageSourceResolvable resolvable, Locale locale);
+    String getMessage(MessageSourceResolvable resolvable, Locale locale);
 
 }

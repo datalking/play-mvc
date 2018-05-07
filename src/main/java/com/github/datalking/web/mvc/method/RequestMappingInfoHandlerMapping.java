@@ -115,7 +115,7 @@ public abstract class RequestMappingInfoHandlerMapping extends AbstractHandlerMe
     @Override
     protected HandlerMethod handleNoMatch(Set<RequestMappingInfo> requestMappingInfos,
                                           String lookupPath,
-                                          HttpServletRequest request) throws ServletException {
+                                          HttpServletRequest request) {
 
         Set<String> allowedMethods = new LinkedHashSet<>(4);
 
