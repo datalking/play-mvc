@@ -2,14 +2,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <artifactId>play-mvc</artifactId>
-        <groupId>com.github.datalking</groupId>
-        <version>0.0.3</version>
-    </parent>
 
-    <artifactId>test-mvc</artifactId>
+    <artifactId>starter-demo</artifactId>
     <groupId>com.github.datalking</groupId>
+    <version>0.0.3</version>
     <packaging>war</packaging>
 
     <name>test-mvc webapp just for test</name>
@@ -26,7 +22,6 @@
             <groupId>com.github.datalking</groupId>
             <artifactId>play-mvc</artifactId>
             <version>0.0.3</version>
-            <!--<scope>compile</scope>-->
         </dependency>
         <!--tomcat-->
         <dependency>

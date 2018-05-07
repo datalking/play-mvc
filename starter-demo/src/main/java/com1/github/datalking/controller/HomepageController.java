@@ -1,4 +1,4 @@
-package com1.github.datalking.home;
+package com1.github.datalking.controller;
 
 import com.github.datalking.annotation.Controller;
 import com.github.datalking.annotation.web.RequestMapping;
@@ -12,7 +12,7 @@ public class HomepageController {
 
         System.out.println("before response /");
 
-        return "home";
+        return "controller";
     }
 
     @ResponseBody
@@ -21,7 +21,7 @@ public class HomepageController {
 
         System.out.println("before response /str");
 
-        return "home";
+        return "controller";
     }
 
 }

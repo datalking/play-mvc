@@ -2,19 +2,17 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>play-mvc</artifactId>
     <groupId>com.github.datalking</groupId>
-    <packaging>pom</packaging>
+    <artifactId>play-mvc</artifactId>
     <version>0.0.3</version>
+
+    <packaging>jar</packaging>
     <name>play-mvc</name>
     <description>simple mvc framework based on java servlet.</description>
     <url>https://github.com/uptonking/play-mvc</url>
 
-    <modules>
-        <module>test-mvc</module>
-    </modules>
-
     <dependencies>
+        <!--common utils-->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>

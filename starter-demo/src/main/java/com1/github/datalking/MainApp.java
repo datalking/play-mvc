@@ -17,7 +17,7 @@ public class MainApp {
 
     public static void main(String[] args) throws ServletException, LifecycleException {
 
-        String webappDirLoc = "test-mvc/src/main/webapp/";
+        String webappDirLoc = "starter-demo/src/main/webapp/";
         File webInfClasses = new File("target/classes");
 
         Tomcat tomcat = new Tomcat();

@@ -8,7 +8,7 @@
 
 ## overview
 - 推荐使用纯注解、零配置的方式，目前实现的xml功能非常有限
-- 暂不支持视图模板，视图模板以后仅支持普通jsp，不会支持jstl、jsf、velocity、freemarker等   
+- 视图模板仅支持jsp，不会支持jsf、velocity、freemarker等   
 - 目前暂不支持：
     - 暂不支持@Autowired，需要显式配置Bean  
     - 暂不支持@Repository、@Resource  
@@ -33,7 +33,7 @@
 
 ## demo
 ```sh
-  cd play-mvc/test-mvc
+  cd play-mvc/starter-demo
   mvn tomcat7:run
 ```
 
