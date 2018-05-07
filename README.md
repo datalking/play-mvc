@@ -8,7 +8,7 @@
 
 ## overview
 - 推荐使用纯注解、零配置的方式，目前实现的xml功能非常有限
-- 视图模板仅支持jsp，不会支持jsf、velocity、freemarker等   
+- 视图模板仅支持jsp，尚未计划支持jsf、velocity、freemarker等   
 - 目前暂不支持：
     - 暂不支持@Autowired，需要显式配置Bean  
     - 暂不支持@Repository、@Resource  
@@ -41,13 +41,13 @@ start from [http://localhost:8999](http://localhost:8999)
 
 ## todo
 
-- [ ] 扫描 DelegatingWebMvcConfiguration中的bean
 - [ ] 支持 @PathVariable, @RequestParam 
 - [ ] 支持 Redirect 
 - [ ] 支持 文件上传 MultipartResolver 
 - [ ] 使用内置tomcat直接启动mvc应用 
 - [ ] servlet和filter支持async处理
 
+- [x] 扫描 DelegatingWebMvcConfiguration中的bean
 - [x] 基本实现DispatcherServlet 
 
 ## later

@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>starter-demo</artifactId>
-    <groupId>com.github.datalking</groupId>
+    <groupId>com1.github.datalking</groupId>
     <version>0.0.3</version>
     <packaging>war</packaging>
 
@@ -111,4 +111,5 @@
             </plugins>
         </pluginManagement>
     </build>
+
 </project>

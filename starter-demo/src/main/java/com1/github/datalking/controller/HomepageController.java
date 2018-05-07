@@ -12,7 +12,7 @@ public class HomepageController {
 
         System.out.println("before response /");
 
-        return "controller";
+        return "home";
     }
 
     @ResponseBody
@@ -21,7 +21,7 @@ public class HomepageController {
 
         System.out.println("before response /str");
 
-        return "controller";
+        return "home";
     }
 
 }
