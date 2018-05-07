@@ -1,6 +1,12 @@
 # dev-log
 
-- mvc finishBeanFactoryInitialization(beanFactory);  
+- A child container failed during start LifecycleException: Failed to start component [StandardEngine[Tomcat].StandardHost[localhost
+ 将tomcat相关依赖改为provided
+
+- mvc finishBeanFactoryInitialization(beanFactory); 
+
+> 寻找方法时要寻找父类的方法，该使用getMethods()，而不是getDeclaredMethods() 
+  
 defaultServletHandlerMapping 找不到factoryMethodToUse    
 mvcUrlPathHelper找不到factoryMethodToUse  
 simpleControllerHandlerAdapter找不到factoryMethodToUse  
