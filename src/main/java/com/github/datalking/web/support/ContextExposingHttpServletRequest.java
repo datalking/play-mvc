@@ -38,7 +38,6 @@ public class ContextExposingHttpServletRequest extends HttpServletRequestWrapper
         return this.webApplicationContext;
     }
 
-
     @Override
     public Object getAttribute(String name) {
         if ((this.explicitAttributes == null || !this.explicitAttributes.contains(name)) &&

@@ -33,7 +33,6 @@ public class HttpEntityMethodProcessor extends AbstractMessageConverterMethodPro
         super(messageConverters, contentNegotiationManager);
     }
 
-
     public boolean supportsParameter(MethodParameter parameter) {
         return HttpEntity.class.equals(parameter.getParameterType());
     }

@@ -21,6 +21,7 @@ import com.github.datalking.web.bind.WebDataBinderFactory;
 import com.github.datalking.web.context.request.WebRequest;
 import com.github.datalking.web.http.accept.ContentNegotiationManager;
 import com.github.datalking.web.http.converter.HttpMessageConverter;
+import com.github.datalking.web.http.converter.MappingJackson2HttpMessageConverter;
 import com.github.datalking.web.http.converter.StringHttpMessageConverter;
 import com.github.datalking.web.mvc.ModelAndView;
 import com.github.datalking.web.mvc.ModelAndViewResolver;
@@ -117,12 +118,14 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
     public RequestMappingHandlerAdapter() {
 
         StringHttpMessageConverter stringHttpMessageConverter = new StringHttpMessageConverter();
+        MappingJackson2HttpMessageConverter jsonConverter = new MappingJackson2HttpMessageConverter();
         stringHttpMessageConverter.setWriteAcceptCharset(false);
 
         /// 添加4种http数据转换器
         this.messageConverters = new ArrayList<>(4);
 //        this.messageConverters.add(new ByteArrayHttpMessageConverter());
         this.messageConverters.add(stringHttpMessageConverter);
+        this.messageConverters.add(jsonConverter);
 //        this.messageConverters.add(new SourceHttpMessageConverter<Source>());
 //        this.messageConverters.add(new AllEncompassingFormHttpMessageConverter());
     }
@@ -387,12 +390,10 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
         handlers.add(new ViewNameMethodReturnValueHandler());
         handlers.add(new MapMethodProcessor());
 
-        // Custom return value types
         if (getCustomReturnValueHandlers() != null) {
             handlers.addAll(getCustomReturnValueHandlers());
         }
 
-        // Catch-all
         if (!CollectionUtils.isEmpty(getModelAndViewResolvers())) {
             handlers.add(new ModelAndViewResolverMethodReturnValueHandler(getModelAndViewResolvers()));
         } else {
@@ -442,14 +443,11 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
                                                 HandlerMethod handlerMethod) throws Exception {
 
         if (getSessionAttributesHandler(handlerMethod).hasSessionAttributes()) {
-            // Always prevent caching in case of session attribute management.
             checkAndPrepare(request, response, this.cacheSecondsForSessionAttributeHandlers, true);
         } else {
-            // Uses configured default cacheSeconds setting.
             checkAndPrepare(request, response, true);
         }
 
-        // Execute invokeHandlerMethod in synchronized block if required.
         if (this.synchronizeOnSession) {
             HttpSession session = request.getSession(false);
             if (session != null) {
@@ -468,7 +466,6 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
     protected long getLastModifiedInternal(HttpServletRequest request, HandlerMethod handlerMethod) {
         return -1;
     }
-
 
     private SessionAttributesHandler getSessionAttributesHandler(HandlerMethod handlerMethod) {
         Class<?> handlerType = handlerMethod.getBeanType();

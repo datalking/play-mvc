@@ -4,7 +4,22 @@ spring笔记
 ## summary
 
 
+#### spring 常用注解
+
+- @ResponseBody表示该方法的返回结果直接写入HTTP response body中  
+    @ResponseBody and ContentNegotiatingViewResolver are two alternatives for the same thing. 
+- @RequestBody
+
 #### spring mvc
+
+- controller的返回值
+    - ModelAndView
+    - Model
+    - ModelMap
+    - Map
+    - View
+    - String
+    - Void
 
 - spring AnnotatedBeanDefinitionReader 默认注册的beanDefinition
     - org.springframework.context.annotation.CommonAnnotationBeanPostProcessor
