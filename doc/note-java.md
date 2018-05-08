@@ -7,6 +7,12 @@ java笔记
 
 ## java web
 
+- request.getAttribute() 和 request.getParameter() 区别
+    - attribute 值来源于 【Web 服务器端】，而parameter 值来源于【浏览器端】
+        - request.getAttribute() 的值来源于【 request.setAttribute() 】方法设置的值。
+        - equest.getParameter() 的值来源于 页面通过【get或者post】方式传上来的参数值没有setParameter()
+    - attribute 值类型是【Object】类型，而parameter 值类型为【String】类型
+
 - 部署之后修改jsp文件仍然会改变网页内容
 
 - RequestDispatcher是一个Web资源的包装器,可以用来把当前request传递到该资源,或者把新的资源包括到当前响应中

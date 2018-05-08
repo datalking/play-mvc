@@ -11,10 +11,13 @@ import java.util.Map;
  */
 public class ModelAndView {
 
+    // view实例 或 名称string
     private Object view;
 
+    // 存放数据，利用setAttribute()传递
     private ModelMap model;
 
+    // 本对象是否已清除
     private boolean cleared = false;
 
     public ModelAndView() {
