@@ -133,8 +133,7 @@ public class RequestResponseBodyMethodProcessor extends AbstractMessageConverter
     public void handleReturnValue(Object returnValue,
                                   MethodParameter returnType,
                                   ModelAndViewContainer mavContainer,
-                                  WebRequest webRequest)
-            throws IOException {
+                                  WebRequest webRequest) throws IOException {
 
         mavContainer.setRequestHandled(true);
         if (returnValue != null) {

@@ -6,6 +6,8 @@ import com.github.datalking.web.context.request.WebRequest;
 import com.github.datalking.web.mvc.Model;
 
 /**
+ * 解析Model类型参数和返回值的类
+ *
  * @author yaoo on 5/2/18
  */
 public class ModelMethodProcessor implements HandlerMethodArgumentResolver, HandlerMethodReturnValueHandler {
@@ -14,10 +16,10 @@ public class ModelMethodProcessor implements HandlerMethodArgumentResolver, Hand
         return Model.class.isAssignableFrom(parameter.getParameterType());
     }
 
-    public Object resolveArgument(
-            MethodParameter parameter, ModelAndViewContainer mavContainer,
-            WebRequest webRequest, WebDataBinderFactory binderFactory)
-            throws Exception {
+    public Object resolveArgument(MethodParameter parameter,
+                                  ModelAndViewContainer mavContainer,
+                                  WebRequest webRequest,
+                                  WebDataBinderFactory binderFactory) throws Exception {
 
         return mavContainer.getModel();
     }
@@ -26,18 +28,18 @@ public class ModelMethodProcessor implements HandlerMethodArgumentResolver, Hand
         return Model.class.isAssignableFrom(returnType.getParameterType());
     }
 
-    public void handleReturnValue(
-            Object returnValue, MethodParameter returnType,
-            ModelAndViewContainer mavContainer, WebRequest webRequest)
-            throws Exception {
+    public void handleReturnValue(Object returnValue,
+                                  MethodParameter returnType,
+                                  ModelAndViewContainer mavContainer,
+                                  WebRequest webRequest) throws Exception {
 
         if (returnValue == null) {
+
             return;
-        }
-        else if (returnValue instanceof Model) {
+        } else if (returnValue instanceof Model) {
+
             mavContainer.addAllAttributes(((Model) returnValue).asMap());
-        }
-        else {
+        } else {
             // should not happen
             throw new UnsupportedOperationException("Unexpected return type: " +
                     returnType.getParameterType().getName() + " in method: " + returnType.getMethod());

@@ -15,10 +15,10 @@ public class ModelAndViewMethodReturnValueHandler implements HandlerMethodReturn
         return ModelAndView.class.isAssignableFrom(returnType.getParameterType());
     }
 
-    public void handleReturnValue(
-            Object returnValue, MethodParameter returnType,
-            ModelAndViewContainer mavContainer, WebRequest webRequest)
-            throws Exception {
+    public void handleReturnValue(Object returnValue,
+                                  MethodParameter returnType,
+                                  ModelAndViewContainer mavContainer,
+                                  WebRequest webRequest) throws Exception {
 
         if (returnValue == null) {
             mavContainer.setRequestHandled(true);

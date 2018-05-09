@@ -12,20 +12,25 @@ import java.io.Writer;
 import java.lang.reflect.Method;
 
 /**
+ * 响应方法参数解析相关方法
+ *
  * @author yaoo on 5/3/18
  */
 public class ServletResponseMethodArgumentResolver implements HandlerMethodArgumentResolver {
 
     public boolean supportsParameter(MethodParameter parameter) {
+
         Class<?> paramType = parameter.getParameterType();
+
         return ServletResponse.class.isAssignableFrom(paramType)
                 || OutputStream.class.isAssignableFrom(paramType)
                 || Writer.class.isAssignableFrom(paramType);
     }
-    public Object resolveArgument(
-            MethodParameter parameter, ModelAndViewContainer mavContainer,
-            WebRequest webRequest, WebDataBinderFactory binderFactory)
-            throws IOException {
+
+    public Object resolveArgument(MethodParameter parameter,
+                                  ModelAndViewContainer mavContainer,
+                                  WebRequest webRequest,
+                                  WebDataBinderFactory binderFactory) throws IOException {
 
         if (mavContainer != null) {
             mavContainer.setRequestHandled(true);
@@ -40,15 +45,15 @@ public class ServletResponseMethodArgumentResolver implements HandlerMethodArgum
                 throw new IllegalStateException(
                         "Current response is not of type [" + paramType.getName() + "]: " + response);
             }
+
             return nativeResponse;
-        }
-        else if (OutputStream.class.isAssignableFrom(paramType)) {
+        } else if (OutputStream.class.isAssignableFrom(paramType)) {
+
             return response.getOutputStream();
-        }
-        else if (Writer.class.isAssignableFrom(paramType)) {
+        } else if (Writer.class.isAssignableFrom(paramType)) {
+
             return response.getWriter();
-        }
-        else {
+        } else {
             // should not happen
             Method method = parameter.getMethod();
             throw new UnsupportedOperationException("Unknown parameter type: " + paramType + " in method: " + method);

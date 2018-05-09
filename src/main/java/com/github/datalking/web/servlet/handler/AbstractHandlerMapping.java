@@ -55,11 +55,9 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
         return this.defaultHandler;
     }
 
-
     public void setAlwaysUseFullPath(boolean alwaysUseFullPath) {
         this.urlPathHelper.setAlwaysUseFullPath(alwaysUseFullPath);
     }
-
 
     public void setUrlDecode(boolean urlDecode) {
         this.urlPathHelper.setUrlDecode(urlDecode);
@@ -69,17 +67,14 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
         this.urlPathHelper.setRemoveSemicolonContent(removeSemicolonContent);
     }
 
-
     public void setUrlPathHelper(UrlPathHelper urlPathHelper) {
         Assert.notNull(urlPathHelper, "UrlPathHelper must not be null");
         this.urlPathHelper = urlPathHelper;
     }
 
-
     public UrlPathHelper getUrlPathHelper() {
         return urlPathHelper;
     }
-
 
     public void setPathMatcher(PathMatcher pathMatcher) {
         Assert.notNull(pathMatcher, "PathMatcher must not be null");
@@ -89,7 +84,6 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
     public PathMatcher getPathMatcher() {
         return this.pathMatcher;
     }
-
 
     public void setInterceptors(Object[] interceptors) {
         this.interceptors.addAll(Arrays.asList(interceptors));
@@ -102,18 +96,14 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
         initInterceptors();
     }
 
-
     protected void extendInterceptors(List<Object> interceptors) {
     }
-
 
     protected void detectMappedInterceptors(List<MappedInterceptor> mappedInterceptors) {
 
         Map<String, MappedInterceptor> result = getWebApplicationContext().getBeansOfType(MappedInterceptor.class);
-//        mappedInterceptors.addAll(BeanFactoryUtils.beansOfTypeIncludingAncestors(getApplicationContext(), MappedInterceptor.class, true, false).values());
         mappedInterceptors.addAll(result.values());
     }
-
 
     protected void initInterceptors() {
         if (!this.interceptors.isEmpty()) {
@@ -130,7 +120,6 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
             }
         }
     }
-
 
     protected HandlerInterceptor adaptInterceptor(Object interceptor) {
         if (interceptor instanceof HandlerInterceptor) {
@@ -161,6 +150,7 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 
         Object handler = null;
         try {
+            // 空方法，由子类实现
             handler = getHandlerInternal(request);
         } catch (Exception e) {
             e.printStackTrace();
@@ -180,10 +170,10 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
         return getHandlerExecutionChain(handler, request);
     }
 
-
     protected abstract Object getHandlerInternal(HttpServletRequest request) throws Exception;
 
     protected HandlerExecutionChain getHandlerExecutionChain(Object handler, HttpServletRequest request) {
+
         HandlerExecutionChain chain = (handler instanceof HandlerExecutionChain ?
                 (HandlerExecutionChain) handler : new HandlerExecutionChain(handler));
         chain.addInterceptors(getAdaptedInterceptors());

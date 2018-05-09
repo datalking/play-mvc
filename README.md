@@ -41,16 +41,16 @@ start from [http://localhost:8999](http://localhost:8999)
 
 ## todo
 
-- [ ] 支持 @ResponseBody 
 - [ ] 支持 @PathVariable
 - [ ] 支持 @RequestParam 
 - [ ] 支持 Redirect 
 - [ ] 支持 文件上传 MultipartResolver 
 - [ ] 使用内置tomcat直接启动mvc应用 
-- [ ] servlet和filter支持async处理
+- [ ] servlet和filter支持 `async` 处理
 
+- [x] 支持 @ResponseBody 
 - [x] 扫描 DelegatingWebMvcConfiguration中的bean
-- [x] 基本实现DispatcherServlet 
+- [x] add DispatcherServlet 
 
 ## later
 

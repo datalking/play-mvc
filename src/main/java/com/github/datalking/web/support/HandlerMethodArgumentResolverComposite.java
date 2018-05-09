@@ -45,13 +45,12 @@ public class HandlerMethodArgumentResolverComposite implements HandlerMethodArgu
 
 
     private HandlerMethodArgumentResolver getArgumentResolver(MethodParameter parameter) {
+
         HandlerMethodArgumentResolver result = this.argumentResolverCache.get(parameter);
+
         if (result == null) {
             for (HandlerMethodArgumentResolver methodArgumentResolver : this.argumentResolvers) {
-                if (logger.isTraceEnabled()) {
-                    logger.trace("Testing if argument resolver [" + methodArgumentResolver + "] supports [" +
-                            parameter.getGenericParameterType() + "]");
-                }
+
                 if (methodArgumentResolver.supportsParameter(parameter)) {
                     result = methodArgumentResolver;
                     this.argumentResolverCache.put(parameter, result);
@@ -59,6 +58,7 @@ public class HandlerMethodArgumentResolverComposite implements HandlerMethodArgu
                 }
             }
         }
+
         return result;
     }
 
@@ -67,10 +67,12 @@ public class HandlerMethodArgumentResolverComposite implements HandlerMethodArgu
         return this;
     }
 
-    public HandlerMethodArgumentResolverComposite addResolvers(
-            List<? extends HandlerMethodArgumentResolver> argumentResolvers) {
+    public HandlerMethodArgumentResolverComposite addResolvers(List<? extends HandlerMethodArgumentResolver> argumentResolvers) {
+
         if (argumentResolvers != null) {
+
             for (HandlerMethodArgumentResolver resolver : argumentResolvers) {
+
                 this.argumentResolvers.add(resolver);
             }
         }

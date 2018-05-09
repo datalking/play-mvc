@@ -8,6 +8,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
+ * 定制map用来存放string -> Object
+ *
  * @author yaoo on 4/26/18
  */
 public class ModelMap extends LinkedHashMap<String, Object> {
@@ -67,7 +69,6 @@ public class ModelMap extends LinkedHashMap<String, Object> {
     public boolean containsAttribute(String attributeName) {
         return containsKey(attributeName);
     }
-
 
 }
 

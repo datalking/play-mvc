@@ -15,6 +15,8 @@ import java.security.Principal;
 import java.util.Locale;
 
 /**
+ * 请求参数解析相关方法
+ *
  * @author yaoo on 5/3/18
  */
 public class ServletRequestMethodArgumentResolver implements HandlerMethodArgumentResolver {

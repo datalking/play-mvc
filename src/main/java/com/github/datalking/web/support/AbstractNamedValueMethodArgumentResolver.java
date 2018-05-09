@@ -36,10 +36,10 @@ public abstract class AbstractNamedValueMethodArgumentResolver implements Handle
                                         ModelAndViewContainer mavContainer,
                                         WebRequest webRequest,
                                         WebDataBinderFactory binderFactory) throws Exception {
-
+        // 获取参数类型
         Class<?> paramType = parameter.getParameterType();
+        // 获取路径中参数名
         NamedValueInfo namedValueInfo = getNamedValueInfo(parameter);
-
         Object arg = resolveName(namedValueInfo.name, parameter, webRequest);
         if (arg == null) {
             if (namedValueInfo.defaultValue != null) {
@@ -56,6 +56,7 @@ public abstract class AbstractNamedValueMethodArgumentResolver implements Handle
             WebDataBinder binder = binderFactory.createBinder(webRequest, null, namedValueInfo.name);
             // todo args convertion
 //            arg = binder.convertIfNecessary(arg, paramType, parameter);
+
         }
 
         handleResolvedValue(arg, namedValueInfo.name, parameter, mavContainer, webRequest);

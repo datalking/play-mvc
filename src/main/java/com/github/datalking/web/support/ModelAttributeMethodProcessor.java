@@ -108,11 +108,10 @@ public class ModelAttributeMethodProcessor
         }
     }
 
-    /**
-     * Add non-null return values to the {@link ModelAndViewContainer}.
-     */
-    public void handleReturnValue(Object returnValue, MethodParameter returnType,
-                                  ModelAndViewContainer mavContainer, WebRequest webRequest) throws Exception {
+    public void handleReturnValue(Object returnValue,
+                                  MethodParameter returnType,
+                                  ModelAndViewContainer mavContainer,
+                                  WebRequest webRequest) throws Exception {
 
         if (returnValue != null) {
             String name = ModelFactory.getNameForReturnValue(returnValue, returnType);

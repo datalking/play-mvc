@@ -58,7 +58,7 @@ public final class ModelFactory {
             }
         }
     }
-
+    // 处理@ModelAttribute注解
     private void invokeModelAttributeMethods(WebRequest request, ModelAndViewContainer mavContainer)
             throws Exception {
 

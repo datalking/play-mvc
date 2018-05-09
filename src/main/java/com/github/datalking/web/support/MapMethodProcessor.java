@@ -27,15 +27,16 @@ public class MapMethodProcessor implements HandlerMethodArgumentResolver, Handle
         return Map.class.isAssignableFrom(returnType.getParameterType());
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    public void handleReturnValue(
-            Object returnValue, MethodParameter returnType,
-            ModelAndViewContainer mavContainer, WebRequest webRequest)
-            throws Exception {
+    public void handleReturnValue(Object returnValue,
+                                  MethodParameter returnType,
+                                  ModelAndViewContainer mavContainer,
+                                  WebRequest webRequest) throws Exception {
 
         if (returnValue == null) {
+
             return;
         } else if (returnValue instanceof Map) {
+
             mavContainer.addAllAttributes((Map) returnValue);
         } else {
             // should not happen

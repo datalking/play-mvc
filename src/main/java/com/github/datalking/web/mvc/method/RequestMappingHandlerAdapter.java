@@ -44,6 +44,8 @@ import com.github.datalking.web.support.ModelMethodProcessor;
 import com.github.datalking.web.support.PathVariableMethodArgumentResolver;
 import com.github.datalking.web.support.RequestParamMethodArgumentResolver;
 import com.github.datalking.web.support.ServletInvocableHandlerMethod;
+import com.github.datalking.web.support.ServletRequestMethodArgumentResolver;
+import com.github.datalking.web.support.ServletResponseMethodArgumentResolver;
 import com.github.datalking.web.support.SessionAttributeStore;
 import com.github.datalking.web.support.SessionAttributesHandler;
 import com.github.datalking.web.support.ViewMethodReturnValueHandler;
@@ -175,7 +177,6 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
         return this.customReturnValueHandlers;
     }
 
-
     public void setReturnValueHandlers(List<HandlerMethodReturnValueHandler> returnValueHandlers) {
         if (returnValueHandlers == null) {
             this.returnValueHandlers = null;
@@ -184,7 +185,6 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
             this.returnValueHandlers.addHandlers(returnValueHandlers);
         }
     }
-
 
     public HandlerMethodReturnValueHandlerComposite getReturnValueHandlers() {
         return this.returnValueHandlers;
@@ -200,11 +200,9 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
         return modelAndViewResolvers;
     }
 
-
     public void setContentNegotiationManager(ContentNegotiationManager contentNegotiationManager) {
         this.contentNegotiationManager = contentNegotiationManager;
     }
-
 
     public void setMessageConverters(List<HttpMessageConverter<?>> messageConverters) {
         this.messageConverters = messageConverters;
@@ -218,7 +216,6 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
     public void setWebBindingInitializer(WebBindingInitializer webBindingInitializer) {
         this.webBindingInitializer = webBindingInitializer;
     }
-
 
     public WebBindingInitializer getWebBindingInitializer() {
         return this.webBindingInitializer;
@@ -281,18 +278,22 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
     }
 
     public void afterPropertiesSet() {
+
         if (this.argumentResolvers == null) {
             List<HandlerMethodArgumentResolver> resolvers = getDefaultArgumentResolvers();
             this.argumentResolvers = new HandlerMethodArgumentResolverComposite().addResolvers(resolvers);
         }
+
         if (this.initBinderArgumentResolvers == null) {
             List<HandlerMethodArgumentResolver> resolvers = getDefaultInitBinderArgumentResolvers();
             this.initBinderArgumentResolvers = new HandlerMethodArgumentResolverComposite().addResolvers(resolvers);
         }
+
         if (this.returnValueHandlers == null) {
             List<HandlerMethodReturnValueHandler> handlers = getDefaultReturnValueHandlers();
             this.returnValueHandlers = new HandlerMethodReturnValueHandlerComposite().addHandlers(handlers);
         }
+
         initControllerAdviceCache();
     }
 
@@ -317,12 +318,12 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 //        resolvers.add(new ExpressionValueMethodArgumentResolver(getBeanFactory()));
 
         // Type-based argument resolution
-//        resolvers.add(new ServletRequestMethodArgumentResolver());
-//        resolvers.add(new ServletResponseMethodArgumentResolver());
-//        resolvers.add(new HttpEntityMethodProcessor(getMessageConverters()));
+        resolvers.add(new ServletRequestMethodArgumentResolver());
+        resolvers.add(new ServletResponseMethodArgumentResolver());
+        resolvers.add(new HttpEntityMethodProcessor(getMessageConverters()));
 //        resolvers.add(new RedirectAttributesMethodArgumentResolver());
-//        resolvers.add(new ModelMethodProcessor());
-//        resolvers.add(new MapMethodProcessor());
+        resolvers.add(new ModelMethodProcessor());
+        resolvers.add(new MapMethodProcessor());
 //        resolvers.add(new ErrorsMethodArgumentResolver());
 //        resolvers.add(new SessionStatusMethodArgumentResolver());
 //        resolvers.add(new UriComponentsBuilderMethodArgumentResolver());
@@ -333,7 +334,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 //        }
 
         // Catch-all
-//        resolvers.add(new RequestParamMethodArgumentResolver(getBeanFactory(), true));
+        resolvers.add(new RequestParamMethodArgumentResolver(getBeanFactory(), true));
 //        resolvers.add(new ServletModelAttributeMethodProcessor(true));
 
         return resolvers;
@@ -353,8 +354,8 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 //        resolvers.add(new ExpressionValueMethodArgumentResolver(getBeanFactory()));
 
         // Type-based argument resolution
-//        resolvers.add(new ServletRequestMethodArgumentResolver());
-//        resolvers.add(new ServletResponseMethodArgumentResolver());
+        resolvers.add(new ServletRequestMethodArgumentResolver());
+        resolvers.add(new ServletResponseMethodArgumentResolver());
 
         // Custom arguments
 //        if (getCustomArgumentResolvers() != null) {
@@ -480,6 +481,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
         }
         return sessionAttrHandler;
     }
+
     /**
      * 实际执行执行请求对应的方法
      */
@@ -529,8 +531,8 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
         return getModelAndView(mavContainer, modelFactory, webRequest);
     }
 
-    private ServletInvocableHandlerMethod createRequestMappingMethod(
-            HandlerMethod handlerMethod, WebDataBinderFactory binderFactory) {
+    private ServletInvocableHandlerMethod createRequestMappingMethod(HandlerMethod handlerMethod,
+                                                                     WebDataBinderFactory binderFactory) {
 
         ServletInvocableHandlerMethod requestMethod;
         requestMethod = new ServletInvocableHandlerMethod(handlerMethod);
@@ -632,7 +634,6 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 
         return mav;
     }
-
 
     public static final MethodFilter INIT_BINDER_METHODS = new MethodFilter() {
 

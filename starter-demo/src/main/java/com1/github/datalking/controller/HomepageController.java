@@ -9,23 +9,18 @@ import com1.github.datalking.bo.User;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
-/**
- * Home page controller. It has methods which are invoked by user
- * interactions on home page.
- */
 @Controller
 public class HomepageController {
 
+    //    http://localhost:8999/
     @RequestMapping("/")
     public String welcome(Model model) {
 //    public String welcome(Locale locale, Model model) {
 //    public String welcome() {
 
         System.out.println("before welcome /");
-
         return "home";
     }
 
@@ -33,7 +28,6 @@ public class HomepageController {
     public String testAjax() {
 
         System.out.println("before testAjax /test/ajax");
-
         return "ajax";
     }
 
@@ -42,17 +36,16 @@ public class HomepageController {
     public String getSimpleStr() {
 
         System.out.println("before getSimpleStr /str");
-
         return "home";
     }
 
+    //    http://localhost:8999/user/sample1
     @ResponseBody
     @RequestMapping(value = "/user/sample1")
     public User getUser(Model model) {
+
         System.out.println("before getUser /user");
-
         User u1 = new User("userNameHere", 24);
-
         return u1;
     }
 
@@ -74,8 +67,6 @@ public class HomepageController {
     public List<User> getUser3(Model model) {
 
         System.out.println("before getUser /user3");
-
-
         return getUserList();
     }
 

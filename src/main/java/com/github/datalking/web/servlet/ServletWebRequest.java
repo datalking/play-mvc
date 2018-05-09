@@ -16,6 +16,8 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
+ * 同时存放request和response，主要作为获取请求信息的getter
+ *
  * @author yaoo on 4/25/18
  */
 public class ServletWebRequest extends ServletRequestAttributes implements WebRequest {

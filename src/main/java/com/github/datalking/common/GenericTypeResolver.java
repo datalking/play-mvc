@@ -20,30 +20,39 @@ public abstract class GenericTypeResolver {
 
     private static final Map<Class, Map<TypeVariable, Type>> typeVariableCache = new ConcurrentReferenceHashMap<>();
 
-    //
+    // 获取methodParam的参数类型，可以是泛型
     public static Type getTargetType(MethodParameter methodParam) {
         Assert.notNull(methodParam, "MethodParameter must not be null");
+
+        /// 方法不是构造函数
         if (methodParam.getConstructor() != null) {
             return methodParam.getConstructor().getGenericParameterTypes()[methodParam.getParameterIndex()];
-        } else {
+        }
+        /// 方法是构造函数
+        else {
+
             if (methodParam.getParameterIndex() >= 0) {
+
                 return methodParam.getMethod().getGenericParameterTypes()[methodParam.getParameterIndex()];
             } else {
+
                 return methodParam.getMethod().getGenericReturnType();
             }
         }
     }
 
-    //
+    // 设置methodParam的参数类型为clazz
     public static Class<?> resolveParameterType(MethodParameter methodParam, Class<?> clazz) {
-        //
+        // 获取methodParam的泛型类型
         Type genericType = getTargetType(methodParam);
-        Assert.notNull(clazz, "Class must not be null");
 
-        //
+        // 获取clazz的泛型与具体类型的map
+        Assert.notNull(clazz, "Class must not be null");
         Map<TypeVariable, Type> typeVariableMap = getTypeVariableMap(clazz);
-        //
+
+        // 获取泛型的基本类型
         Type rawType = getRawType(genericType, typeVariableMap);
+        // 获取具体类型
         Class<?> result = (rawType instanceof Class ? (Class) rawType : methodParam.getParameterType());
 
         methodParam.setParameterType(result);
@@ -235,8 +244,11 @@ public abstract class GenericTypeResolver {
         return (resolvedType instanceof Class ? (Class) resolvedType : Object.class);
     }
 
+    // 获取泛型的基本类型
     static Type getRawType(Type genericType, Map<TypeVariable, Type> typeVariableMap) {
+
         Type resolvedType = genericType;
+
         if (genericType instanceof TypeVariable) {
             TypeVariable tv = (TypeVariable) genericType;
             resolvedType = typeVariableMap.get(tv);
@@ -244,6 +256,7 @@ public abstract class GenericTypeResolver {
                 resolvedType = extractBoundForTypeVariable(tv);
             }
         }
+
         if (resolvedType instanceof ParameterizedType) {
             return ((ParameterizedType) resolvedType).getRawType();
         } else {
@@ -251,6 +264,7 @@ public abstract class GenericTypeResolver {
         }
     }
 
+    // 获取clazz的泛型与具体类型的map
     public static Map<TypeVariable, Type> getTypeVariableMap(Class<?> clazz) {
         Map<TypeVariable, Type> typeVariableMap = typeVariableCache.get(clazz);
 

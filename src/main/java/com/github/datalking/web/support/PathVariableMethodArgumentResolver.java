@@ -12,8 +12,8 @@ import com.github.datalking.web.servlet.HandlerMapping;
 import javax.servlet.ServletException;
 import java.util.HashMap;
 import java.util.Map;
-
 /**
+ * 解析方法中@PathVariable的参数
  * @author yaoo on 4/29/18
  */
 public class PathVariableMethodArgumentResolver extends AbstractNamedValueMethodArgumentResolver {
@@ -40,7 +40,6 @@ public class PathVariableMethodArgumentResolver extends AbstractNamedValueMethod
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected Object resolveName(String name, MethodParameter parameter, WebRequest request) throws Exception {
         Map<String, String> uriTemplateVars =
                 (Map<String, String>) request.getAttribute(
@@ -53,7 +52,6 @@ public class PathVariableMethodArgumentResolver extends AbstractNamedValueMethod
     @Override
     protected void handleMissingValue(String name, MethodParameter param) throws ServletException {
         String paramType = param.getParameterType().getName();
-//        throw new ServletRequestBindingException("Missing URI template variable '" + name + "' for method parameter type [" + paramType + "]");
         try {
             throw new Exception("Missing URI template variable '" + name + "' for method parameter type [" + paramType + "]");
         } catch (Exception e) {

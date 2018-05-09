@@ -38,6 +38,8 @@ public class ExtendedModelMap extends ModelMap implements Model {
         return this;
     }
 
+    // 返回自身的Map
+    @Override
     public Map<String, Object> asMap() {
         return this;
     }

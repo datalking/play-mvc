@@ -86,6 +86,7 @@ public class InvocableHandlerMethod extends HandlerMethod {
                                              ModelAndViewContainer mavContainer,
                                              Object... providedArgs) throws Exception {
 
+        // 获取所有传入参数
         MethodParameter[] parameters = getMethodParameters();
         Object[] args = new Object[parameters.length];
 
@@ -94,29 +95,33 @@ public class InvocableHandlerMethod extends HandlerMethod {
             // 设置 LocalVariableTableParameterNameDiscoverer
             parameter.initParameterNameDiscovery(this.parameterNameDiscoverer);
 
-            GenericTypeResolver.resolveParameterType(parameter, getBean().getClass());
+            // 设置parameter类型为clazz
+            Class clazz = getBean().getClass();
+            GenericTypeResolver.resolveParameterType(parameter, clazz);
 
+            // 检验parameter的类型是否为providedArgs
             args[i] = resolveProvidedArgument(parameter, providedArgs);
+
+            /// 如果parameter类型在providedArgs里面，则跳过，一般不在
             if (args[i] != null) {
                 continue;
             }
+
             if (this.argumentResolvers.supportsParameter(parameter)) {
-                try {
-                    args[i] = this.argumentResolvers.resolveArgument(
-                            parameter, mavContainer, request, this.dataBinderFactory);
+                try { // 解析第i个参数
+                    args[i] = this.argumentResolvers.resolveArgument(parameter, mavContainer, request, this.dataBinderFactory);
                     continue;
                 } catch (Exception ex) {
-                    if (logger.isDebugEnabled()) {
-                        logger.debug(getArgumentResolutionErrorMessage("Error resolving argument", i), ex);
-                    }
                     throw ex;
                 }
             }
+
             if (args[i] == null) {
                 String msg = getArgumentResolutionErrorMessage("No suitable resolver for argument", i);
                 throw new IllegalStateException(msg);
             }
         }
+
         return args;
     }
 
@@ -138,11 +143,13 @@ public class InvocableHandlerMethod extends HandlerMethod {
         if (providedArgs == null) {
             return null;
         }
+
         for (Object providedArg : providedArgs) {
             if (parameter.getParameterType().isInstance(providedArg)) {
                 return providedArg;
             }
         }
+
         return null;
     }
 

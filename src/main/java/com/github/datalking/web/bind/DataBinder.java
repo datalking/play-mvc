@@ -1,6 +1,7 @@
 package com.github.datalking.web.bind;
 
 import com.github.datalking.beans.MutablePropertyValues;
+import com.github.datalking.common.MethodParameter;
 
 /**
  * @author yaoo on 4/29/18
@@ -41,5 +42,11 @@ public class DataBinder {
     protected void applyPropertyValues(MutablePropertyValues mpvs) {
 
     }
+
+    public <T> T convertIfNecessary(Object value, Class<T> requiredType, MethodParameter methodParam) {
+
+        return getTypeConverter().convertIfNecessary(value, requiredType, methodParam);
+    }
+
 
 }

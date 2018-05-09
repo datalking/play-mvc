@@ -25,12 +25,15 @@ public class HandlerMethod {
 
     private final BeanFactory beanFactory;
 
+    // 方法所属bean
     private final Object bean;
 
+    // 方法实例
     private final Method method;
 
     private final Method bridgedMethod;
 
+    // 方法参数
     private final MethodParameter[] parameters;
 
     public HandlerMethod(Object bean, Method method) {
@@ -186,7 +189,7 @@ public class HandlerMethod {
     }
 
     /**
-     * HandlerMethod的返回值
+     * HandlerMethod的返回值，索引为-1
      */
     private class ReturnValueMethodParameter extends HandlerMethodParameter {
 

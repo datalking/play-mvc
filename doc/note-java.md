@@ -23,6 +23,28 @@ java笔记
 
 ## summary
 
+- Type 是Java类型体系中的顶级接口，Class是Type的一个直接实现类，Type有4个直接子接口：TypeVariable，WildcardType，ParameterizedType，GenericArrayType
+
+- TypeVariable 表示类型变量，是各种类型变量的公共父接口。
+  比如T，比如K extends Comparable<? super T> & Serializable，这个接口里面有个getBounds()方法，它用来获得类型变量上限的Type数组，如果没有定义上限，则默认设定上限为Object
+
+- WildcardType 用来描述通配符表达式，如? super T，调用getUpperBounds()上限和getLowerBounds()下限这两个方法，获得类型变量?的限定类型(上下限)
+
+- ParameterizedType 表示参数化类型，如java.lang.Comparable<? super T>，再比如List<T>，List<String>，这些都叫参数化类型。
+  得到Comparable<? super T>之后，再调用 `getRawType()` 与 `getActualTypeArguments()` 两个方法，
+  就可以得到声明此参数化类型的类(java.lang.Comparable)和实际的类型参数数组([? super T])，而这个? super T又是一个WildcardType类型。
+
+- GenericArrayType 表示泛型数组，即一种元素类型是参数化类型或者类型变量的数组类型
+```
+// 以下属于 GenericArrayType
+List<String>[] pTypeArray;
+T[] vTypeArray;
+
+// 以下不属于 GenericArrayType
+List<String> list;
+String[] strings;
+Person[] ints;
+```
 
 - jdk动态代理生成执行before、after的打印结果可以通过System.setOut重定向来获取
 

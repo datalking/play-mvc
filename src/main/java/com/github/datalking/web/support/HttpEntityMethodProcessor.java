@@ -44,14 +44,13 @@ public class HttpEntityMethodProcessor extends AbstractMessageConverterMethodPro
     public Object resolveArgument(MethodParameter parameter,
                                   ModelAndViewContainer mavContainer,
                                   WebRequest webRequest,
-                                  WebDataBinderFactory binderFactory)
-            throws IOException {
+                                  WebDataBinderFactory binderFactory) throws IOException {
 
         HttpInputMessage inputMessage = createInputMessage(webRequest);
         Type paramType = getHttpEntityType(parameter);
 
         Object body = readWithMessageConverters(webRequest, parameter, paramType);
-        return new HttpEntity<Object>(body, inputMessage.getHeaders());
+        return new HttpEntity<>(body, inputMessage.getHeaders());
     }
 
     private Type getHttpEntityType(MethodParameter parameter) {
@@ -67,8 +66,10 @@ public class HttpEntityMethodProcessor extends AbstractMessageConverterMethodPro
                 "' in method " + parameter.getMethod() + " is not parameterized or has more than one parameter");
     }
 
-    public void handleReturnValue(Object returnValue, MethodParameter returnType,
-                                  ModelAndViewContainer mavContainer, WebRequest webRequest) throws Exception {
+    public void handleReturnValue(Object returnValue,
+                                  MethodParameter returnType,
+                                  ModelAndViewContainer mavContainer,
+                                  WebRequest webRequest) throws Exception {
 
         mavContainer.setRequestHandled(true);
         if (returnValue == null) {

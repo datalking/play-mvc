@@ -14,25 +14,32 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 方法参数操作类
+ * 方法参数操作工具类
  */
 public class MethodParameter {
 
+    // 普通方法实例
     private final Method method;
 
+    // 构造方法实例
     private final Constructor<?> constructor;
 
+    // 方法参数索引，从0开始，-1表示返回值类型，0是第一个参数
     private final int parameterIndex;
 
+    // 参数具体类型
     private volatile Class<?> parameterType;
 
+    // 参数类型泛型
     private volatile Type genericParameterType;
 
+    // 方法参数上的注解，如@PathVariable
     private volatile Annotation[] parameterAnnotations;
 
     // 获取方法参数名的类
     private volatile ParameterNameDiscoverer parameterNameDiscoverer;
 
+    // 方法参数名
     private volatile String parameterName;
 
     private int nestingLevel = 1;
@@ -78,6 +85,19 @@ public class MethodParameter {
         this.nestingLevel = original.nestingLevel;
         this.typeIndexesPerLevel = original.typeIndexesPerLevel;
         this.typeVariableMap = original.typeVariableMap;
+    }
+
+    public static MethodParameter forMethodOrConstructor(Object methodOrConstructor, int parameterIndex) {
+
+        if (methodOrConstructor instanceof Method) {
+            return new MethodParameter((Method) methodOrConstructor, parameterIndex);
+
+        } else if (methodOrConstructor instanceof Constructor) {
+            return new MethodParameter((Constructor<?>) methodOrConstructor, parameterIndex);
+
+        } else {
+            throw new IllegalArgumentException(methodOrConstructor + "is neither a Method nor a Constructor");
+        }
     }
 
     public Method getMethod() {
@@ -194,6 +214,7 @@ public class MethodParameter {
         return (getParameterAnnotation(annotationType) != null);
     }
 
+    // 设置 parameterNameDiscoverer
     public void initParameterNameDiscovery(ParameterNameDiscoverer parameterNameDiscoverer) {
         this.parameterNameDiscoverer = parameterNameDiscoverer;
     }
@@ -259,19 +280,6 @@ public class MethodParameter {
     @Override
     public int hashCode() {
         return (getMember().hashCode() * 31 + this.parameterIndex);
-    }
-
-    public static MethodParameter forMethodOrConstructor(Object methodOrConstructor, int parameterIndex) {
-
-        if (methodOrConstructor instanceof Method) {
-            return new MethodParameter((Method) methodOrConstructor, parameterIndex);
-
-        } else if (methodOrConstructor instanceof Constructor) {
-            return new MethodParameter((Constructor<?>) methodOrConstructor, parameterIndex);
-
-        } else {
-            throw new IllegalArgumentException(methodOrConstructor + "is neither a Method nor a Constructor");
-        }
     }
 
 }

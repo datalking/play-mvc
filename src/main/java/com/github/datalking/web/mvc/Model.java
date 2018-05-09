@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
+ * 存放属性kv 接口
+ *
  * @author yaoo on 4/24/18
  */
 public interface Model {

@@ -37,7 +37,7 @@ public class HandlerMethodReturnValueHandlerComposite implements HandlerMethodRe
 
         Assert.notNull(handler, "Unknown return value type [" + returnType.getParameterType().getName() + "]");
 
-        // 处理返回值
+        // 处理返回值，主要setViewName()或设置重定向
         handler.handleReturnValue(returnValue, returnType, mavContainer, webRequest);
     }
 
