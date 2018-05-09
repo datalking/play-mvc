@@ -1,5 +1,17 @@
 # dev-log
 
+
+- @ResponseBody The resource identified by this request is only capable of generating responses with characteristics not acceptable according to the request "accept" headers.
+没有添加依赖
+```
+   <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>2.7.9</version>
+    </dependency>
+```
+  
+
 - A child container failed during start LifecycleException: Failed to start component [StandardEngine[Tomcat].StandardHost[localhost
  将tomcat相关依赖改为provided
 

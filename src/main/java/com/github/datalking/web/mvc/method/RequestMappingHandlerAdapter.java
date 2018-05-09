@@ -118,14 +118,12 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
     public RequestMappingHandlerAdapter() {
 
         StringHttpMessageConverter stringHttpMessageConverter = new StringHttpMessageConverter();
-        MappingJackson2HttpMessageConverter jsonConverter = new MappingJackson2HttpMessageConverter();
         stringHttpMessageConverter.setWriteAcceptCharset(false);
 
         /// 添加4种http数据转换器
         this.messageConverters = new ArrayList<>(4);
 //        this.messageConverters.add(new ByteArrayHttpMessageConverter());
         this.messageConverters.add(stringHttpMessageConverter);
-        this.messageConverters.add(jsonConverter);
 //        this.messageConverters.add(new SourceHttpMessageConverter<Source>());
 //        this.messageConverters.add(new AllEncompassingFormHttpMessageConverter());
     }
@@ -458,6 +456,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
             }
         }
 
+        // ==== 调用执行方法
         return invokeHandleMethod(request, response, handlerMethod);
     }
 
@@ -481,7 +480,6 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
         }
         return sessionAttrHandler;
     }
-
     /**
      * 实际执行执行请求对应的方法
      */

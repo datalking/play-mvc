@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 基于ASM获取局部变量表中的方法名
+ * 基于ASM获取局部变量表中的方法参数名
  *
  * @author yaoo on 4/29/18
  */
@@ -63,7 +63,6 @@ public class LocalVariableTableParameterNameDiscoverer implements ParameterNameD
     private Map<Member, String[]> inspectClass(Class<?> clazz) {
         InputStream is = clazz.getResourceAsStream(ClassUtils.getClassFileName(clazz));
         if (is == null) {
-            // We couldn't load the class file, which is not fatal as it simply means this method of discovering parameter names won't work.
             if (logger.isDebugEnabled()) {
                 logger.debug("Cannot find '.class' file for class [" + clazz +
                         "] - unable to determine constructor/method parameter names");
@@ -146,11 +145,6 @@ public class LocalVariableTableParameterNameDiscoverer implements ParameterNameD
         private final boolean isStatic;
 
         private boolean hasLvtInfo = false;
-
-        /*
-         * The nth entry contains the slot index of the LVT table entry holding the
-         * argument name for the nth parameter.
-         */
         private final int[] lvtSlotIndex;
 
         public LocalVariableTableVisitor(Class<?> clazz, Map<Member, String[]> map, String name, String desc, boolean isStatic) {
@@ -217,7 +211,6 @@ public class LocalVariableTableParameterNameDiscoverer implements ParameterNameD
         }
 
         private static boolean isWideType(Type aType) {
-            // float is not a wide type
             return (aType == Type.LONG_TYPE || aType == Type.DOUBLE_TYPE);
         }
     }

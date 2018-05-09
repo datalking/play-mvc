@@ -16,6 +16,8 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 
 /**
+ * 利用java反射调用处理请求的方法
+ *
  * @author yaoo on 5/2/18
  */
 public class InvocableHandlerMethod extends HandlerMethod {
@@ -86,10 +88,14 @@ public class InvocableHandlerMethod extends HandlerMethod {
 
         MethodParameter[] parameters = getMethodParameters();
         Object[] args = new Object[parameters.length];
+
         for (int i = 0; i < parameters.length; i++) {
             MethodParameter parameter = parameters[i];
+            // 设置 LocalVariableTableParameterNameDiscoverer
             parameter.initParameterNameDiscovery(this.parameterNameDiscoverer);
+
             GenericTypeResolver.resolveParameterType(parameter, getBean().getClass());
+
             args[i] = resolveProvidedArgument(parameter, providedArgs);
             if (args[i] != null) {
                 continue;
@@ -148,6 +154,7 @@ public class InvocableHandlerMethod extends HandlerMethod {
         ReflectionUtils.makeAccessible(bm);
         try {
             Object obj = getBean();
+
             // ==== 通过java反射调用对象的方法，即调用Controller中匹配的方法
             return bm.invoke(obj, args);
         } catch (IllegalArgumentException ex) {

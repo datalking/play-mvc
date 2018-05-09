@@ -13,15 +13,19 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
 /**
+ * 处理请求的方法的封装类
+ * <p>
+ * 便于操作方法参数与返回值，通过内部类 HandlerMethodParameter，ReturnValueMethodParameter实现
+ *
  * @author yaoo on 4/28/18
  */
 public class HandlerMethod {
 
     protected final Logger logger = LoggerFactory.getLogger(HandlerMethod.class);
 
-    private final Object bean;
-
     private final BeanFactory beanFactory;
+
+    private final Object bean;
 
     private final Method method;
 
@@ -161,6 +165,9 @@ public class HandlerMethod {
         return this.method.toGenericString();
     }
 
+    /**
+     * HandlerMethod的参数
+     */
     private class HandlerMethodParameter extends MethodParameter {
 
         public HandlerMethodParameter(int index) {
@@ -178,6 +185,9 @@ public class HandlerMethod {
         }
     }
 
+    /**
+     * HandlerMethod的返回值
+     */
     private class ReturnValueMethodParameter extends HandlerMethodParameter {
 
         private final Object returnValue;

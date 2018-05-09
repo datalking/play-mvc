@@ -6,7 +6,9 @@ import com.github.datalking.annotation.web.ResponseBody;
 import com.github.datalking.web.mvc.Model;
 import com1.github.datalking.bo.User;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -18,7 +20,9 @@ import java.util.Map;
 public class HomepageController {
 
     @RequestMapping("/")
-    public String welcome(Locale locale, Model model) {
+    public String welcome(Model model) {
+//    public String welcome(Locale locale, Model model) {
+//    public String welcome() {
 
         System.out.println("before welcome /");
 
@@ -43,16 +47,17 @@ public class HomepageController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/user/sample1", produces = "application/json")
+    @RequestMapping(value = "/user/sample1")
     public User getUser(Model model) {
         System.out.println("before getUser /user");
+
         User u1 = new User("userNameHere", 24);
 
         return u1;
     }
 
     @ResponseBody
-    @RequestMapping(value = "/user/sample2", produces = "application/json")
+    @RequestMapping(value = "/user/sample2")
     public Map<String, Object> getUser2(Model model) {
 
         System.out.println("before getUser /user2");
@@ -64,5 +69,27 @@ public class HomepageController {
         return map;
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/user/sample3", produces = "application/json")
+    public List<User> getUser3(Model model) {
+
+        System.out.println("before getUser /user3");
+
+
+        return getUserList();
+    }
+
+    private List<User> getUserList() {
+        List<User> lst = new ArrayList<>();
+        User user1 = new User();
+        user1.setName("aa");
+        user1.setAge(10);
+        lst.add(user1);
+        User user2 = new User();
+        user2.setName("bb");
+        user2.setAge(33);
+        lst.add(user2);
+        return lst;
+    }
 
 }

@@ -6,22 +6,23 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
+ * 优先找到方法参数名不为空的类
+ *
  * @author yaoo on 4/19/18
  */
 public class PrioritizedParameterNameDiscoverer implements ParameterNameDiscoverer {
 
     private final List<ParameterNameDiscoverer> parameterNameDiscoverers = new LinkedList<>();
 
-
     public void addDiscoverer(ParameterNameDiscoverer pnd) {
         this.parameterNameDiscoverers.add(pnd);
     }
-
 
     @Override
     public String[] getParameterNames(Method method) {
         for (ParameterNameDiscoverer pnd : this.parameterNameDiscoverers) {
             String[] result = pnd.getParameterNames(method);
+
             if (result != null) {
                 return result;
             }
@@ -33,6 +34,7 @@ public class PrioritizedParameterNameDiscoverer implements ParameterNameDiscover
     public String[] getParameterNames(Constructor<?> ctor) {
         for (ParameterNameDiscoverer pnd : this.parameterNameDiscoverers) {
             String[] result = pnd.getParameterNames(ctor);
+
             if (result != null) {
                 return result;
             }

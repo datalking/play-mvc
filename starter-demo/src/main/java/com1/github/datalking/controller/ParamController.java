@@ -13,14 +13,14 @@ import java.util.List;
 @Controller
 public class ParamController {
 
-//    http://localhost:8080/param/model
+//    http://localhost:8999/param/model
     @RequestMapping("/param/model")
     public String testModel(Model model) {
         model.addAttribute("userList", getUserList());
         return "user-info";
     }
 
-//    http://localhost:8080/param/path/var/12
+//    http://localhost:8999/param/path/var/12
     @RequestMapping("/param/path/var/{v}")
     public String testPathVariable(@PathVariable(value = "v") Integer param1, Model model) {
         System.out.println("/param/path/var/{v}:" + param1);
@@ -30,7 +30,7 @@ public class ParamController {
         return "param-simple";
     }
 
-//    http://localhost:8080/param/req?v1=str&v3=33
+//    http://localhost:8999/param/req?v1=str&v3=33
     @RequestMapping("/param/req")
     public String testRequestParam(@RequestParam(value = "v1") String v1, @RequestParam(value = "v3") Integer v2, Model model) {
         System.out.println("RequestParam:" + v1 + ", " + v2);

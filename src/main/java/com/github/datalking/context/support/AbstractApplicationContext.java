@@ -25,12 +25,14 @@ import java.util.Map;
  */
 public abstract class AbstractApplicationContext implements ConfigurableApplicationContext {
 
+    // messageSource默认bean名称
     public static final String MESSAGE_SOURCE_BEAN_NAME = "messageSource";
 
     protected DefaultListableBeanFactory beanFactory;
 
     private String configLocation;
 
+    // beanFactoryPostProcessors在加载bean的定义之后、bean实例化之前执行
     private final List<BeanFactoryPostProcessor> beanFactoryPostProcessors = new ArrayList<>();
 
     private String id = ObjectUtils.identityToString(this);
@@ -69,13 +71,15 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
         this.beanFactory = beanFactory;
     }
 
-    @Override
-    public Object getBean(String name) {
-        return beanFactory.getBean(name);
-    }
+    // ======== BeanFactory Interface ========
 
     public ConfigurableListableBeanFactory getBeanFactory() {
         return beanFactory;
+    }
+
+    @Override
+    public Object getBean(String name) {
+        return getBeanFactory().getBean(name);
     }
 
     @Override
@@ -87,6 +91,13 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
     public boolean isTypeMatch(String name, Class<?> targetType) {
         return getBeanFactory().isTypeMatch(name, targetType);
     }
+
+    @Override
+    public boolean containsBean(String name) {
+        return getBeanFactory().containsBean(name);
+    }
+
+    // ======== ConfigurableApplicationContext Interface ========
 
     /**
      * 读取配置文件并注册bean
@@ -116,6 +127,7 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
             // 实例化各种内部bean，如AspectJAutoProxyCreator
             registerBeanPostProcessors(beanFactory);
 
+            // 实例化国际化语言相关bean
             initMessageSource();
 
             // 通过调用getBean()创建非懒加载而是需要立即实例化的bean
@@ -130,9 +142,7 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
     protected void prepareRefresh() {
 
         this.startupDate = System.currentTimeMillis();
-
         this.active = true;
-
     }
 
     protected void obtainFreshBeanFactory() {
@@ -177,12 +187,11 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
 
     protected void initMessageSource() {
 
-//        if (beanFactory.containsLocalBean(MESSAGE_SOURCE_BEAN_NAME)) {
         if (beanFactory.containsBeanDefinition(MESSAGE_SOURCE_BEAN_NAME)) {
             this.messageSource = (MessageSource) beanFactory.getBean(MESSAGE_SOURCE_BEAN_NAME);
         } else {
             DelegatingMessageSource dms = new DelegatingMessageSource();
-            this.messageSource = (MessageSource) dms;
+            this.messageSource = dms;
             beanFactory.registerSingleton(MESSAGE_SOURCE_BEAN_NAME, this.messageSource);
         }
     }
@@ -238,11 +247,6 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
 //        onClose();
         this.active = false;
 
-    }
-
-    @Override
-    public boolean containsBean(String name) {
-        return getBeanFactory().containsBean(name);
     }
 
     // ======== ApplicationContext interface ========
