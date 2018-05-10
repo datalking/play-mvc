@@ -1,5 +1,6 @@
 package com.github.datalking.web.bind;
 
+import com.github.datalking.common.MessageCodesResolver;
 import com.github.datalking.common.convert.ConversionService;
 import com.github.datalking.web.context.request.WebRequest;
 
@@ -12,7 +13,7 @@ public class ConfigurableWebBindingInitializer implements WebBindingInitializer 
 
     private boolean directFieldAccess = false;
 
-//    private MessageCodesResolver messageCodesResolver;
+    private MessageCodesResolver messageCodesResolver;
 
 //    private BindingErrorProcessor bindingErrorProcessor;
 
@@ -38,13 +39,13 @@ public class ConfigurableWebBindingInitializer implements WebBindingInitializer 
         return directFieldAccess;
     }
 
-//    public final void setMessageCodesResolver(MessageCodesResolver messageCodesResolver) {
-//        this.messageCodesResolver = messageCodesResolver;
-//    }
-//
-//    public final MessageCodesResolver getMessageCodesResolver() {
-//        return this.messageCodesResolver;
-//    }
+    public final void setMessageCodesResolver(MessageCodesResolver messageCodesResolver) {
+        this.messageCodesResolver = messageCodesResolver;
+    }
+
+    public final MessageCodesResolver getMessageCodesResolver() {
+        return this.messageCodesResolver;
+    }
 //
 //    public final void setBindingErrorProcessor(BindingErrorProcessor bindingErrorProcessor) {
 //        this.bindingErrorProcessor = bindingErrorProcessor;
@@ -82,15 +83,14 @@ public class ConfigurableWebBindingInitializer implements WebBindingInitializer 
 //        return this.propertyEditorRegistrars;
 //    }
 
-
     public void initBinder(WebDataBinder binder, WebRequest request) {
-//        binder.setAutoGrowNestedPaths(this.autoGrowNestedPaths);
-//        if (this.directFieldAccess) {
-//            binder.initDirectFieldAccess();
-//        }
-//        if (this.messageCodesResolver != null) {
-//            binder.setMessageCodesResolver(this.messageCodesResolver);
-//        }
+        binder.setAutoGrowNestedPaths(this.autoGrowNestedPaths);
+        if (this.directFieldAccess) {
+            binder.initDirectFieldAccess();
+        }
+        if (this.messageCodesResolver != null) {
+            binder.setMessageCodesResolver(this.messageCodesResolver);
+        }
 //        if (this.bindingErrorProcessor != null) {
 //            binder.setBindingErrorProcessor(this.bindingErrorProcessor);
 //        }
@@ -99,7 +99,7 @@ public class ConfigurableWebBindingInitializer implements WebBindingInitializer 
 //            binder.setValidator(this.validator);
 //        }
         if (this.conversionService != null) {
-//            binder.setConversionService(this.conversionService);
+            binder.setConversionService(this.conversionService);
         }
 //        if (this.propertyEditorRegistrars != null) {
 //            for (PropertyEditorRegistrar propertyEditorRegistrar : this.propertyEditorRegistrars) {

@@ -43,6 +43,7 @@ start from [http://localhost:8999](http://localhost:8999)
 
 - [ ] 支持 @PathVariable
 - [ ] 支持 @RequestParam 
+- [ ] 测试 @PathVariable 多个路径参数
 - [ ] 支持 Redirect 
 - [ ] 支持 文件上传 MultipartResolver 
 - [ ] 使用内置tomcat直接启动mvc应用 

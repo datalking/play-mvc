@@ -31,7 +31,6 @@ public class BeanPropertyBindingResult extends AbstractPropertyBindingResult imp
         this.autoGrowCollectionLimit = autoGrowCollectionLimit;
     }
 
-
     @Override
     public final Object getTarget() {
         return this.target;

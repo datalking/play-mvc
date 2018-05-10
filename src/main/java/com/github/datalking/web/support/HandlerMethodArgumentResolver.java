@@ -16,5 +16,4 @@ public interface HandlerMethodArgumentResolver {
                            WebRequest webRequest,
                            WebDataBinderFactory binderFactory) throws Exception;
 
-
 }

@@ -18,17 +18,17 @@ public class ServletRequestDataBinder extends WebDataBinder {
         super(target, objectName);
     }
 
-    /**
-     * todo
-     */
     public void bind(ServletRequest request) {
-//        MutablePropertyValues mpvs = new ServletRequestParameterPropertyValues(request);
+        MutablePropertyValues mpvs = new ServletRequestParameterPropertyValues(request);
 //        MultipartRequest multipartRequest = WebUtils.getNativeRequest(request, MultipartRequest.class);
 //        if (multipartRequest != null) {
 //            bindMultipart(multipartRequest.getMultiFileMap(), mpvs);
 //        }
-//        addBindValues(mpvs, request);
-//        doBind(mpvs);
+
+        // 空方法，留给子类实现
+        addBindValues(mpvs, request);
+
+        doBind(mpvs);
     }
 
     protected void addBindValues(MutablePropertyValues mpvs, ServletRequest request) {

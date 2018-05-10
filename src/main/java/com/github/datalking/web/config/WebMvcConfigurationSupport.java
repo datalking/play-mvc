@@ -1,6 +1,9 @@
 package com.github.datalking.web.config;
 
 import com.github.datalking.annotation.Bean;
+import com.github.datalking.common.MessageCodesResolver;
+import com.github.datalking.common.convert.DefaultConversionService;
+import com.github.datalking.common.convert.GenericConversionService;
 import com.github.datalking.context.ApplicationContext;
 import com.github.datalking.context.ApplicationContextAware;
 import com.github.datalking.util.AntPathMatcher;
@@ -250,25 +253,26 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 
     protected ConfigurableWebBindingInitializer getConfigurableWebBindingInitializer() {
         ConfigurableWebBindingInitializer initializer = new ConfigurableWebBindingInitializer();
-//        initializer.setConversionService(mvcConversionService());
+        initializer.setConversionService(mvcConversionService());
 //        initializer.setValidator(mvcValidator());
-//        initializer.setMessageCodesResolver(getMessageCodesResolver());
+        initializer.setMessageCodesResolver(getMessageCodesResolver());
         return initializer;
     }
 
-//    protected MessageCodesResolver getMessageCodesResolver() {
-//        return null;
-//    }
-//
+    @Bean
+    public GenericConversionService mvcConversionService() {
+        GenericConversionService conversionService = new DefaultConversionService();
+//        addFormatters(conversionService);
+        return conversionService;
+    }
+
+    protected MessageCodesResolver getMessageCodesResolver() {
+        return null;
+    }
+
 //    protected void configureAsyncSupport(AsyncSupportConfigurer configurer) {
 //    }
 
-//    @Bean
-//    public FormattingConversionService mvcConversionService() {
-//        FormattingConversionService conversionService = new DefaultFormattingConversionService();
-//        addFormatters(conversionService);
-//        return conversionService;
-//    }
 
 //    protected void addFormatters(FormatterRegistry registry) {
 //    }
@@ -372,7 +376,7 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
         exceptionResolvers.add(exceptionHandlerExceptionResolver);
 
         ResponseStatusExceptionResolver responseStatusExceptionResolver = new ResponseStatusExceptionResolver();
-//        responseStatusExceptionResolver.setMessageSource(this.applicationContext);
+        responseStatusExceptionResolver.setMessageSource(this.applicationContext);
         exceptionResolvers.add(responseStatusExceptionResolver);
 
         exceptionResolvers.add(new DefaultHandlerExceptionResolver());

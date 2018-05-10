@@ -8,17 +8,17 @@ import java.beans.PropertyDescriptor;
  *
  * @author yaoo on 4/3/18
  */
-public interface BeanWrapper {
+public interface BeanWrapper extends ConfigurablePropertyAccessor {
 
     Object getWrappedInstance();
 
     Class<?> getWrappedClass();
 
-    void setPropertyValues(PropertyValues pvs) throws NoSuchFieldException, IllegalAccessException;
+    void setPropertyValues(PropertyValues pvs);
 
     PropertyDescriptor[] getPropertyDescriptors();
 
-    PropertyDescriptor getPropertyDescriptor(String propertyName) throws IntrospectionException;
+    PropertyDescriptor getPropertyDescriptor(String propertyName);
 
 //    void setAutoGrowNestedPaths(boolean autoGrowNestedPaths);
 //    boolean isAutoGrowNestedPaths();

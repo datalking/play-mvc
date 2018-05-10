@@ -16,6 +16,7 @@ public class ServletRequestDataBinderFactory extends InitBinderDataBinderFactory
 
     @Override
     protected ServletRequestDataBinder createBinderInstance(Object target, String objectName, WebRequest request) {
+
         return new ExtendedServletRequestDataBinder(target, objectName);
     }
 

@@ -92,7 +92,6 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
     private Long asyncRequestTimeout;
 
 //    private CallableProcessingInterceptor[] callableInterceptors = new CallableProcessingInterceptor[0];
-
 //    private DeferredResultProcessingInterceptor[] deferredResultInterceptors = new DeferredResultProcessingInterceptor[0];
 
     private boolean ignoreDefaultModelOnRedirect = false;
@@ -134,11 +133,9 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 //        this.customArgumentResolvers = argumentResolvers;
 //    }
 //
-//
 //    public List<HandlerMethodArgumentResolver> getCustomArgumentResolvers() {
 //        return this.customArgumentResolvers;
 //    }
-
 
     public void setArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
         if (argumentResolvers == null) {
@@ -153,7 +150,6 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
         return this.argumentResolvers;
     }
 
-
     public void setInitBinderArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
         if (argumentResolvers == null) {
             this.initBinderArgumentResolvers = null;
@@ -163,11 +159,9 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
         }
     }
 
-
     public HandlerMethodArgumentResolverComposite getInitBinderArgumentResolvers() {
         return this.initBinderArgumentResolvers;
     }
-
 
     public void setCustomReturnValueHandlers(List<HandlerMethodReturnValueHandler> returnValueHandlers) {
         this.customReturnValueHandlers = returnValueHandlers;
@@ -190,11 +184,9 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
         return this.returnValueHandlers;
     }
 
-
     public void setModelAndViewResolvers(List<ModelAndViewResolver> modelAndViewResolvers) {
         this.modelAndViewResolvers = modelAndViewResolvers;
     }
-
 
     public List<ModelAndViewResolver> getModelAndViewResolvers() {
         return modelAndViewResolvers;
@@ -212,7 +204,6 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
         return this.messageConverters;
     }
 
-
     public void setWebBindingInitializer(WebBindingInitializer webBindingInitializer) {
         this.webBindingInitializer = webBindingInitializer;
     }
@@ -220,7 +211,6 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
     public WebBindingInitializer getWebBindingInitializer() {
         return this.webBindingInitializer;
     }
-
 
 //    public void setTaskExecutor(AsyncTaskExecutor taskExecutor) {
 //        this.taskExecutor = taskExecutor;
@@ -266,7 +256,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
         this.parameterNameDiscoverer = parameterNameDiscoverer;
     }
 
-
+    @Override
     public void setBeanFactory(BeanFactory beanFactory) {
         if (beanFactory instanceof ConfigurableBeanFactory) {
             this.beanFactory = (ConfigurableBeanFactory) beanFactory;
@@ -277,6 +267,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
         return this.beanFactory;
     }
 
+    @Override
     public void afterPropertiesSet() {
 
         if (this.argumentResolvers == null) {
@@ -340,7 +331,6 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
         return resolvers;
     }
 
-
     private List<HandlerMethodArgumentResolver> getDefaultInitBinderArgumentResolvers() {
         List<HandlerMethodArgumentResolver> resolvers = new ArrayList<>();
 
@@ -367,7 +357,6 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 
         return resolvers;
     }
-
 
     private List<HandlerMethodReturnValueHandler> getDefaultReturnValueHandlers() {
         List<HandlerMethodReturnValueHandler> handlers = new ArrayList<>();
@@ -491,8 +480,11 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 
         ServletWebRequest webRequest = new ServletWebRequest(request, response);
 
+        // 创建数据绑定工厂
         WebDataBinderFactory binderFactory = getDataBinderFactory(handlerMethod);
+
         ModelFactory modelFactory = getModelFactory(handlerMethod, binderFactory);
+
         ServletInvocableHandlerMethod invocableMethod = createRequestMappingMethod(handlerMethod, binderFactory);
 
         ModelAndViewContainer mavContainer = new ModelAndViewContainer();
@@ -581,7 +573,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
             methods = HandlerMethodSelector.selectMethods(handlerType, INIT_BINDER_METHODS);
             this.initBinderCache.put(handlerType, methods);
         }
-        List<InvocableHandlerMethod> initBinderMethods = new ArrayList<InvocableHandlerMethod>();
+        List<InvocableHandlerMethod> initBinderMethods = new ArrayList<>();
         // Global methods first
 //        for (Map.Entry<ControllerAdviceBean, Set<Method>> entry : this.initBinderAdviceCache.entrySet()) {
 //            Object bean = entry.getKey().resolveBean();
@@ -597,10 +589,15 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
     }
 
     private InvocableHandlerMethod createInitBinderMethod(Object bean, Method method) {
+
         InvocableHandlerMethod binderMethod = new InvocableHandlerMethod(bean, method);
+
         binderMethod.setHandlerMethodArgumentResolvers(this.initBinderArgumentResolvers);
+
         binderMethod.setDataBinderFactory(new DefaultDataBinderFactory(this.webBindingInitializer));
+
         binderMethod.setParameterNameDiscoverer(this.parameterNameDiscoverer);
+
         return binderMethod;
     }
 

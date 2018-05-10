@@ -64,23 +64,6 @@ public class WebDataBinder extends DataBinder {
         super.doBind(mpvs);
     }
 
-//    public BindingResult getBindingResult() {
-//
-//        return null;
-////        return getInternalBindingResult();
-//    }
-
-
-//    protected AbstractPropertyBindingResult getInternalBindingResult() {
-//        if (this.bindingResult == null) {
-//            initBeanPropertyAccess();
-//        }
-//        return this.bindingResult;
-//    }
-
-
-
-
 //        protected void checkFieldDefaults (MutablePropertyValues mpvs){
 //            if (getFieldDefaultPrefix() != null) {
 //                String fieldDefaultPrefix = getFieldDefaultPrefix();

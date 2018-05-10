@@ -6,6 +6,8 @@ import com.github.datalking.util.Assert;
 import java.beans.PropertyEditorSupport;
 
 /**
+ * PropertyEditor与conversionService的适配器
+ *
  * @author yaoo on 5/10/18
  */
 public class ConvertingPropertyEditorAdapter extends PropertyEditorSupport {
@@ -34,8 +36,7 @@ public class ConvertingPropertyEditorAdapter extends PropertyEditorSupport {
         if (this.canConvertToString) {
 
             return (String) this.conversionService.convert(getValue(), this.targetDescriptor, TypeDescriptor.valueOf(String.class));
-        }
-        else {
+        } else {
             return null;
         }
     }

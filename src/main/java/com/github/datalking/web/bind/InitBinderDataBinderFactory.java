@@ -24,9 +24,13 @@ public class InitBinderDataBinderFactory extends DefaultDataBinderFactory {
 
     @Override
     public void initBinder(WebDataBinder binder, WebRequest request) throws Exception {
+
         for (InvocableHandlerMethod binderMethod : this.binderMethods) {
+
             if (isBinderMethodApplicable(binderMethod, binder)) {
+
                 Object returnValue = binderMethod.invokeForRequest(request, null, binder);
+
                 if (returnValue != null) {
                     throw new IllegalStateException("@InitBinder methods should return void: " + binderMethod);
                 }
@@ -37,6 +41,7 @@ public class InitBinderDataBinderFactory extends DefaultDataBinderFactory {
     protected boolean isBinderMethodApplicable(HandlerMethod initBinderMethod, WebDataBinder binder) {
         InitBinder annot = initBinderMethod.getMethodAnnotation(InitBinder.class);
         Collection<String> names = Arrays.asList(annot.value());
+
         return (names.size() == 0 || names.contains(binder.getObjectName()));
     }
 

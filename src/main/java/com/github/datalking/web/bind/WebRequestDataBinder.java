@@ -17,21 +17,24 @@ public class WebRequestDataBinder extends WebDataBinder {
     }
 
     public void bind(WebRequest request) {
-//        MutablePropertyValues mpvs = new MutablePropertyValues(request.getParameterMap());
-//        if (request instanceof NativeWebRequest) {
-//            MultipartRequest multipartRequest = ((NativeWebRequest) request).getNativeRequest(MultipartRequest.class);
-//        if (multipartRequest != null) {
-//            bindMultipart(multipartRequest.getMultiFileMap(), mpvs);
+
+        MutablePropertyValues mpvs = new MutablePropertyValues(request.getParameterMap());
+
+//        if (request instanceof WebRequest) {
+//            MultipartRequest multipartRequest = ((WebRequest) request).getNativeRequest(MultipartRequest.class);
+//            if (multipartRequest != null) {
+//                bindMultipart(multipartRequest.getMultiFileMap(), mpvs);
+//            }
 //        }
-//        }
-//        doBind(mpvs);
+
+        doBind(mpvs);
     }
 
 
     public void closeNoCatch() throws Exception {
-        if (getBindingResult().hasErrors()) {
-            throw new Exception(getBindingResult() + "");
-        }
+//        if (getBindingResult().hasErrors()) {
+//            throw new Exception(getBindingResult() + "");
+//        }
     }
 
 }

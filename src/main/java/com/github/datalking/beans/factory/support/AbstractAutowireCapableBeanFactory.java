@@ -246,12 +246,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         }
 
         // ==== 批量设置值
-        try {
             bw.setPropertyValues(new MutablePropertyValues(deepCopy));
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-
 
     }
 

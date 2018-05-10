@@ -23,6 +23,7 @@ import com.github.datalking.common.convert.editor.TimeZoneEditor;
 import com.github.datalking.common.convert.editor.URIEditor;
 import com.github.datalking.common.convert.editor.URLEditor;
 import com.github.datalking.common.convert.editor.UUIDEditor;
+import com.github.datalking.util.Assert;
 import com.github.datalking.util.ClassUtils;
 import org.xml.sax.InputSource;
 

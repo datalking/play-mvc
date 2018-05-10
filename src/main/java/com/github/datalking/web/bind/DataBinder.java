@@ -1,9 +1,12 @@
 package com.github.datalking.web.bind;
 
+import com.github.datalking.beans.ConfigurablePropertyAccessor;
 import com.github.datalking.beans.MutablePropertyValues;
 import com.github.datalking.beans.PropertyEditorRegistry;
 import com.github.datalking.beans.PropertyValues;
 import com.github.datalking.beans.TypeConverter;
+import com.github.datalking.common.BindingResult;
+import com.github.datalking.common.MessageCodesResolver;
 import com.github.datalking.common.MethodParameter;
 import com.github.datalking.common.convert.ConversionService;
 import com.github.datalking.common.convert.SimpleTypeConverter;
@@ -25,17 +28,25 @@ public class DataBinder implements PropertyEditorRegistry, TypeConverter {
 
     public static final int DEFAULT_AUTO_GROW_COLLECTION_LIMIT = 256;
 
-    protected static final Logger logger = LoggerFactory.getLogger(DataBinder.class);
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final Object target;
 
     private final String objectName;
 
+    private AbstractPropertyBindingResult bindingResult;
+
     private SimpleTypeConverter typeConverter;
 
     private ConversionService conversionService;
 
-    private AbstractPropertyBindingResult bindingResult;
+    private boolean ignoreUnknownFields = true;
+
+    private boolean ignoreInvalidFields = false;
+
+    private boolean autoGrowNestedPaths = true;
+
+    private int autoGrowCollectionLimit = DEFAULT_AUTO_GROW_COLLECTION_LIMIT;
 
     public DataBinder(Object target) {
         this(target, DEFAULT_OBJECT_NAME);
@@ -54,16 +65,10 @@ public class DataBinder implements PropertyEditorRegistry, TypeConverter {
         return this.objectName;
     }
 
-    public void initBeanPropertyAccess() {
-        Assert.state(this.bindingResult == null, "DataBinder is already initialized");
-        this.bindingResult = new BeanPropertyBindingResult(getTarget(), getObjectName(), isAutoGrowNestedPaths(), getAutoGrowCollectionLimit());
-        if (this.conversionService != null) {
-            this.bindingResult.initConversion(this.conversionService);
-        }
-    }
-
     public void bind(PropertyValues pvs) {
-        MutablePropertyValues mpvs = (pvs instanceof MutablePropertyValues) ? (MutablePropertyValues) pvs : new MutablePropertyValues(pvs);
+        MutablePropertyValues mpvs = (pvs instanceof MutablePropertyValues) ?
+                (MutablePropertyValues) pvs : new MutablePropertyValues(pvs);
+
         doBind(mpvs);
     }
 
@@ -73,24 +78,60 @@ public class DataBinder implements PropertyEditorRegistry, TypeConverter {
         applyPropertyValues(mpvs);
     }
 
+    public boolean isAutoGrowNestedPaths() {
+        return this.autoGrowNestedPaths;
+    }
+
+    public void setAutoGrowNestedPaths(boolean autoGrowNestedPaths) {
+        Assert.state(this.bindingResult == null,
+                "DataBinder is already initialized - call setAutoGrowNestedPaths before other configuration methods");
+        this.autoGrowNestedPaths = autoGrowNestedPaths;
+    }
+
+    public int getAutoGrowCollectionLimit() {
+        return this.autoGrowCollectionLimit;
+    }
+
+    public void setAutoGrowCollectionLimit(int autoGrowCollectionLimit) {
+        this.autoGrowCollectionLimit = autoGrowCollectionLimit;
+    }
+
+    public void initBeanPropertyAccess() {
+        Assert.state(this.bindingResult == null, "DataBinder is already initialized");
+        this.bindingResult = new BeanPropertyBindingResult(getTarget(), getObjectName(), isAutoGrowNestedPaths(), getAutoGrowCollectionLimit());
+        if (this.conversionService != null) {
+            this.bindingResult.initConversion(this.conversionService);
+        }
+    }
+
+    public void initDirectFieldAccess() {
+        Assert.state(this.bindingResult == null, "DataBinder is already initialized");
+        this.bindingResult = new DirectFieldBindingResult(getTarget(), getObjectName());
+        if (this.conversionService != null) {
+            this.bindingResult.initConversion(this.conversionService);
+        }
+    }
+
     protected void applyPropertyValues(MutablePropertyValues mpvs) {
+
+        getPropertyAccessor().setPropertyValues(mpvs);
 
     }
 
     protected PropertyEditorRegistry getPropertyEditorRegistry() {
-//        if (getTarget() != null) {
-//            return getInternalBindingResult().getPropertyAccessor();
-//        } else {
-        return getSimpleTypeConverter();
-//        }
+        if (getTarget() != null) {
+            return getInternalBindingResult().getPropertyAccessor();
+        } else {
+            return getSimpleTypeConverter();
+        }
     }
 
     protected TypeConverter getTypeConverter() {
-//        if (getTarget() != null) {
-//            return getInternalBindingResult().getPropertyAccessor();
-//        } else {
-        return getSimpleTypeConverter();
-//        }
+        if (getTarget() != null) {
+            return getInternalBindingResult().getPropertyAccessor();
+        } else {
+            return getSimpleTypeConverter();
+        }
     }
 
     protected SimpleTypeConverter getSimpleTypeConverter() {
@@ -106,12 +147,36 @@ public class DataBinder implements PropertyEditorRegistry, TypeConverter {
         return this.typeConverter;
     }
 
-//    protected AbstractPropertyBindingResult getInternalBindingResult() {
-//        if (this.bindingResult == null) {
-//            initBeanPropertyAccess();
-//        }
-//        return this.bindingResult;
-//    }
+    protected ConfigurablePropertyAccessor getPropertyAccessor() {
+        return getInternalBindingResult().getPropertyAccessor();
+    }
+
+    protected AbstractPropertyBindingResult getInternalBindingResult() {
+        if (this.bindingResult == null) {
+            initBeanPropertyAccess();
+        }
+        return this.bindingResult;
+    }
+
+    public BindingResult getBindingResult() {
+        return getInternalBindingResult();
+    }
+
+    public void setMessageCodesResolver(MessageCodesResolver messageCodesResolver) {
+        getInternalBindingResult().setMessageCodesResolver(messageCodesResolver);
+    }
+
+    public void setConversionService(ConversionService conversionService) {
+        Assert.state(this.conversionService == null, "ConversionService is already initialized");
+        this.conversionService = conversionService;
+        if (this.bindingResult != null && conversionService != null) {
+            this.bindingResult.initConversion(conversionService);
+        }
+    }
+
+    public ConversionService getConversionService() {
+        return this.conversionService;
+    }
 
     // ======== PropertyEditorRegistry Interface ========
 

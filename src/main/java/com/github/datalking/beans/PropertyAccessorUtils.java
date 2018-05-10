@@ -86,8 +86,7 @@ public abstract class PropertyAccessorUtils {
             int keyStart = sb.indexOf(PropertyAccessor.PROPERTY_KEY_PREFIX, searchIndex);
             searchIndex = -1;
             if (keyStart != -1) {
-                int keyEnd = sb.indexOf(
-                        PropertyAccessor.PROPERTY_KEY_SUFFIX, keyStart + PropertyAccessor.PROPERTY_KEY_PREFIX.length());
+                int keyEnd = sb.indexOf(PropertyAccessor.PROPERTY_KEY_SUFFIX, keyStart + PropertyAccessor.PROPERTY_KEY_PREFIX.length());
                 if (keyEnd != -1) {
                     String key = sb.substring(keyStart + PropertyAccessor.PROPERTY_KEY_PREFIX.length(), keyEnd);
                     if ((key.startsWith("'") && key.endsWith("'")) || (key.startsWith("\"") && key.endsWith("\""))) {

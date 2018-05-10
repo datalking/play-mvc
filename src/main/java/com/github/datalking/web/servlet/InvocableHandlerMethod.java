@@ -61,20 +61,8 @@ public class InvocableHandlerMethod extends HandlerMethod {
         // ==== 请求参数解析
         Object[] args = getMethodArgumentValues(request, mavContainer, providedArgs);
 
-        if (logger.isTraceEnabled()) {
-            StringBuilder sb = new StringBuilder("Invoking [");
-            sb.append(getBeanType().getSimpleName()).append(".");
-            sb.append(getMethod().getName()).append("] method with arguments ");
-            sb.append(Arrays.asList(args));
-            logger.trace(sb.toString());
-        }
-
         // ==== 实际执行处理请求的方法
         Object returnValue = doInvoke(args);
-
-        if (logger.isTraceEnabled()) {
-            logger.trace("Method [" + getMethod().getName() + "] returned [" + returnValue + "]");
-        }
 
         return returnValue;
     }

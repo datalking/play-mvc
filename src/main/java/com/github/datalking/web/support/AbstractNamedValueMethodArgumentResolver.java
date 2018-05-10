@@ -38,7 +38,7 @@ public abstract class AbstractNamedValueMethodArgumentResolver implements Handle
                                         WebDataBinderFactory binderFactory) throws Exception {
         // 获取参数类型
         Class<?> paramType = parameter.getParameterType();
-        // 获取路径中参数名
+        // 获取@PathVariable中配置的参数名
         NamedValueInfo namedValueInfo = getNamedValueInfo(parameter);
         // 从request中获取name属性
         Object arg = resolveName(namedValueInfo.name, parameter, webRequest);
