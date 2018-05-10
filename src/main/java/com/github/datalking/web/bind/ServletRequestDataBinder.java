@@ -34,12 +34,9 @@ public class ServletRequestDataBinder extends WebDataBinder {
     protected void addBindValues(MutablePropertyValues mpvs, ServletRequest request) {
     }
 
-    //    public void closeNoCatch() throws ServletRequestBindingException {
     public void closeNoCatch() throws Exception {
         if (getBindingResult().hasErrors()) {
-            throw new Exception(
-                    "Errors binding onto object '" + getBindingResult().getObjectName() + "'",
-                    new Exception(getBindingResult() + ""));
+            throw new Exception("Errors binding onto object '" + getBindingResult().getObjectName());
         }
     }
 

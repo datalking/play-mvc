@@ -20,7 +20,6 @@ public class ExtendedServletRequestDataBinder extends ServletRequestDataBinder {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected void addBindValues(MutablePropertyValues mpvs, ServletRequest request) {
         String attr = HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE;
         Map<String, String> uriVars = (Map<String, String>) request.getAttribute(attr);

@@ -6,7 +6,7 @@ import java.beans.PropertyEditor;
 import java.util.Map;
 
 /**
- * 参数绑定的结果 接口
+ * 数据绑定的结果 接口
  *
  * @author yaoo on 4/29/18
  */

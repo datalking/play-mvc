@@ -23,6 +23,38 @@ java笔记
 
 ## summary
 
+
+
+- java.beans.PropertyEditor属性编辑器接口，它规定了将外部设置值转换为内部JavaBean属性值的转换接口方法
+    - Object getValue()：返回属性的当前值。基本类型被封装成对应的包装类实例；
+    - void setAsText(String text)：用一个字符串去更新属性的内部值，这个字符串一般从外部属性编辑器传入；
+    - void setValue(Object newValue)：设置属性的值，基本类型以包装类传入（自动装箱），  
+      setValue()一般不直接使用，在setAsText方法中将字符串进行转换并产生目标对象以后，由调setAsText调用setValue来把目标对象注入到编辑器中
+    - String getAsText()：将属性对象用一个字符串表示，以便外部的属性编辑器能以可视化的方式显示。缺省返回null，表示该属性不能以字符串表示；
+    - String[] getTags()：返回表示有效属性值的字符串数组（如boolean属性对应的有效Tag为true和false），以便属性编辑器能以下拉框的方式显示出来。缺省返回null，表示属性没有匹配的字符值有限集合；
+    - String getJavaInitializationString()：为属性提供一个表示初始值的字符串，属性编辑器以此值作为属性的默认值。
+- PropertyEditorSupport，该类实现了PropertyEditor接口并提供默认实现，一般情况下，用户可以通过扩展这个方便类设计自己的属性编辑器
+- BeanInfo主要描述了JavaBean哪些属性可以编辑以及对应的属性编辑器，每一个属性对应一个属性描述器PropertyDescriptor
+    - PropertyDescriptor的构造函数PropertyDescriptor(String propertyName, Class beanClass) ，其中propertyName为属性名，而beanClass为JavaBean对应的Class
+    - PropertyDescriptor还有一个setPropertyEditorClass(Class propertyEditorClass)方法，为JavaBean属性指定编辑器
+    - BeanInfo接口最重要的方法就是：PropertyDescriptor[] getPropertyDescriptors() ，该方法返回JavaBean的属性描述器数组
+
+- Spring的属性编辑器和传统的用于IDE开发时的属性编辑器不同，它们没有UI界面，仅负责将配置文件中的文本配置值转换为Bean属性的对应值
+- PropertyEditorRegistrySupport为常见属性类型提供了默认的属性编辑器，这些“常见的类型”可分为3大类
+    - 基本类型
+        - 1）基本数据类型，如：boolean、byte、short、int等；
+        - 2）基本数据类型封装类，如：Long、Character、Integer等； 
+        - 3）两个基本数据类型的数组，char[]和byte[]；
+        - 4）大数类，BigDecimal和BigInteger
+    - 集合类型
+        - 为5种类型的集合类Collection、Set、SortedSet、List和SortedMap提供了编辑器
+    - 资源类型
+        - 用于访问外部资源的8个常见类Class、Class[]、File、InputStream、Locale、Properties、Resource[]和URL	
+- defaultEditors：用于保存默认属性类型的编辑器，元素的键为属性类型，值为对应的属性编辑器实例；
+- customEditors：用于保存用户自定义的属性编辑器，元素的键值和defaultEditors相同
+- Spring大部分默认属性编辑器都直接扩展于java.beans.PropertyEditorSupport类，用户也可以通过扩展PropertyEditorSupport实现自己的属性编辑器。
+  比起用于IDE环境的属性编辑器来说，Spring环境下使用的属性编辑器的功能非常单一：仅需要将配置文件中字面值转换为属性类型的对象即可，不需提供UI，因此仅需覆盖setAsText()方法
+    
 - Type 是Java类型体系中的顶级接口，Class是Type的一个直接实现类，Type有4个直接子接口：TypeVariable，WildcardType，ParameterizedType，GenericArrayType
 
 - TypeVariable 表示类型变量，是各种类型变量的公共父接口。

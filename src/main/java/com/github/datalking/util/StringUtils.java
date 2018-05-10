@@ -400,4 +400,33 @@ public abstract class StringUtils {
         return sb.toString();
     }
 
+    public static String trimAllWhitespace(String str) {
+        if (!hasLength(str)) {
+            return str;
+        }
+        StringBuilder sb = new StringBuilder(str);
+        int index = 0;
+        while (sb.length() > index) {
+            if (Character.isWhitespace(sb.charAt(index))) {
+                sb.deleteCharAt(index);
+            }
+            else {
+                index++;
+            }
+        }
+        return sb.toString();
+    }
+
+    public static String[] trimArrayElements(String[] array) {
+        if (ObjectUtils.isEmpty(array)) {
+            return new String[0];
+        }
+        String[] result = new String[array.length];
+        for (int i = 0; i < array.length; i++) {
+            String element = array[i];
+            result[i] = (element != null ? element.trim() : null);
+        }
+        return result;
+    }
+
 }
