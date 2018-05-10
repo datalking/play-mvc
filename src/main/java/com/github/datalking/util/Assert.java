@@ -85,4 +85,10 @@ public interface Assert {
         }
     }
 
+    static void state(boolean expression, String message) {
+        if (!expression) {
+            throw new IllegalStateException(message);
+        }
+    }
+
 }

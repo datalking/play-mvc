@@ -53,6 +53,8 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 
 /**
+ * 注册默认与自定义属性编辑器
+ *
  * @author yaoo on 5/10/18
  */
 public class PropertyEditorRegistrySupport implements PropertyEditorRegistry {

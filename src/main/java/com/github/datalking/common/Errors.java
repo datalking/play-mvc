@@ -1,4 +1,4 @@
-package com.github.datalking.exception;
+package com.github.datalking.common;
 
 import com.github.datalking.beans.PropertyAccessor;
 
@@ -43,11 +43,11 @@ public interface Errors {
 
     int getGlobalErrorCount();
 
-//    List<ObjectError> getGlobalErrors();
-//
-//    List<ObjectError> getAllErrors();
-//
-//    ObjectError getGlobalError();
+    List<ObjectError> getGlobalErrors();
+
+    List<ObjectError> getAllErrors();
+
+    ObjectError getGlobalError();
 
     boolean hasFieldErrors();
 
@@ -57,13 +57,13 @@ public interface Errors {
 
     int getFieldErrorCount(String field);
 
-//    List<FieldError> getFieldErrors();
-//
-//    List<FieldError> getFieldErrors(String field);
-//
-//    FieldError getFieldError();
-//
-//    FieldError getFieldError(String field);
+    List<FieldError> getFieldErrors();
+
+    List<FieldError> getFieldErrors(String field);
+
+    FieldError getFieldError();
+
+    FieldError getFieldError(String field);
 
     Object getFieldValue(String field);
 

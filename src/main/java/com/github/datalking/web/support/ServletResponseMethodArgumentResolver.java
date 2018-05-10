@@ -42,8 +42,7 @@ public class ServletResponseMethodArgumentResolver implements HandlerMethodArgum
         if (ServletResponse.class.isAssignableFrom(paramType)) {
             Object nativeResponse = webRequest.getNativeResponse(paramType);
             if (nativeResponse == null) {
-                throw new IllegalStateException(
-                        "Current response is not of type [" + paramType.getName() + "]: " + response);
+                throw new IllegalStateException("Current response is not of type [" + paramType.getName() + "]: " + response);
             }
 
             return nativeResponse;

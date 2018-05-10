@@ -40,22 +40,33 @@ public abstract class AbstractNamedValueMethodArgumentResolver implements Handle
         Class<?> paramType = parameter.getParameterType();
         // 获取路径中参数名
         NamedValueInfo namedValueInfo = getNamedValueInfo(parameter);
+        // 从request中获取name属性
         Object arg = resolveName(namedValueInfo.name, parameter, webRequest);
+
         if (arg == null) {
             if (namedValueInfo.defaultValue != null) {
+
+                // 使用默认值
                 arg = resolveDefaultValue(namedValueInfo.defaultValue);
             } else if (namedValueInfo.required) {
+
+                // 处理缺失值
                 handleMissingValue(namedValueInfo.name, parameter);
             }
+
+            // 处理空值
             arg = handleNullValue(namedValueInfo.name, arg, paramType);
+
         } else if ("".equals(arg) && (namedValueInfo.defaultValue != null)) {
             arg = resolveDefaultValue(namedValueInfo.defaultValue);
         }
 
         if (binderFactory != null) {
+            // 创建WebDataBinder对象作为类型转换工厂
             WebDataBinder binder = binderFactory.createBinder(webRequest, null, namedValueInfo.name);
-            // todo args convertion
-//            arg = binder.convertIfNecessary(arg, paramType, parameter);
+
+            // 执行转换
+            arg = binder.convertIfNecessary(arg, paramType, parameter);
 
         }
 

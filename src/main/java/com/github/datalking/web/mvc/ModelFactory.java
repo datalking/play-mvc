@@ -46,6 +46,7 @@ public final class ModelFactory {
         Map<String, ?> attributesInSession = this.sessionAttributesHandler.retrieveAttributes(request);
         mavContainer.mergeAttributes(attributesInSession);
 
+        // 处理@ModelAttribute注解
         invokeModelAttributeMethods(request, mavContainer);
 
         for (String name : findSessionAttributeArguments(handlerMethod)) {

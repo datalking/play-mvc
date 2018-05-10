@@ -10,7 +10,7 @@ import java.util.List;
  *
  * @author yaoo on 4/3/18
  */
-public class BeanWrapperImpl implements BeanWrapper {
+public class BeanWrapperImpl extends AbstractPropertyAccessor implements BeanWrapper {
 
     private Object wrappedObject;
 //    Object rootObject;

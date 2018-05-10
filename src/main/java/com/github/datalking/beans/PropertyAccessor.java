@@ -1,8 +1,12 @@
 package com.github.datalking.beans;
 
+import com.github.datalking.common.convert.descriptor.TypeDescriptor;
+
 import java.util.Map;
 
 /**
+ * 通过名称访问对象的属性 接口
+ *
  * @author yaoo on 4/29/18
  */
 public interface PropertyAccessor {
@@ -25,7 +29,7 @@ public interface PropertyAccessor {
 
     Class<?> getPropertyType(String propertyName);
 
-    //    TypeDescriptor getPropertyTypeDescriptor(String propertyName) ;
+    TypeDescriptor getPropertyTypeDescriptor(String propertyName);
 
     Object getPropertyValue(String propertyName);
 
@@ -37,7 +41,8 @@ public interface PropertyAccessor {
 
     void setPropertyValues(PropertyValues pvs);
 
-//    void setPropertyValues(PropertyValues pvs, boolean ignoreUnknown);
-//    void setPropertyValues(PropertyValues pvs, boolean ignoreUnknown, boolean ignoreInvalid);
+    void setPropertyValues(PropertyValues pvs, boolean ignoreUnknown);
+
+    void setPropertyValues(PropertyValues pvs, boolean ignoreUnknown, boolean ignoreInvalid);
 
 }

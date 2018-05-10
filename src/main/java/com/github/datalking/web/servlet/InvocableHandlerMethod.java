@@ -108,7 +108,8 @@ public class InvocableHandlerMethod extends HandlerMethod {
             }
 
             if (this.argumentResolvers.supportsParameter(parameter)) {
-                try { // 解析第i个参数
+                try {
+                    // 解析第i个参数
                     args[i] = this.argumentResolvers.resolveArgument(parameter, mavContainer, request, this.dataBinderFactory);
                     continue;
                 } catch (Exception ex) {

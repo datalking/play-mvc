@@ -409,8 +409,7 @@ public abstract class StringUtils {
         while (sb.length() > index) {
             if (Character.isWhitespace(sb.charAt(index))) {
                 sb.deleteCharAt(index);
-            }
-            else {
+            } else {
                 index++;
             }
         }
@@ -427,6 +426,24 @@ public abstract class StringUtils {
             result[i] = (element != null ? element.trim() : null);
         }
         return result;
+    }
+
+    public static String uncapitalize(String str) {
+        return changeFirstCharacterCase(str, false);
+    }
+
+    private static String changeFirstCharacterCase(String str, boolean capitalize) {
+        if (str == null || str.length() == 0) {
+            return str;
+        }
+        StringBuilder sb = new StringBuilder(str.length());
+        if (capitalize) {
+            sb.append(Character.toUpperCase(str.charAt(0)));
+        } else {
+            sb.append(Character.toLowerCase(str.charAt(0)));
+        }
+        sb.append(str.substring(1));
+        return sb.toString();
     }
 
 }

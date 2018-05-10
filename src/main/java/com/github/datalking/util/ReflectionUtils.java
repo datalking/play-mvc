@@ -132,5 +132,60 @@ public abstract class ReflectionUtils {
         }
     }
 
+    public static Field findField(Class<?> clazz, String name) {
+        return findField(clazz, name, null);
+    }
+
+    public static Field findField(Class<?> clazz, String name, Class<?> type) {
+        Assert.notNull(clazz, "Class must not be null");
+        Assert.isTrue(name != null || type != null, "Either name or type of the field must be specified");
+        Class<?> searchType = clazz;
+        while (!Object.class.equals(searchType) && searchType != null) {
+            Field[] fields = searchType.getDeclaredFields();
+            for (Field field : fields) {
+                if ((name == null || name.equals(field.getName())) &&
+                        (type == null || type.equals(field.getType()))) {
+                    return field;
+                }
+            }
+            searchType = searchType.getSuperclass();
+        }
+        return null;
+    }
+
+    public static void doWithFields(Class<?> clazz, FieldCallback fc) {
+        doWithFields(clazz, fc, null);
+    }
+
+    public static void doWithFields(Class<?> clazz, FieldCallback fc, FieldFilter ff) {
+        // Keep backing up the inheritance hierarchy.
+        Class<?> targetClass = clazz;
+        do {
+            Field[] fields = targetClass.getDeclaredFields();
+            for (Field field : fields) {
+                if (ff != null && !ff.matches(field)) {
+                    continue;
+                }
+                try {
+                    fc.doWith(field);
+                } catch (IllegalAccessException ex) {
+                    throw new IllegalStateException("Not allowed to access field '" + field.getName() + "': " + ex);
+                }
+            }
+            targetClass = targetClass.getSuperclass();
+        }
+        while (targetClass != null && targetClass != Object.class);
+    }
+
+
+    public interface FieldFilter {
+
+        boolean matches(Field field);
+    }
+
+    public interface FieldCallback {
+
+        void doWith(Field field) throws IllegalArgumentException, IllegalAccessException;
+    }
 
 }

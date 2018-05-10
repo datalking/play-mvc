@@ -1,7 +1,5 @@
 package com.github.datalking.common;
 
-import com.github.datalking.exception.Errors;
-
 import java.beans.PropertyEditor;
 import java.util.Map;
 

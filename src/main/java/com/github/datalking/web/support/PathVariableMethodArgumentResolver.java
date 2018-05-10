@@ -12,8 +12,10 @@ import com.github.datalking.web.servlet.HandlerMapping;
 import javax.servlet.ServletException;
 import java.util.HashMap;
 import java.util.Map;
+
 /**
  * 解析方法中@PathVariable的参数
+ *
  * @author yaoo on 4/29/18
  */
 public class PathVariableMethodArgumentResolver extends AbstractNamedValueMethodArgumentResolver {
@@ -39,12 +41,12 @@ public class PathVariableMethodArgumentResolver extends AbstractNamedValueMethod
         return new PathVariableNamedValueInfo(annotation);
     }
 
+    // 从request中获取name属性
     @Override
     protected Object resolveName(String name, MethodParameter parameter, WebRequest request) throws Exception {
-        Map<String, String> uriTemplateVars =
-                (Map<String, String>) request.getAttribute(
-                        HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE,
-                        RequestAttributes.SCOPE_REQUEST);
+        Map<String, String> uriTemplateVars = (Map<String, String>) request.getAttribute(
+                HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE,
+                RequestAttributes.SCOPE_REQUEST);
 
         return (uriTemplateVars != null) ? uriTemplateVars.get(name) : null;
     }
@@ -53,7 +55,7 @@ public class PathVariableMethodArgumentResolver extends AbstractNamedValueMethod
     protected void handleMissingValue(String name, MethodParameter param) throws ServletException {
         String paramType = param.getParameterType().getName();
         try {
-            throw new Exception("Missing URI template variable '" + name + "' for method parameter type [" + paramType + "]");
+            throw new Exception("Missing URI template variable '" + name + "' for method param type [" + paramType + "]");
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -2,7 +2,7 @@ package com.github.datalking.web.support;
 
 import com.github.datalking.annotation.ModelAttribute;
 import com.github.datalking.common.MethodParameter;
-import com.github.datalking.exception.Errors;
+import com.github.datalking.common.Errors;
 import com.github.datalking.util.AnnotationUtils;
 import com.github.datalking.util.BeanUtils;
 import com.github.datalking.web.bind.WebDataBinder;

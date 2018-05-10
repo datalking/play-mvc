@@ -2,8 +2,10 @@ package com.github.datalking.util;
 
 import java.beans.Introspector;
 import java.lang.reflect.Array;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -153,17 +155,17 @@ public abstract class ClassUtils {
             return true;
         }
 
-//        if (c1.isPrimitive()) {
-//            Class<?> resolvedPrimitive = primitiveWrapperTypeMap.get(c2);
-//            if (c1 == resolvedPrimitive) {
-//                return true;
-//            }
-//        } else {
-//            Class<?> resolvedWrapper = primitiveTypeToWrapperMap.get(c2);
-//            if (resolvedWrapper != null && c1.isAssignableFrom(resolvedWrapper)) {
-//                return true;
-//            }
-//        }
+        if (c1.isPrimitive()) {
+            Class<?> resolvedPrimitive = primitiveWrapperTypeMap.get(c2);
+            if (c1 == resolvedPrimitive) {
+                return true;
+            }
+        } else {
+            Class<?> resolvedWrapper = primitiveTypeToWrapperMap.get(c2);
+            if (resolvedWrapper != null && c1.isAssignableFrom(resolvedWrapper)) {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -458,6 +460,58 @@ public abstract class ClassUtils {
         }
         result.insert(0, clazz.getName());
         return result.toString();
+    }
+
+    public static Class<?> resolvePrimitiveIfNecessary(Class<?> clazz) {
+        Assert.notNull(clazz, "Class must not be null");
+        return (clazz.isPrimitive() && clazz != void.class ? primitiveTypeToWrapperMap.get(clazz) : clazz);
+    }
+
+    public static String getDescriptiveType(Object value) {
+        if (value == null) {
+            return null;
+        }
+        Class<?> clazz = value.getClass();
+        if (Proxy.isProxyClass(clazz)) {
+            StringBuilder result = new StringBuilder(clazz.getName());
+            result.append(" implementing ");
+            Class<?>[] ifcs = clazz.getInterfaces();
+            for (int i = 0; i < ifcs.length; i++) {
+                result.append(ifcs[i].getName());
+                if (i < ifcs.length - 1) {
+                    result.append(',');
+                }
+            }
+            return result.toString();
+        } else if (clazz.isArray()) {
+            return getQualifiedNameForArray(clazz);
+        } else {
+            return clazz.getName();
+        }
+    }
+
+    public static boolean hasConstructor(Class<?> clazz, Class<?>... paramTypes) {
+        return (getConstructorIfAvailable(clazz, paramTypes) != null);
+    }
+
+    public static <T> Constructor<T> getConstructorIfAvailable(Class<T> clazz, Class<?>... paramTypes) {
+        Assert.notNull(clazz, "Class must not be null");
+        try {
+            return clazz.getConstructor(paramTypes);
+        } catch (NoSuchMethodException ex) {
+            return null;
+        }
+    }
+
+    public static Method getStaticMethod(Class<?> clazz, String methodName, Class<?>... args) {
+        Assert.notNull(clazz, "Class must not be null");
+        Assert.notNull(methodName, "Method name must not be null");
+        try {
+            Method method = clazz.getMethod(methodName, args);
+            return Modifier.isStatic(method.getModifiers()) ? method : null;
+        } catch (NoSuchMethodException ex) {
+            return null;
+        }
     }
 
 }

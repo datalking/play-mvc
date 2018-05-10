@@ -17,24 +17,10 @@ import java.util.Map;
  */
 public abstract class GenericCollectionTypeResolver {
 
-    /**
-     * Determine the generic element type of the given Collection class
-     * (if it declares one through a generic superclass or generic interface).
-     *
-     * @param collectionClass the collection class to introspect
-     * @return the generic type, or {@code null} if none
-     */
     public static Class<?> getCollectionType(Class<? extends Collection> collectionClass) {
         return extractTypeFromClass(collectionClass, Collection.class, 0);
     }
 
-    /**
-     * Determine the generic key type of the given Map class
-     * (if it declares one through a generic superclass or generic interface).
-     *
-     * @param mapClass the map class to introspect
-     * @return the generic type, or {@code null} if none
-     */
     public static Class<?> getMapKeyType(Class<? extends Map> mapClass) {
         return extractTypeFromClass(mapClass, Map.class, 0);
     }

@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * 将web请求中的参数绑定到java bean
+ *
  * @author yaoo on 4/29/18
  */
 public class WebDataBinder extends DataBinder {
@@ -55,12 +57,18 @@ public class WebDataBinder extends DataBinder {
         return this.bindEmptyMultipartFiles;
     }
 
-    public BindingResult getBindingResult() {
-
-        // todo 绑定结果
-        return null;
-//        return getInternalBindingResult();
+    @Override
+    protected void doBind(MutablePropertyValues mpvs) {
+//        checkFieldDefaults(mpvs);
+//        checkFieldMarkers(mpvs);
+        super.doBind(mpvs);
     }
+
+//    public BindingResult getBindingResult() {
+//
+//        return null;
+////        return getInternalBindingResult();
+//    }
 
 
 //    protected AbstractPropertyBindingResult getInternalBindingResult() {
@@ -71,12 +79,7 @@ public class WebDataBinder extends DataBinder {
 //    }
 
 
-    @Override
-    protected void doBind(MutablePropertyValues mpvs) {
-//        checkFieldDefaults(mpvs);
-//        checkFieldMarkers(mpvs);
-        super.doBind(mpvs);
-    }
+
 
 //        protected void checkFieldDefaults (MutablePropertyValues mpvs){
 //            if (getFieldDefaultPrefix() != null) {

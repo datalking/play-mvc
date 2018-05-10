@@ -1,5 +1,7 @@
 package com.github.datalking.common.convert;
 
+import com.github.datalking.common.convert.descriptor.TypeDescriptor;
+
 /**
  * 数据类型转换 接口
  *
@@ -13,7 +15,8 @@ public interface ConversionService {
     // 将源类型对象转换为目标类型对象
     <T> T convert(Object source, Class<T> targetType);
 
-//    Object convert(Object source, TypeDescriptor sourceType, TypeDescriptor targetType);
-//    boolean canConvert(TypeDescriptor sourceType, TypeDescriptor targetType);
+    Object convert(Object source, TypeDescriptor sourceType, TypeDescriptor targetType);
+
+    boolean canConvert(TypeDescriptor sourceType, TypeDescriptor targetType);
 
 }

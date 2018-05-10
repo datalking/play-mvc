@@ -10,15 +10,20 @@ import java.beans.PropertyDescriptor;
  */
 public interface BeanWrapper {
 
+    Object getWrappedInstance();
 
     Class<?> getWrappedClass();
 
-    Object getWrappedInstance();
-
     void setPropertyValues(PropertyValues pvs) throws NoSuchFieldException, IllegalAccessException;
 
+    PropertyDescriptor[] getPropertyDescriptors();
 
-//    PropertyDescriptor[] getPropertyDescriptors();
-//    PropertyDescriptor getPropertyDescriptor(String propertyName) throws IntrospectionException;
+    PropertyDescriptor getPropertyDescriptor(String propertyName) throws IntrospectionException;
+
+//    void setAutoGrowNestedPaths(boolean autoGrowNestedPaths);
+//    boolean isAutoGrowNestedPaths();
+//    void setAutoGrowCollectionLimit(int autoGrowCollectionLimit);
+//    int getAutoGrowCollectionLimit();
+
 
 }

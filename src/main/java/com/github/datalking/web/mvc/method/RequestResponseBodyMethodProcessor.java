@@ -5,7 +5,7 @@ import com.github.datalking.annotation.web.ResponseBody;
 import com.github.datalking.common.BindingResult;
 import com.github.datalking.common.Conventions;
 import com.github.datalking.common.MethodParameter;
-import com.github.datalking.exception.Errors;
+import com.github.datalking.common.Errors;
 import com.github.datalking.util.AnnotationUtils;
 import com.github.datalking.web.bind.WebDataBinder;
 import com.github.datalking.web.bind.WebDataBinderFactory;

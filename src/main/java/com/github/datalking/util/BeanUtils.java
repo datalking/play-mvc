@@ -86,27 +86,26 @@ public abstract class BeanUtils {
         return (T) instantiateClass(clazz);
     }
 
+    /**
+     * 通过java反射调用 Constructor.newInstance() 创建新实例
+     */
     public static <T> T instantiateClass(Constructor<T> ctor, Object... args) {
         Assert.notNull(ctor, "Constructor must not be null");
         ReflectionUtils.makeAccessible(ctor);
 
         Object obj = null;
+
         try {
             obj = ctor.newInstance(args);
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
+        } catch (InstantiationException | InvocationTargetException | IllegalAccessException e) {
             e.printStackTrace();
         }
 
         if (obj == null) {
             return null;
         }
+
         return (T) obj;
-
-
     }
 
     public static Method findMethod(Class<?> clazz, String methodName, Class<?>... paramTypes) {
