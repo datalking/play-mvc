@@ -33,7 +33,6 @@ public class RequestParamMethodArgumentResolver extends AbstractNamedValueMethod
         this.useDefaultResolution = useDefaultResolution;
     }
 
-
     public boolean supportsParameter(MethodParameter parameter) {
         Class<?> paramType = parameter.getParameterType();
         if (parameter.hasParameterAnnotation(RequestParam.class)) {

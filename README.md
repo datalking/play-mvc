@@ -2,13 +2,16 @@
 >基于servlet的mvc框架   
 
 ## target
-- 快速开发rest服务
+- 基于mvc快速开发rest服务
 - 基于mvc快速开发webapp
 - 使用方式与spring mvc相同
 
 ## overview
-- 推荐使用纯注解、零配置的方式，目前实现的xml功能非常有限
-- 视图模板仅支持jsp，尚未计划支持jsf、velocity、freemarker等   
+- 推荐使用纯注解、零配置文件的方式，目前实现的xml功能非常有限
+- 视图模板仅支持jsp，无计划支持jsf、velocity、freemarker等   
+- 支持以下注解
+    - 通用注解：@Component、@Configuration、@Bean、@EnableAspectJAutoProxy、@Aspect、@Before、@After
+    - mvc相关：@Controller、@PathVariable、@RequestParam
 - 目前暂不支持：
     - 暂不支持@Autowired，需要显式配置Bean  
     - 暂不支持@Repository、@Resource  
@@ -41,14 +44,16 @@ start from [http://localhost:8999](http://localhost:8999)
 
 ## todo
 
-- [ ] 支持 @PathVariable
-- [ ] 支持 @RequestParam 
+
 - [ ] 测试 @PathVariable 多个路径参数
+- [ ] 支持 @Service
 - [ ] 支持 Redirect 
 - [ ] 支持 文件上传 MultipartResolver 
-- [ ] 使用内置tomcat直接启动mvc应用 
+- [ ] 支持内置tomcat直接启动mvc应用 
 - [ ] servlet和filter支持 `async` 处理
 
+- [x] 支持 @PathVariable
+- [x] 支持 @RequestParam 
 - [x] 支持 @ResponseBody 
 - [x] 扫描 DelegatingWebMvcConfiguration中的bean
 - [x] add DispatcherServlet 

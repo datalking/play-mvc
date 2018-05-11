@@ -32,6 +32,7 @@ public class MainApp {
                         webInfClasses.getAbsolutePath(),
                         "/")
         );
+
         tomcat.start();
         tomcat.getServer().await();
 
