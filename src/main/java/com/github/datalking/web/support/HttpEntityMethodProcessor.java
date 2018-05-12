@@ -56,12 +56,15 @@ public class HttpEntityMethodProcessor extends AbstractMessageConverterMethodPro
     private Type getHttpEntityType(MethodParameter parameter) {
         Assert.isAssignable(HttpEntity.class, parameter.getParameterType());
         Type parameterType = parameter.getGenericParameterType();
+
         if (parameterType instanceof ParameterizedType) {
+
             ParameterizedType type = (ParameterizedType) parameterType;
             if (type.getActualTypeArguments().length == 1) {
                 return type.getActualTypeArguments()[0];
             }
         }
+
         throw new IllegalArgumentException("HttpEntity parameter '" + parameter.getParameterName() +
                 "' in method " + parameter.getMethod() + " is not parameterized or has more than one parameter");
     }

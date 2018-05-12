@@ -1,5 +1,6 @@
 package com.github.datalking.web.servlet;
 
+import com.github.datalking.common.AnnotationAwareOrderComparator;
 import com.github.datalking.common.GenericTypeResolver;
 import com.github.datalking.context.ApplicationContext;
 import com.github.datalking.context.ApplicationContextInitializer;
@@ -331,9 +332,6 @@ public abstract class FrameworkServlet extends HttpServletBean {
         wac.setNamespace(getNamespace());
 //        wac.addApplicationListener(new SourceFilteringListener(wac, new ContextRefreshListener()));
 
-        // The wac environment's #initPropertySources will be called in any case when the context
-        // is refreshed; do it eagerly here to ensure servlet property sources are in place for
-        // use in any post-processing or initialization that occurs below prior to #refresh
 //        ConfigurableEnvironment env = wac.getEnvironment();
 //        if (env instanceof ConfigurableWebEnvironment) {
 //            ((ConfigurableWebEnvironment) env).initPropertySources(getServletContext(), getServletConfig());
@@ -351,7 +349,6 @@ public abstract class FrameworkServlet extends HttpServletBean {
 
     protected void postProcessWebApplicationContext(ConfigurableWebApplicationContext wac) {
     }
-
 
     protected void applyInitializers(ConfigurableApplicationContext wac) {
         String globalClassNames = getServletContext().getInitParameter(ContextLoader.GLOBAL_INITIALIZER_CLASSES_PARAM);
@@ -373,7 +370,6 @@ public abstract class FrameworkServlet extends HttpServletBean {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private ApplicationContextInitializer<ConfigurableApplicationContext> loadInitializer(String className, ConfigurableApplicationContext wac) {
         try {
             Class<?> initializerClass = Class.forName(className);

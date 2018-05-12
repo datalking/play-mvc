@@ -37,16 +37,9 @@ public abstract class AbstractMappingContentNegotiationStrategy extends MappingM
 
     protected abstract String getMediaTypeKey(WebRequest request);
 
-    /**
-     * Invoked when a matching media type is found in the lookup map.
-     */
     protected void handleMatch(String mappingKey, MediaType mediaType) {
     }
 
-    /**
-     * Invoked when no matching media type is found in the lookup map.
-     * Sub-classes can take further steps to determine the media type.
-     */
     protected MediaType handleNoMatch(WebRequest request, String mappingKey) {
         return null;
     }

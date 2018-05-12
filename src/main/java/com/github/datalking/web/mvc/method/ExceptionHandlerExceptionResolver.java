@@ -65,7 +65,7 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
         StringHttpMessageConverter stringHttpMessageConverter = new StringHttpMessageConverter();
         stringHttpMessageConverter.setWriteAcceptCharset(false);
 
-        this.messageConverters = new ArrayList<HttpMessageConverter<?>>();
+        this.messageConverters = new ArrayList<>();
 //        this.messageConverters.add(new ByteArrayHttpMessageConverter());
         this.messageConverters.add(stringHttpMessageConverter);
 //        this.messageConverters.add(new SourceHttpMessageConverter<Source>());
@@ -134,14 +134,15 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
         return this.applicationContext;
     }
 
-
     public void afterPropertiesSet() {
         if (this.argumentResolvers == null) {
             List<HandlerMethodArgumentResolver> resolvers = getDefaultArgumentResolvers();
             this.argumentResolvers = new HandlerMethodArgumentResolverComposite().addResolvers(resolvers);
         }
         if (this.returnValueHandlers == null) {
+
             List<HandlerMethodReturnValueHandler> handlers = getDefaultReturnValueHandlers();
+
             this.returnValueHandlers = new HandlerMethodReturnValueHandlerComposite().addHandlers(handlers);
         }
         initExceptionHandlerAdviceCache();
@@ -163,7 +164,7 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
     }
 
     protected List<HandlerMethodReturnValueHandler> getDefaultReturnValueHandlers() {
-        List<HandlerMethodReturnValueHandler> handlers = new ArrayList<HandlerMethodReturnValueHandler>();
+        List<HandlerMethodReturnValueHandler> handlers = new ArrayList<>();
 
         // Single-purpose return value types
         handlers.add(new ModelAndViewMethodReturnValueHandler());
@@ -232,6 +233,7 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
             if (logger.isDebugEnabled()) {
                 logger.debug("Invoking @ExceptionHandler method: " + exceptionHandlerMethod);
             }
+
             exceptionHandlerMethod.invokeAndHandle(webRequest, mavContainer, exception);
         } catch (Exception invocationEx) {
             if (logger.isErrorEnabled()) {

@@ -10,10 +10,9 @@ import java.util.Set;
 /**
  * copied from spring
  */
-public final class HeadersRequestCondition extends AbstractRequestCondition<HeadersRequestCondition> {
+public class HeadersRequestCondition extends AbstractRequestCondition<HeadersRequestCondition> {
 
     private final Set<HeaderExpression> expressions;
-
 
     public HeadersRequestCondition(String... headers) {
         this(parseExpressions(headers));
@@ -22,7 +21,6 @@ public final class HeadersRequestCondition extends AbstractRequestCondition<Head
     private HeadersRequestCondition(Collection<HeaderExpression> conditions) {
         this.expressions = Collections.unmodifiableSet(new LinkedHashSet<>(conditions));
     }
-
 
     private static Collection<HeaderExpression> parseExpressions(String... headers) {
         Set<HeaderExpression> expressions = new LinkedHashSet<>();
@@ -38,9 +36,6 @@ public final class HeadersRequestCondition extends AbstractRequestCondition<Head
         return expressions;
     }
 
-    /**
-     * Return the contained request header expressions.
-     */
     public Set<NameValueExpression<String>> getExpressions() {
         return new LinkedHashSet<>(this.expressions);
     }
@@ -55,20 +50,12 @@ public final class HeadersRequestCondition extends AbstractRequestCondition<Head
         return " && ";
     }
 
-    /**
-     * Returns a new instance with the union of the header expressions
-     * from "this" and the "other" instance.
-     */
     public HeadersRequestCondition combine(HeadersRequestCondition other) {
-        Set<HeaderExpression> set = new LinkedHashSet<HeaderExpression>(this.expressions);
+        Set<HeaderExpression> set = new LinkedHashSet<>(this.expressions);
         set.addAll(other.expressions);
         return new HeadersRequestCondition(set);
     }
 
-    /**
-     * Returns "this" instance if the request matches all expressions;
-     * or {@code null} otherwise.
-     */
     public HeadersRequestCondition getMatchingCondition(HttpServletRequest request) {
         for (HeaderExpression expression : expressions) {
             if (!expression.match(request)) {
@@ -78,25 +65,10 @@ public final class HeadersRequestCondition extends AbstractRequestCondition<Head
         return this;
     }
 
-    /**
-     * Returns:
-     * <ul>
-     * <li>0 if the two conditions have the same number of header expressions
-     * <li>Less than 0 if "this" instance has more header expressions
-     * <li>Greater than 0 if the "other" instance has more header expressions
-     * </ul>
-     * <p>It is assumed that both instances have been obtained via
-     * {@link #getMatchingCondition(HttpServletRequest)} and each instance
-     * contains the matching header expression only or is otherwise empty.
-     */
     public int compareTo(HeadersRequestCondition other, HttpServletRequest request) {
         return other.expressions.size() - this.expressions.size();
     }
 
-
-    /**
-     * Parses and matches a single header expression to a request.
-     */
     static class HeaderExpression extends AbstractNameValueExpression<String> {
 
         public HeaderExpression(String expression) {

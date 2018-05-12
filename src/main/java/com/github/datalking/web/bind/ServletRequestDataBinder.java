@@ -1,7 +1,6 @@
 package com.github.datalking.web.bind;
 
 import com.github.datalking.beans.MutablePropertyValues;
-import com.github.datalking.util.web.WebUtils;
 
 import javax.servlet.ServletRequest;
 

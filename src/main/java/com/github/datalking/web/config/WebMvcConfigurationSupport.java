@@ -30,7 +30,7 @@ import com.github.datalking.web.support.DefaultHandlerExceptionResolver;
 import com.github.datalking.web.support.HandlerMethodArgumentResolver;
 import com.github.datalking.web.support.HandlerMethodReturnValueHandler;
 import com.github.datalking.web.support.PathMatchConfigurer;
-import com.github.datalking.web.support.ServletContextAware;
+import com.github.datalking.web.context.ServletContextAware;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;

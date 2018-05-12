@@ -36,28 +36,14 @@ public class PathExtensionContentNegotiationStrategy extends AbstractMappingCont
 
     private boolean useJaf = true;
 
-
-    /**
-     * Create an instance with the given extension-to-MediaType lookup.
-     *
-     * @throws IllegalArgumentException if a media type string cannot be parsed
-     */
     public PathExtensionContentNegotiationStrategy(Map<String, MediaType> mediaTypes) {
         super(mediaTypes);
     }
 
-    /**
-     * Create an instance without any mappings to start with. Mappings may be added
-     * later on if any extensions are resolved through the Java Activation framework.
-     */
     public PathExtensionContentNegotiationStrategy() {
         super(null);
     }
 
-    /**
-     * Indicate whether to use the Java Activation Framework to map from file extensions to media types.
-     * <p>Default is {@code true}, i.e. the Java Activation Framework is used (if available).
-     */
     public void setUseJaf(boolean useJaf) {
         this.useJaf = useJaf;
     }
@@ -102,9 +88,6 @@ public class PathExtensionContentNegotiationStrategy extends AbstractMappingCont
             fileTypeMap = initFileTypeMap();
         }
 
-        /**
-         * Find extended mime.types from the spring-context-support module.
-         */
         private static FileTypeMap initFileTypeMap() {
             ClassPathResource resource = new ClassPathResource("mime.types");
             if (resource.exists()) {

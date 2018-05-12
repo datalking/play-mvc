@@ -5,6 +5,7 @@ import com.github.datalking.beans.PropertyAccessor;
 import java.util.List;
 
 /**
+ * 数据绑定和数据验证相关的error方法
  */
 public interface Errors {
 

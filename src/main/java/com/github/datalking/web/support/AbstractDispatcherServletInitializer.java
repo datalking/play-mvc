@@ -64,16 +64,14 @@ public abstract class AbstractDispatcherServletInitializer extends AbstractConte
 
         // ==== 初始化ServletApplicationContext
         WebApplicationContext servletAppContext = createServletApplicationContext();
-        Assert.notNull(servletAppContext, "createServletApplicationContext() did not return an application " +
-                "context for servlet [" + servletName + "]");
+        Assert.notNull(servletAppContext, "createServletApplicationContext() cannot be null for servlet [" + servletName + "]");
 
         // ==== 初始化
         DispatcherServlet dispatcherServlet = new DispatcherServlet(servletAppContext);
 
         // 注册servlet组件
         ServletRegistration.Dynamic registration = servletContext.addServlet(servletName, dispatcherServlet);
-        Assert.notNull(registration, "Failed to register servlet with name '" + servletName + "'." +
-                "Check if there is another servlet registered under the same name.");
+        Assert.notNull(registration, "Failed to register servlet '" + servletName + "'. Check if same name.");
 
         registration.setLoadOnStartup(1);
         // 配置servlet的映射信息

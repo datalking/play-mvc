@@ -1,5 +1,7 @@
 package com.github.datalking.common;
 
+import com.github.datalking.beans.PropertyEditorRegistry;
+
 import java.beans.PropertyEditor;
 import java.util.Map;
 
@@ -20,7 +22,7 @@ public interface BindingResult extends Errors {
 
     PropertyEditor findEditor(String field, Class<?> valueType);
 
-//    PropertyEditorRegistry getPropertyEditorRegistry();
+    PropertyEditorRegistry getPropertyEditorRegistry();
 
 //    void addError(ObjectError error);
 

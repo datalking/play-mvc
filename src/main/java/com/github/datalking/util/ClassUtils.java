@@ -96,6 +96,10 @@ public abstract class ClassUtils {
         return StringUtils.firstLetterLowerCase(className);
     }
 
+    public static Class<?>[] getAllInterfacesForClass(Class<?> clazz) {
+        return getAllInterfacesForClass(clazz, null);
+    }
+
     public static Class<?>[] getAllInterfacesForClass(Class<?> clazz, ClassLoader classLoader) {
         Set<Class<?>> ifcs = getAllInterfacesForClassAsSet(clazz, classLoader);
         return ifcs.toArray(new Class<?>[ifcs.size()]);

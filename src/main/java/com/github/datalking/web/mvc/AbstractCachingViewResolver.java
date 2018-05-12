@@ -109,7 +109,6 @@ public abstract class AbstractCachingViewResolver extends WebApplicationObjectSu
 
     protected abstract View loadView(String viewName);
 
-
     public void removeFromCache(String viewName) {
         if (!isCache()) {
             logger.warn("View caching is SWITCHED OFF -- removal not necessary");

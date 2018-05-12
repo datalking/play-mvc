@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.TreeSet;
 
 /**
- * Represents an Internet Media Type, as defined in the HTTP specification.
+ * HTTP协议中定义的Internet Media Type
  * copied from spring
  */
 public class MediaType implements Comparable<MediaType> {
@@ -253,7 +253,7 @@ public class MediaType implements Comparable<MediaType> {
      * @throws IllegalArgumentException if any of the parameters contain illegal characters
      */
     public MediaType(String type, String subtype) {
-        this(type, subtype, Collections.<String, String>emptyMap());
+        this(type, subtype, Collections.emptyMap());
     }
 
     /**

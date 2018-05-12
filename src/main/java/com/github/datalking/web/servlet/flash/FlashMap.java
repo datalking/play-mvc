@@ -19,7 +19,6 @@ public class FlashMap extends HashMap<String, Object> implements Comparable<Flas
 
     private int timeToLive;
 
-
     public void setTargetRequestPath(String path) {
         this.targetRequestPath = path;
     }
@@ -41,7 +40,6 @@ public class FlashMap extends HashMap<String, Object> implements Comparable<Flas
         return this;
     }
 
-
     public FlashMap addTargetRequestParam(String name, String value) {
         if (StringUtils.hasText(name) && StringUtils.hasText(value)) {
             this.targetRequestParams.add(name, value);
@@ -49,23 +47,19 @@ public class FlashMap extends HashMap<String, Object> implements Comparable<Flas
         return this;
     }
 
-
     public MultiValueMap<String, String> getTargetRequestParams() {
         return this.targetRequestParams;
     }
-
 
     public void startExpirationPeriod(int timeToLive) {
         this.expirationStartTime = System.currentTimeMillis();
         this.timeToLive = timeToLive;
     }
 
-
     public boolean isExpired() {
         return (this.expirationStartTime != 0 &&
                 (System.currentTimeMillis() - this.expirationStartTime > this.timeToLive * 1000));
     }
-
 
     public int compareTo(FlashMap other) {
         int thisUrlPath = (this.targetRequestPath != null ? 1 : 0);

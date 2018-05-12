@@ -24,14 +24,19 @@ public class PathVariableMethodArgumentResolver extends AbstractNamedValueMethod
         super(null);
     }
 
+    @Override
     public boolean supportsParameter(MethodParameter parameter) {
+        // 检查方法参数是否有@PathVariable注解
         if (!parameter.hasParameterAnnotation(PathVariable.class)) {
             return false;
         }
+
+        // 检查@PathVariable配置的值是否为Map类型
         if (Map.class.isAssignableFrom(parameter.getParameterType())) {
             String paramName = parameter.getParameterAnnotation(PathVariable.class).value();
             return StringUtils.hasText(paramName);
         }
+
         return true;
     }
 
@@ -62,7 +67,6 @@ public class PathVariableMethodArgumentResolver extends AbstractNamedValueMethod
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected void handleResolvedValue(Object arg, String name,
                                        MethodParameter parameter,
                                        ModelAndViewContainer mavContainer,
@@ -71,10 +75,13 @@ public class PathVariableMethodArgumentResolver extends AbstractNamedValueMethod
         String key = View.PATH_VARIABLES;
         int scope = RequestAttributes.SCOPE_REQUEST;
         Map<String, Object> pathVars = (Map<String, Object>) request.getAttribute(key, scope);
+
         if (pathVars == null) {
             pathVars = new HashMap<>();
             request.setAttribute(key, pathVars, scope);
         }
+
+        // 把参数的key-value放进请求域
         pathVars.put(name, arg);
     }
 

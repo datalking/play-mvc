@@ -3,7 +3,7 @@ package com.github.datalking.util.web;
 import com.github.datalking.web.context.WebApplicationContext;
 import com.github.datalking.web.servlet.DispatcherServlet;
 import com.github.datalking.web.servlet.flash.FlashMap;
-import com.github.datalking.web.servlet.flash.FlashMapManager;
+import com.github.datalking.web.servlet.FlashMapManager;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;

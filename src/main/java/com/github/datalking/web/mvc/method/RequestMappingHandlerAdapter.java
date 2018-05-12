@@ -461,9 +461,12 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
         SessionAttributesHandler sessionAttrHandler = this.sessionAttributesHandlerCache.get(handlerType);
         if (sessionAttrHandler == null) {
             synchronized (this.sessionAttributesHandlerCache) {
+
                 sessionAttrHandler = this.sessionAttributesHandlerCache.get(handlerType);
                 if (sessionAttrHandler == null) {
+
                     sessionAttrHandler = new SessionAttributesHandler(handlerType, sessionAttributeStore);
+
                     this.sessionAttributesHandlerCache.put(handlerType, sessionAttrHandler);
                 }
             }
@@ -489,6 +492,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 
         ModelAndViewContainer mavContainer = new ModelAndViewContainer();
         mavContainer.addAllAttributes(RequestContextUtils.getInputFlashMap(request));
+
         modelFactory.initModel(webRequest, mavContainer, invocableMethod);
         mavContainer.setIgnoreDefaultModelOnRedirect(this.ignoreDefaultModelOnRedirect);
 

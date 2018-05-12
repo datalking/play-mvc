@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * 直接绑定到对象的属性字段，不用遍历setter
+ *
  * @author yaoo on 5/10/18
  */
 public class DirectFieldAccessor extends AbstractPropertyAccessor {

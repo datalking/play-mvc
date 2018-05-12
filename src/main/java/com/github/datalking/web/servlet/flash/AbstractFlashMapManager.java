@@ -6,6 +6,7 @@ import com.github.datalking.util.CollectionUtils;
 import com.github.datalking.util.ObjectUtils;
 import com.github.datalking.util.StringUtils;
 import com.github.datalking.util.web.UrlPathHelper;
+import com.github.datalking.web.servlet.FlashMapManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +49,7 @@ public abstract class AbstractFlashMapManager implements FlashMapManager {
         return this.urlPathHelper;
     }
 
-
+    @Override
     public final FlashMap retrieveAndUpdate(HttpServletRequest request, HttpServletResponse response) {
         List<FlashMap> maps = retrieveFlashMaps(request);
         if (CollectionUtils.isEmpty(maps)) {
@@ -79,12 +80,33 @@ public abstract class AbstractFlashMapManager implements FlashMapManager {
         return match;
     }
 
+    @Override
+    public final void saveOutputFlashMap(FlashMap flashMap, HttpServletRequest request, HttpServletResponse response) {
+        if (CollectionUtils.isEmpty(flashMap)) {
+            return;
+        }
+
+        String path = decodeAndNormalizePath(flashMap.getTargetRequestPath(), request);
+        flashMap.setTargetRequestPath(path);
+        decodeParameters(flashMap.getTargetRequestParams(), request);
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("Saving FlashMap=" + flashMap);
+        }
+        flashMap.startExpirationPeriod(this.flashMapTimeout);
+
+        synchronized (writeLock) {
+            List<FlashMap> allMaps = retrieveFlashMaps(request);
+            allMaps = (allMaps != null ? allMaps : new CopyOnWriteArrayList<>());
+            allMaps.add(flashMap);
+            updateFlashMaps(allMaps, request, response);
+        }
+    }
 
     protected abstract List<FlashMap> retrieveFlashMaps(HttpServletRequest request);
 
-
     private List<FlashMap> getExpiredFlashMaps(List<FlashMap> allMaps) {
-        List<FlashMap> result = new ArrayList<FlashMap>();
+        List<FlashMap> result = new ArrayList<>();
         for (FlashMap map : allMaps) {
             if (map.isExpired()) {
                 result.add(map);
@@ -95,7 +117,7 @@ public abstract class AbstractFlashMapManager implements FlashMapManager {
 
 
     private FlashMap getMatchingFlashMap(List<FlashMap> allMaps, HttpServletRequest request) {
-        List<FlashMap> result = new ArrayList<FlashMap>();
+        List<FlashMap> result = new ArrayList<>();
         for (FlashMap flashMap : allMaps) {
             if (isFlashMapForRequest(flashMap, request)) {
                 result.add(flashMap);
@@ -110,7 +132,6 @@ public abstract class AbstractFlashMapManager implements FlashMapManager {
         }
         return null;
     }
-
 
     protected boolean isFlashMapForRequest(FlashMap flashMap, HttpServletRequest request) {
         String expectedPath = flashMap.getTargetRequestPath();
@@ -129,28 +150,6 @@ public abstract class AbstractFlashMapManager implements FlashMapManager {
             }
         }
         return true;
-    }
-
-    public final void saveOutputFlashMap(FlashMap flashMap, HttpServletRequest request, HttpServletResponse response) {
-        if (CollectionUtils.isEmpty(flashMap)) {
-            return;
-        }
-
-        String path = decodeAndNormalizePath(flashMap.getTargetRequestPath(), request);
-        flashMap.setTargetRequestPath(path);
-        decodeParameters(flashMap.getTargetRequestParams(), request);
-
-        if (logger.isDebugEnabled()) {
-            logger.debug("Saving FlashMap=" + flashMap);
-        }
-        flashMap.startExpirationPeriod(this.flashMapTimeout);
-
-        synchronized (writeLock) {
-            List<FlashMap> allMaps = retrieveFlashMaps(request);
-            allMaps = (allMaps != null ? allMaps : new CopyOnWriteArrayList<FlashMap>());
-            allMaps.add(flashMap);
-            updateFlashMaps(allMaps, request, response);
-        }
     }
 
     private String decodeAndNormalizePath(String path, HttpServletRequest request) {

@@ -12,31 +12,29 @@ import java.util.Map;
  */
 public class ParameterContentNegotiationStrategy extends AbstractMappingContentNegotiationStrategy {
 
-	private static final Logger logger = LoggerFactory.getLogger(ParameterContentNegotiationStrategy.class);
+    private static final Logger logger = LoggerFactory.getLogger(ParameterContentNegotiationStrategy.class);
 
-	private String parameterName = "format";
+    private String parameterName = "format";
 
+    public ParameterContentNegotiationStrategy(Map<String, MediaType> mediaTypes) {
+        super(mediaTypes);
+    }
 
-	public ParameterContentNegotiationStrategy(Map<String, MediaType> mediaTypes) {
-		super(mediaTypes);
-	}
+    public void setParameterName(String parameterName) {
+        Assert.notNull(parameterName, "parameterName is required");
+        this.parameterName = parameterName;
+    }
 
-	public void setParameterName(String parameterName) {
-		Assert.notNull(parameterName, "parameterName is required");
-		this.parameterName = parameterName;
-	}
+    @Override
+    protected String getMediaTypeKey(WebRequest webRequest) {
+        return webRequest.getParameter(this.parameterName);
+    }
 
-	@Override
-	protected String getMediaTypeKey(WebRequest webRequest) {
-		return webRequest.getParameter(this.parameterName);
-	}
-
-	@Override
-	protected void handleMatch(String mediaTypeKey, MediaType mediaType) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Requested media type is '" + mediaType + "' (based on parameter '" +
-					this.parameterName + "'='" + mediaTypeKey + "')");
-		}
-	}
+    @Override
+    protected void handleMatch(String mediaTypeKey, MediaType mediaType) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Requested media type is " + mediaType + " based on parameter" + mediaTypeKey + "')");
+        }
+    }
 
 }

@@ -12,7 +12,7 @@ import com.github.datalking.web.http.accept.HeaderContentNegotiationStrategy;
 import com.github.datalking.web.http.accept.ParameterContentNegotiationStrategy;
 import com.github.datalking.web.http.accept.PathExtensionContentNegotiationStrategy;
 import com.github.datalking.web.http.accept.ServletPathExtensionContentNegotiationStrategy;
-import com.github.datalking.web.support.ServletContextAware;
+import com.github.datalking.web.context.ServletContextAware;
 
 import javax.servlet.ServletContext;
 import java.util.ArrayList;

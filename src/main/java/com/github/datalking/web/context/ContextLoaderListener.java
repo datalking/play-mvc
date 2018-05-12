@@ -35,7 +35,9 @@ public class ContextLoaderListener extends ContextLoader implements ServletConte
         Enumeration attrNames = sc.getAttributeNames();
         while (attrNames.hasMoreElements()) {
             String attrName = (String) attrNames.nextElement();
-            if (attrName.startsWith("org.springframework.")) {
+
+//            if (attrName.startsWith("org.springframework.")) {
+            if (attrName.startsWith("com.github.datalking")) {
                 Object attrValue = sc.getAttribute(attrName);
                 if (attrValue instanceof DisposableBean) {
                     try {

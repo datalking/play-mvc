@@ -70,12 +70,12 @@ public class ServletInvocableHandlerMethod extends InvocableHandlerMethod {
         mavContainer.setRequestHandled(false);
 
         try {
+            // 获取返回值类型
             MethodParameter returnValType = getReturnValueType(returnValue);
+
+            // 返回值处理
             this.returnValueHandlers.handleReturnValue(returnValue, returnValType, mavContainer, webRequest);
         } catch (Exception ex) {
-            if (logger.isTraceEnabled()) {
-                logger.trace(getReturnValueHandlingErrorMessage("Error handling return value", returnValue), ex);
-            }
             throw ex;
         }
     }

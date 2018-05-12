@@ -16,7 +16,7 @@ public class HeaderContentNegotiationStrategy implements ContentNegotiationStrat
         try {
             if (StringUtils.hasText(acceptHeader)) {
                 List<MediaType> mediaTypes = MediaType.parseMediaTypes(acceptHeader);
-                //MediaType.sortBySpecificityAndQuality(mediaTypes);
+//                MediaType.sortBySpecificityAndQuality(mediaTypes);
                 return mediaTypes;
             }
         } catch (IllegalArgumentException ex) {

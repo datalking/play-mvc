@@ -48,7 +48,7 @@ public class BeanPropertyBindingResult extends AbstractPropertyBindingResult imp
     }
 
     protected BeanWrapper createBeanWrapper() {
-        Assert.state(this.target != null, "Cannot access properties on null bean instance '" + getObjectName() + "'!");
+        Assert.state(this.target != null, "Cannot access properties on null bean" + getObjectName());
         return PropertyAccessorFactory.forBeanPropertyAccess(this.target);
     }
 

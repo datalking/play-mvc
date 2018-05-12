@@ -48,7 +48,6 @@ public abstract class AbstractBindingResult extends AbstractErrors implements Bi
         return this.messageCodesResolver;
     }
 
-
     //---------------------------------------------------------------------
     // Implementation of the Errors interface
     //---------------------------------------------------------------------

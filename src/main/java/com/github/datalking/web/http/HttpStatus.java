@@ -1,7 +1,8 @@
 package com.github.datalking.web.http;
 
 /**
- * @author yaoo on 4/28/18
+ * http状态码 枚举类
+ * copied from spring
  */
 public enum HttpStatus {
 
@@ -469,7 +470,6 @@ public enum HttpStatus {
     public boolean is3xxRedirection() {
         return Series.REDIRECTION.equals(series());
     }
-
 
 
     public boolean is4xxClientError() {

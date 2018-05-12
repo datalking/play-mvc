@@ -11,7 +11,7 @@
 //                var htmlObj = $.ajax({url: 'https://hacker-news.firebaseio.com/v0/jobstories.json', async: false});
                 $.ajax({
 //                    url: 'https://api.github.com/users/uptonking',
-                    url: 'http://localhost:8080/mvc/user/sample1',
+                    url: 'http://localhost:8999/user/sample1',
                     async: false,
                     dataType: 'json',
                     success: function (data) {

@@ -13,7 +13,7 @@ public final class NumberToNumberConverterFactory
         implements ConverterFactory<Number, Number>, ConditionalConverter {
 
     public <T extends Number> Converter<Number, T> getConverter(Class<T> targetType) {
-        return new NumberToNumber<T>(targetType);
+        return new NumberToNumber<>(targetType);
     }
 
     public boolean matches(TypeDescriptor sourceType, TypeDescriptor targetType) {

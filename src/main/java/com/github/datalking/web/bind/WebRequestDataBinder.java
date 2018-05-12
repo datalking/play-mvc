@@ -30,7 +30,6 @@ public class WebRequestDataBinder extends WebDataBinder {
         doBind(mpvs);
     }
 
-
     public void closeNoCatch() throws Exception {
 //        if (getBindingResult().hasErrors()) {
 //            throw new Exception(getBindingResult() + "");

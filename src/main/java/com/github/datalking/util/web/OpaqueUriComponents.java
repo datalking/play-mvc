@@ -13,8 +13,7 @@ import java.util.List;
 /**
  * Extension of {@link UriComponents} for opaque URIs.
  */
-@SuppressWarnings("serial")
-final class OpaqueUriComponents extends UriComponents {
+public class OpaqueUriComponents extends UriComponents {
 
     private static final MultiValueMap<String, String> QUERY_PARAMS_NONE = new LinkedMultiValueMap<>(0);
 

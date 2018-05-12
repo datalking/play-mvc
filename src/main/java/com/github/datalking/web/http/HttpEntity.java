@@ -5,6 +5,7 @@ import com.github.datalking.common.MultiValueMap;
 import com.github.datalking.util.ObjectUtils;
 
 /**
+ * 代表http request或response，由header和body2部分构成
  */
 public class HttpEntity<T> {
 
@@ -14,37 +15,18 @@ public class HttpEntity<T> {
 
     private final T body;
 
-    /**
-     * Create a new, empty {@code HttpEntity}.
-     */
     protected HttpEntity() {
         this(null, null);
     }
 
-    /**
-     * Create a new {@code HttpEntity} with the given body and no headers.
-     *
-     * @param body the entity body
-     */
     public HttpEntity(T body) {
         this(body, null);
     }
 
-    /**
-     * Create a new {@code HttpEntity} with the given headers and no body.
-     *
-     * @param headers the entity headers
-     */
     public HttpEntity(MultiValueMap<String, String> headers) {
         this(null, headers);
     }
 
-    /**
-     * Create a new {@code HttpEntity} with the given body and headers.
-     *
-     * @param body    the entity body
-     * @param headers the entity headers
-     */
     public HttpEntity(T body, MultiValueMap<String, String> headers) {
         this.body = body;
         HttpHeaders tempHeaders = new HttpHeaders();
@@ -54,24 +36,14 @@ public class HttpEntity<T> {
         this.headers = HttpHeaders.readOnlyHttpHeaders(tempHeaders);
     }
 
-
-    /**
-     * Returns the headers of this entity.
-     */
     public HttpHeaders getHeaders() {
         return this.headers;
     }
 
-    /**
-     * Returns the body of this entity.
-     */
     public T getBody() {
         return this.body;
     }
 
-    /**
-     * Indicates whether this entity has a body.
-     */
     public boolean hasBody() {
         return (this.body != null);
     }
@@ -109,6 +81,5 @@ public class HttpEntity<T> {
         builder.append('>');
         return builder.toString();
     }
-
 
 }

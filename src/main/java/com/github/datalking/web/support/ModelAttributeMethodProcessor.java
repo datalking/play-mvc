@@ -30,7 +30,6 @@ public class ModelAttributeMethodProcessor
         this.annotationNotRequired = annotationNotRequired;
     }
 
-
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         if (parameter.hasParameterAnnotation(ModelAttribute.class)) {
@@ -53,15 +52,14 @@ public class ModelAttributeMethodProcessor
 
         WebDataBinder binder = binderFactory.createBinder(webRequest, attribute, name);
 
-//        if (binder.getTarget() != null) {
-//            bindRequestParameters(binder, webRequest);
-//            validateIfApplicable(binder, parameter);
-//            if (binder.getBindingResult().hasErrors() && isBindExceptionRequired(binder, parameter)) {
-//                throw new BindException(binder.getBindingResult());
-//            }
-//        }
+        if (binder.getTarget() != null) {
+            bindRequestParameters(binder, webRequest);
+            validateIfApplicable(binder, parameter);
+            if (binder.getBindingResult().hasErrors() && isBindExceptionRequired(binder, parameter)) {
+                throw new Exception(binder.getBindingResult()+"");
+            }
+        }
 
-        // Add resolved attribute and BindingResult at the end of the model
         Map<String, Object> bindingResultModel = binder.getBindingResult().getModel();
         mavContainer.removeAttributes(bindingResultModel);
         mavContainer.addAllAttributes(bindingResultModel);
@@ -69,8 +67,10 @@ public class ModelAttributeMethodProcessor
         return binder.getTarget();
     }
 
-    protected Object createAttribute(String attributeName, MethodParameter methodParam,
-                                     WebDataBinderFactory binderFactory, WebRequest request) throws Exception {
+    protected Object createAttribute(String attributeName,
+                                     MethodParameter methodParam,
+                                     WebDataBinderFactory binderFactory,
+                                     WebRequest request) throws Exception {
 
         return BeanUtils.instantiateClass(methodParam.getParameterType());
     }

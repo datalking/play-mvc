@@ -15,8 +15,8 @@ import java.util.Map;
 /**
  * @author yaoo on 4/25/18
  */
-public abstract class AbstractWebApplicationContext
-        extends AbstractApplicationContext implements ConfigurableWebApplicationContext {
+public abstract class AbstractWebApplicationContext extends AbstractApplicationContext
+        implements ConfigurableWebApplicationContext {
 
     private ServletContext servletContext;
 

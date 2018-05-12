@@ -224,7 +224,6 @@ public abstract class AbstractView extends WebApplicationObjectSupport implement
         }
     }
 
-
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(getClass().getName());

@@ -23,7 +23,7 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping {
 
     private boolean lazyInitHandlers = false;
 
-    private final Map<String, Object> handlerMap = new LinkedHashMap<String, Object>();
+    private final Map<String, Object> handlerMap = new LinkedHashMap<>();
 
     public void setRootHandler(Object rootHandler) {
         this.rootHandler = rootHandler;
@@ -55,17 +55,20 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping {
                 // Bean name or resolved handler?
                 if (rawHandler instanceof String) {
                     String handlerName = (String) rawHandler;
+
                     rawHandler = getApplicationContext().getBean(handlerName);
                 }
                 validateHandler(rawHandler, request);
                 handler = buildPathExposingHandler(rawHandler, lookupPath, lookupPath, null);
             }
         }
+
         if (handler != null && logger.isDebugEnabled()) {
             logger.debug("Mapping [" + lookupPath + "] to " + handler);
         } else if (handler == null && logger.isTraceEnabled()) {
             logger.trace("No handler mapping found for [" + lookupPath + "]");
         }
+
         return handler;
     }
 
@@ -76,13 +79,15 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping {
             // Bean name or resolved handler?
             if (handler instanceof String) {
                 String handlerName = (String) handler;
+
                 handler = getApplicationContext().getBean(handlerName);
             }
             validateHandler(handler, request);
+
             return buildPathExposingHandler(handler, urlPath, urlPath, null);
         }
         // Pattern match?
-        List<String> matchingPatterns = new ArrayList<String>();
+        List<String> matchingPatterns = new ArrayList<>();
         for (String registeredPattern : this.handlerMap.keySet()) {
             if (getPathMatcher().match(registeredPattern, urlPath)) {
                 matchingPatterns.add(registeredPattern);
@@ -90,6 +95,7 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping {
         }
         String bestPatternMatch = null;
         Comparator<String> patternComparator = getPathMatcher().getPatternComparator(urlPath);
+
         if (!matchingPatterns.isEmpty()) {
             Collections.sort(matchingPatterns, patternComparator);
             if (logger.isDebugEnabled()) {
@@ -97,6 +103,7 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping {
             }
             bestPatternMatch = matchingPatterns.get(0);
         }
+
         if (bestPatternMatch != null) {
             handler = this.handlerMap.get(bestPatternMatch);
             // Bean name or resolved handler?
@@ -112,7 +119,9 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping {
             Map<String, String> uriTemplateVariables = new LinkedHashMap<String, String>();
             for (String matchingPattern : matchingPatterns) {
                 if (patternComparator.compare(bestPatternMatch, matchingPattern) == 0) {
+
                     Map<String, String> vars = getPathMatcher().extractUriTemplateVariables(matchingPattern, urlPath);
+
                     Map<String, String> decodedVars = getUrlPathHelper().decodePathVariables(request, vars);
                     uriTemplateVariables.putAll(decodedVars);
                 }
@@ -135,6 +144,7 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping {
                                               Map<String, String> uriTemplateVariables) {
 
         HandlerExecutionChain chain = new HandlerExecutionChain(rawHandler);
+
         chain.addInterceptor(new PathExposingHandlerInterceptor(bestMatchingPattern, pathWithinMapping));
         if (!CollectionUtils.isEmpty(uriTemplateVariables)) {
             chain.addInterceptor(new UriTemplateVariablesHandlerInterceptor(uriTemplateVariables));

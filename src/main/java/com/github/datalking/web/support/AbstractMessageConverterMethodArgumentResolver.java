@@ -41,11 +41,11 @@ public abstract class AbstractMessageConverterMethodArgumentResolver implements 
     }
 
     private static List<MediaType> getAllSupportedMediaTypes(List<HttpMessageConverter<?>> messageConverters) {
-        Set<MediaType> allSupportedMediaTypes = new LinkedHashSet<MediaType>();
+        Set<MediaType> allSupportedMediaTypes = new LinkedHashSet<>();
         for (HttpMessageConverter<?> messageConverter : messageConverters) {
             allSupportedMediaTypes.addAll(messageConverter.getSupportedMediaTypes());
         }
-        List<MediaType> result = new ArrayList<MediaType>(allSupportedMediaTypes);
+        List<MediaType> result = new ArrayList<>(allSupportedMediaTypes);
         MediaType.sortBySpecificity(result);
         return Collections.unmodifiableList(result);
     }
@@ -58,7 +58,6 @@ public abstract class AbstractMessageConverterMethodArgumentResolver implements 
         return readWithMessageConverters(inputMessage, methodParam, paramType);
     }
 
-    @SuppressWarnings("unchecked")
     protected <T> Object readWithMessageConverters(HttpInputMessage inputMessage,
                                                    MethodParameter methodParam,
                                                    Type targetType) throws IOException {
@@ -113,9 +112,10 @@ public abstract class AbstractMessageConverterMethodArgumentResolver implements 
         return null;
     }
 
-
         protected ServletServerHttpRequest createInputMessage(WebRequest webRequest) {
+
         HttpServletRequest servletRequest = webRequest.getNativeRequest(HttpServletRequest.class);
+
         return new ServletServerHttpRequest(servletRequest);
     }
 

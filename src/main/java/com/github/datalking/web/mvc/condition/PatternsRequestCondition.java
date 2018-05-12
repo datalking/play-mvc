@@ -18,9 +18,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * copied from spring
  */
-public final class PatternsRequestCondition extends AbstractRequestCondition<PatternsRequestCondition> {
+public class PatternsRequestCondition extends AbstractRequestCondition<PatternsRequestCondition> {
 
     private final Set<String> patterns;
 
@@ -34,40 +33,34 @@ public final class PatternsRequestCondition extends AbstractRequestCondition<Pat
 
     private final List<String> fileExtensions = new ArrayList<>();
 
-
     public PatternsRequestCondition(String... patterns) {
         this(asList(patterns), null, null, true, true, null);
     }
 
-    public PatternsRequestCondition(String[] patterns, UrlPathHelper urlPathHelper, PathMatcher pathMatcher,
-                                    boolean useSuffixPatternMatch, boolean useTrailingSlashMatch) {
+    public PatternsRequestCondition(String[] patterns,
+                                    UrlPathHelper urlPathHelper,
+                                    PathMatcher pathMatcher,
+                                    boolean useSuffixPatternMatch,
+                                    boolean useTrailingSlashMatch) {
 
         this(asList(patterns), urlPathHelper, pathMatcher, useSuffixPatternMatch, useTrailingSlashMatch, null);
     }
 
-    /**
-     * Creates a new instance with the given URL patterns.
-     * Each pattern that is not empty and does not start with "/" is pre-pended with "/".
-     *
-     * @param patterns              the URL patterns to use; if 0, the condition will match to every request.
-     * @param urlPathHelper         a {@link UrlPathHelper} for determining the lookup path for a request
-     * @param pathMatcher           a {@link PathMatcher} for pattern path matching
-     * @param useSuffixPatternMatch whether to enable matching by suffix (".*")
-     * @param useTrailingSlashMatch whether to match irrespective of a trailing slash
-     * @param fileExtensions        a list of file extensions to consider for path matching
-     */
-    public PatternsRequestCondition(String[] patterns, UrlPathHelper urlPathHelper,
-                                    PathMatcher pathMatcher, boolean useSuffixPatternMatch, boolean useTrailingSlashMatch,
+    public PatternsRequestCondition(String[] patterns,
+                                    UrlPathHelper urlPathHelper,
+                                    PathMatcher pathMatcher,
+                                    boolean useSuffixPatternMatch,
+                                    boolean useTrailingSlashMatch,
                                     List<String> fileExtensions) {
 
         this(asList(patterns), urlPathHelper, pathMatcher, useSuffixPatternMatch, useTrailingSlashMatch, fileExtensions);
     }
 
-    /**
-     * Private constructor accepting a collection of patterns.
-     */
-    private PatternsRequestCondition(Collection<String> patterns, UrlPathHelper urlPathHelper,
-                                     PathMatcher pathMatcher, boolean useSuffixPatternMatch, boolean useTrailingSlashMatch,
+    private PatternsRequestCondition(Collection<String> patterns,
+                                     UrlPathHelper urlPathHelper,
+                                     PathMatcher pathMatcher,
+                                     boolean useSuffixPatternMatch,
+                                     boolean useTrailingSlashMatch,
                                      List<String> fileExtensions) {
 
         this.patterns = Collections.unmodifiableSet(prependLeadingSlash(patterns));
@@ -87,14 +80,14 @@ public final class PatternsRequestCondition extends AbstractRequestCondition<Pat
 
 
     private static List<String> asList(String... patterns) {
-        return (patterns != null ? Arrays.asList(patterns) : Collections.<String>emptyList());
+        return (patterns != null ? Arrays.asList(patterns) : Collections.emptyList());
     }
 
     private static Set<String> prependLeadingSlash(Collection<String> patterns) {
         if (patterns == null) {
             return Collections.emptySet();
         }
-        Set<String> result = new LinkedHashSet<String>(patterns.size());
+        Set<String> result = new LinkedHashSet<>(patterns.size());
         for (String pattern : patterns) {
             if (StringUtils.hasLength(pattern) && !pattern.startsWith("/")) {
                 pattern = "/" + pattern;
@@ -120,7 +113,7 @@ public final class PatternsRequestCondition extends AbstractRequestCondition<Pat
 
     @Override
     public PatternsRequestCondition combine(PatternsRequestCondition other) {
-        Set<String> result = new LinkedHashSet<String>();
+        Set<String> result = new LinkedHashSet<>();
         if (!this.patterns.isEmpty() && !other.patterns.isEmpty()) {
             for (String pattern1 : this.patterns) {
                 for (String pattern2 : other.patterns) {
@@ -146,7 +139,7 @@ public final class PatternsRequestCondition extends AbstractRequestCondition<Pat
         }
 
         String lookupPath = this.pathHelper.getLookupPathForRequest(request);
-        List<String> matches = new ArrayList<String>();
+        List<String> matches = new ArrayList<>();
         for (String pattern : this.patterns) {
             String match = getMatchingPattern(pattern, lookupPath);
             if (match != null) {
@@ -155,8 +148,12 @@ public final class PatternsRequestCondition extends AbstractRequestCondition<Pat
         }
         Collections.sort(matches, this.pathMatcher.getPatternComparator(lookupPath));
         return matches.isEmpty() ? null :
-                new PatternsRequestCondition(matches, this.pathHelper, this.pathMatcher, this.useSuffixPatternMatch,
-                        this.useTrailingSlashMatch, this.fileExtensions);
+                new PatternsRequestCondition(matches,
+                        this.pathHelper,
+                        this.pathMatcher,
+                        this.useSuffixPatternMatch,
+                        this.useTrailingSlashMatch,
+                        this.fileExtensions);
     }
 
     private String getMatchingPattern(String pattern, String lookupPath) {

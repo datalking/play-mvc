@@ -58,13 +58,14 @@ public class HandlerMethodReturnValueHandlerComposite implements HandlerMethodRe
         return this;
     }
 
-    public HandlerMethodReturnValueHandlerComposite addHandlers(
-            List<? extends HandlerMethodReturnValueHandler> returnValueHandlers) {
+    public HandlerMethodReturnValueHandlerComposite addHandlers(List<? extends HandlerMethodReturnValueHandler> returnValueHandlers) {
+
         if (returnValueHandlers != null) {
             for (HandlerMethodReturnValueHandler handler : returnValueHandlers) {
                 this.returnValueHandlers.add(handler);
             }
         }
+
         return this;
     }
 

@@ -15,7 +15,6 @@ abstract class AbstractMediaTypeExpression implements Comparable<AbstractMediaTy
 
     private final boolean isNegated;
 
-
     AbstractMediaTypeExpression(String expression) {
         if (expression.startsWith("!")) {
             this.isNegated = true;
@@ -39,7 +38,6 @@ abstract class AbstractMediaTypeExpression implements Comparable<AbstractMediaTy
         return this.isNegated;
     }
 
-
     public final boolean match(HttpServletRequest request) {
         try {
             boolean match = matchMediaType(request);
@@ -50,7 +48,6 @@ abstract class AbstractMediaTypeExpression implements Comparable<AbstractMediaTy
     }
 
     protected abstract boolean matchMediaType(HttpServletRequest request);
-
 
     public int compareTo(AbstractMediaTypeExpression other) {
         return MediaType.SPECIFICITY_COMPARATOR.compare(this.getMediaType(), other.getMediaType());

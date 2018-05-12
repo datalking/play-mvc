@@ -78,7 +78,6 @@ public class DefaultRequestToViewNameTranslator implements RequestToViewNameTran
         return (this.prefix + transformPath(lookupPath) + this.suffix);
     }
 
-
     protected String transformPath(String lookupPath) {
         String path = lookupPath;
         if (this.stripLeadingSlash && path.startsWith(SLASH)) {

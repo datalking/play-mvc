@@ -26,21 +26,28 @@ public class ModelAndViewMethodReturnValueHandler implements HandlerMethodReturn
         }
 
         ModelAndView mav = (ModelAndView) returnValue;
+
         if (mav.isReference()) {
+
             String viewName = mav.getViewName();
+
             mavContainer.setViewName(viewName);
+
             if (viewName != null && viewName.startsWith("redirect:")) {
                 mavContainer.setRedirectModelScenario(true);
             }
         } else {
             View view = mav.getView();
+
             mavContainer.setView(view);
+
             if (view instanceof SmartView) {
                 if (((SmartView) view).isRedirectView()) {
                     mavContainer.setRedirectModelScenario(true);
                 }
             }
         }
+
         mavContainer.addAllAttributes(mav.getModel());
     }
 

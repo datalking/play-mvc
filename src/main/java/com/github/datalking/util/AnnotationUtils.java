@@ -99,7 +99,7 @@ public abstract class AnnotationUtils {
             }
             for (Annotation ann : anns) {
                 if (!isInJavaLangAnnotationPackage(ann) && visited.add(ann)) {
-                    A annotation = findAnnotation((AnnotatedElement) ann.annotationType(), annotationType, visited);
+                    A annotation = findAnnotation(ann.annotationType(), annotationType, visited);
                     if (annotation != null) {
                         return annotation;
                     }

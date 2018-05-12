@@ -13,7 +13,7 @@ import java.util.Set;
  * Servlet容器启动时会调用ServletContainerInitializer的onStartup()
  * 容器启动的时候会将@HandlesTypes指定的这个类型下面的子类（实现类，子接口等）传递过来，作为参数传入onStartup()
  * <p>
- * HandlesTypes注解标识SpringServletContainerInitializer 类启动时需要处理的类
+ * HandlesTypes注解标识 SpringServletContainerInitializer 类启动时需要处理的类
  *
  * @author yaoo on 4/25/18
  */

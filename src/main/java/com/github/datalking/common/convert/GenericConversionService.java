@@ -39,7 +39,6 @@ public class GenericConversionService implements ConversionService, ConverterReg
 
     private final Map<ConverterCacheKey, GenericConverter> converterCache = new ConcurrentHashMap<>(64);
 
-
     // implementing ConverterRegistry
 
     @Override
@@ -344,10 +343,9 @@ public class GenericConversionService implements ConversionService, ConverterReg
      */
     private static class Converters {
 
-        private final Set<GenericConverter> globalConverters = new LinkedHashSet<GenericConverter>();
+        private final Set<GenericConverter> globalConverters = new LinkedHashSet<>();
 
-        private final Map<ConvertiblePair, ConvertersForPair> converters =
-                new LinkedHashMap<ConvertiblePair, ConvertersForPair>(36);
+        private final Map<ConvertiblePair, ConvertersForPair> converters =                new LinkedHashMap<>(36);
 
         public void add(GenericConverter converter) {
             Set<ConvertiblePair> convertibleTypes = converter.getConvertibleTypes();
@@ -455,7 +453,7 @@ public class GenericConversionService implements ConversionService, ConverterReg
         }
 
         private List<String> getConverterStrings() {
-            List<String> converterStrings = new ArrayList<String>();
+            List<String> converterStrings = new ArrayList<>();
             for (ConvertersForPair convertersForPair : converters.values()) {
                 converterStrings.add(convertersForPair.toString());
             }
@@ -466,11 +464,11 @@ public class GenericConversionService implements ConversionService, ConverterReg
 
 
     /**
-     * Manages converters registered with a specific {@link ConvertiblePair}.
+     * Manages converters registered with a specific ConvertiblePair
      */
     private static class ConvertersForPair {
 
-        private final LinkedList<GenericConverter> converters = new LinkedList<GenericConverter>();
+        private final LinkedList<GenericConverter> converters = new LinkedList<>();
 
         public void add(GenericConverter converter) {
             this.converters.addFirst(converter);

@@ -49,6 +49,8 @@ start from [http://localhost:8999](http://localhost:8999)
 - [ ] 支持 @Service
 - [ ] 支持 Redirect 
 - [ ] 支持 文件上传 MultipartResolver 
+- [ ] 静态资源处理
+- [ ] ajax.jsp的jquery换成本地静态资源
 - [ ] 支持内置tomcat直接启动mvc应用 
 - [ ] servlet和filter支持 `async` 处理
 

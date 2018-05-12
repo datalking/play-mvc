@@ -18,7 +18,6 @@ import java.util.regex.Pattern;
  * Represents a URI template. A URI template is a URI-like String that contains variables enclosed
  * by braces ({@code {}}), which can be expanded to produce an actual URI.
  */
-@SuppressWarnings("serial")
 public class UriTemplate implements Serializable {
 
     /**

@@ -12,7 +12,6 @@ import java.util.List;
  */
 public class OrderComparator implements Comparator<Object> {
 
-
     public static final OrderComparator INSTANCE = new OrderComparator();
 
     @Override

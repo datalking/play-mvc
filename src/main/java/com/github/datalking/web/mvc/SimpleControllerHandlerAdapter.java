@@ -21,6 +21,7 @@ public class SimpleControllerHandlerAdapter implements HandlerAdapter {
 
     public long getLastModified(HttpServletRequest request, Object handler) {
         if (handler instanceof LastModified) {
+
             return ((LastModified) handler).getLastModified(request);
         }
         return -1L;

@@ -72,7 +72,9 @@ public class ContentNegotiationConfigurer {
         if (!this.mediaTypes.isEmpty()) {
             this.factoryBean.addMediaTypes(mediaTypes);
         }
+
         this.factoryBean.afterPropertiesSet();
+
         return this.factoryBean.getObject();
     }
 

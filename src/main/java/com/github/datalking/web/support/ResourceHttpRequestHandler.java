@@ -38,7 +38,6 @@ public class ResourceHttpRequestHandler extends WebContentGenerator implements H
 
     private List<Resource> locations;
 
-
     public ResourceHttpRequestHandler() {
         super(METHOD_GET, METHOD_HEAD);
     }

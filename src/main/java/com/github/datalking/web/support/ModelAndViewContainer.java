@@ -1,6 +1,6 @@
 package com.github.datalking.web.support;
 
-import com.github.datalking.web.mvc.BindingAwareModelMap;
+import com.github.datalking.web.bind.BindingAwareModelMap;
 import com.github.datalking.web.mvc.ModelMap;
 
 import java.util.Map;

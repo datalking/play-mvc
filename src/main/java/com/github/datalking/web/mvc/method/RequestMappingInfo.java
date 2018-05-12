@@ -12,6 +12,8 @@ import com.github.datalking.web.mvc.condition.RequestMethodsRequestCondition;
 import javax.servlet.http.HttpServletRequest;
 
 /**
+ * 是@RequestMapping对应的信息，包含了请求路径，请求方法，请求头等信息
+ *
  * @author yaoo on 4/28/18
  */
 public class RequestMappingInfo implements RequestCondition<RequestMappingInfo> {
@@ -173,7 +175,9 @@ public class RequestMappingInfo implements RequestCondition<RequestMappingInfo> 
 
     @Override
     public int hashCode() {
-        return (this.patternsCondition.hashCode() * 31 +  // primary differentiation
+
+        // primary differentiation
+        return (this.patternsCondition.hashCode() * 31 +
                 this.methodsCondition.hashCode() + this.paramsCondition.hashCode() +
                 this.headersCondition.hashCode() + this.consumesCondition.hashCode() +
                 this.producesCondition.hashCode() + this.customConditionHolder.hashCode());

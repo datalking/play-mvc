@@ -21,6 +21,15 @@ spring笔记
     - String
     - Void
 
+- @ControllerAdvice
+    - 一般用作处理系统error，拦截出错信息，返回报错提示界面
+    - @ControllerAdvice注解内部使用@ExceptionHandler、@InitBinder、@ModelAttribute注解的方法应用到所有的 @RequestMapping注解的方法
+
+- 非注解的处理器映射器与适配器
+    - SimpleUrlHandlerMapping
+    - SimpleControllerHandlerAdapter
+
+
 - spring AnnotatedBeanDefinitionReader 默认注册的beanDefinition
     - org.springframework.context.annotation.CommonAnnotationBeanPostProcessor
     - org.springframework.context.annotation.ConfigurationClassPostProcessor

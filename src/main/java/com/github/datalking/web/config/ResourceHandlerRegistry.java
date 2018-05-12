@@ -27,7 +27,6 @@ public class ResourceHandlerRegistry {
 
     private ResourceLoader resourceLoader;
 
-
     private final List<ResourceHandlerRegistration> registrations = new ArrayList<>();
 
     private int order = Integer.MAX_VALUE - 1;

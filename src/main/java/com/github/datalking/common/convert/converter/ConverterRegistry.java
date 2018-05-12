@@ -5,7 +5,6 @@ package com.github.datalking.common.convert.converter;
  */
 public interface ConverterRegistry {
 
-
     void addConverter(Converter<?, ?> converter);
 
     void addConverter(Class<?> sourceType, Class<?> targetType, Converter<?, ?> converter);

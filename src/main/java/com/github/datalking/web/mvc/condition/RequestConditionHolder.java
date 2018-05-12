@@ -6,7 +6,7 @@ import java.util.Collections;
 
 /**
  */
-public final class RequestConditionHolder extends AbstractRequestCondition<RequestConditionHolder> {
+public class RequestConditionHolder extends AbstractRequestCondition<RequestConditionHolder> {
 
 	private final RequestCondition<Object> condition;
 

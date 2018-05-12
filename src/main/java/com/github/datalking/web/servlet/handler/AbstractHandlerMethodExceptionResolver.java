@@ -25,13 +25,16 @@ public abstract class AbstractHandlerMethodExceptionResolver extends AbstractHan
     }
 
     @Override
-    protected final ModelAndView doResolveException(
-            HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
+    protected final ModelAndView doResolveException(HttpServletRequest request,
+                                                    HttpServletResponse response,
+                                                    Object handler, Exception ex) {
 
         return doResolveHandlerMethodException(request, response, (HandlerMethod) handler, ex);
     }
 
-    protected abstract ModelAndView doResolveHandlerMethodException(
-            HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod, Exception ex);
+    protected abstract ModelAndView doResolveHandlerMethodException(HttpServletRequest request,
+                                                                    HttpServletResponse response,
+                                                                    HandlerMethod handlerMethod,
+                                                                    Exception ex);
 
 }

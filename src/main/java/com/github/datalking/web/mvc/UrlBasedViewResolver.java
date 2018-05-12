@@ -5,7 +5,6 @@ import com.github.datalking.util.CollectionUtils;
 import com.github.datalking.util.PatternMatchUtils;
 
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
@@ -32,7 +31,7 @@ public class UrlBasedViewResolver extends AbstractCachingViewResolver implements
 
     private String requestContextAttribute;
 
-    private final Map<String, Object> staticAttributes = new HashMap<String, Object>();
+    private final Map<String, Object> staticAttributes = new HashMap<>();
 
     private Boolean exposePathVariables;
 
@@ -42,7 +41,7 @@ public class UrlBasedViewResolver extends AbstractCachingViewResolver implements
 
     public void setViewClass(Class<?> viewClass) {
         if (viewClass == null || !requiredViewClass().isAssignableFrom(viewClass)) {
-            throw new IllegalArgumentException("Given view class [" + (viewClass != null ? viewClass.getName() : null) + "] is not of type [" + requiredViewClass().getName() + "]");
+            throw new IllegalArgumentException("Given view class type Mismatch");
         }
         this.viewClass = viewClass;
     }

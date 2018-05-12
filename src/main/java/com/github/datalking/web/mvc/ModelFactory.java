@@ -24,7 +24,7 @@ import java.util.Map;
 /**
  * @author yaoo on 5/2/18
  */
-public final class ModelFactory {
+public class ModelFactory {
 
     private final List<InvocableHandlerMethod> attributeMethods;
 
@@ -59,6 +59,7 @@ public final class ModelFactory {
             }
         }
     }
+
     // 处理@ModelAttribute注解
     private void invokeModelAttributeMethods(WebRequest request, ModelAndViewContainer mavContainer)
             throws Exception {
@@ -124,7 +125,7 @@ public final class ModelFactory {
     }
 
     private void updateBindingResult(WebRequest request, ModelMap model) throws Exception {
-        List<String> keyNames = new ArrayList<String>(model.keySet());
+        List<String> keyNames = new ArrayList<>(model.keySet());
         for (String name : keyNames) {
             Object value = model.get(name);
 
@@ -132,6 +133,7 @@ public final class ModelFactory {
                 String bindingResultKey = BindingResult.MODEL_KEY_PREFIX + name;
 
                 if (!model.containsAttribute(bindingResultKey)) {
+
                     WebDataBinder dataBinder = binderFactory.createBinder(request, value, name);
                     model.put(bindingResultKey, dataBinder.getBindingResult());
                 }

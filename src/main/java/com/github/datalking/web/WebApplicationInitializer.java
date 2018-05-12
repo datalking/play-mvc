@@ -4,7 +4,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
 /**
- * 在代码中配置ServletContext
+ * 容器启动时在代码中配置ServletContext
  * <p>
  * 任何servlet, listener, 或者filter都可以在WebApplicationInitializer中注册
  *

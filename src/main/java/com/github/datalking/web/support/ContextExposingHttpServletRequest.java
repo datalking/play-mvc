@@ -19,11 +19,9 @@ public class ContextExposingHttpServletRequest extends HttpServletRequestWrapper
 
     private Set<String> explicitAttributes;
 
-
     public ContextExposingHttpServletRequest(HttpServletRequest originalRequest, WebApplicationContext context) {
         this(originalRequest, context, null);
     }
-
 
     public ContextExposingHttpServletRequest(HttpServletRequest originalRequest, WebApplicationContext context, Set<String> exposedContextBeanNames) {
 
@@ -32,7 +30,6 @@ public class ContextExposingHttpServletRequest extends HttpServletRequestWrapper
         this.webApplicationContext = context;
         this.exposedContextBeanNames = exposedContextBeanNames;
     }
-
 
     public final WebApplicationContext getWebApplicationContext() {
         return this.webApplicationContext;

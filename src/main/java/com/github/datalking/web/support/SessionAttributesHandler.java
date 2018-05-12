@@ -21,7 +21,6 @@ public class SessionAttributesHandler {
 
     private final Set<Class<?>> attributeTypes = new HashSet<>();
 
-    // using a ConcurrentHashMap as a Set
     private final Map<String, Boolean> knownAttributeNames = new ConcurrentHashMap<>(4);
 
     private final SessionAttributeStore sessionAttributeStore;
@@ -67,7 +66,7 @@ public class SessionAttributesHandler {
     }
 
     public Map<String, Object> retrieveAttributes(WebRequest request) {
-        Map<String, Object> attributes = new HashMap<String, Object>();
+        Map<String, Object> attributes = new HashMap<>();
         for (String name : this.knownAttributeNames.keySet()) {
             Object value = this.sessionAttributeStore.retrieveAttribute(request, name);
             if (value != null) {

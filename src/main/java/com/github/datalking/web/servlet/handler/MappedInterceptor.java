@@ -16,11 +16,9 @@ public class MappedInterceptor {
 
     private HandlerInterceptor interceptor;
 
-
     public MappedInterceptor(String[] includePatterns, HandlerInterceptor interceptor) {
         this(includePatterns, null, interceptor);
     }
-
 
     public MappedInterceptor(String[] includePatterns, String[] excludePatterns, HandlerInterceptor interceptor) {
         this.includePatterns = includePatterns;
@@ -28,21 +26,17 @@ public class MappedInterceptor {
         this.interceptor = interceptor;
     }
 
-
     public MappedInterceptor(String[] includePatterns, WebRequestInterceptor interceptor) {
         this(includePatterns, null, interceptor);
     }
-
 
     public MappedInterceptor(String[] includePatterns, String[] excludePatterns, WebRequestInterceptor interceptor) {
         this(includePatterns, excludePatterns, new WebRequestHandlerInterceptorAdapter(interceptor));
     }
 
-
     public String[] getPathPatterns() {
         return this.includePatterns;
     }
-
 
     public HandlerInterceptor getInterceptor() {
         return this.interceptor;
@@ -56,6 +50,7 @@ public class MappedInterceptor {
                 }
             }
         }
+
         if (this.includePatterns == null) {
             return true;
         } else {

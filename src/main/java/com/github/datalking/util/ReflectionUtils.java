@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -12,6 +13,10 @@ import java.util.List;
  * @author yaoo on 4/19/18
  */
 public abstract class ReflectionUtils {
+
+    public static void doWithMethods(Class<?> clazz, MethodCallback mc) {
+        doWithMethods(clazz, mc, null);
+    }
 
     public static void doWithMethods(Class<?> clazz, MethodCallback mc, MethodFilter mf) {
 
@@ -187,5 +192,16 @@ public abstract class ReflectionUtils {
 
         void doWith(Field field) throws IllegalArgumentException, IllegalAccessException;
     }
+
+    public static Method[] getAllDeclaredMethods(Class<?> leafClass) {
+        final List<Method> methods = new ArrayList<>(32);
+        doWithMethods(leafClass, new MethodCallback() {
+            public void doWith(Method method) {
+                methods.add(method);
+            }
+        });
+        return methods.toArray(new Method[methods.size()]);
+    }
+
 
 }

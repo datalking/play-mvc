@@ -32,7 +32,6 @@ public abstract class AbstractRequestAttributes implements RequestAttributes {
         }
     }
 
-
     protected final void removeRequestDestructionCallback(String name) {
         Assert.notNull(name, "Name must not be null");
         synchronized (this.requestDestructionCallbacks) {

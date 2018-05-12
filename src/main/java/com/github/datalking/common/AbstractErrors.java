@@ -151,7 +151,6 @@ public abstract class AbstractErrors implements Errors, Serializable {
         return (!fieldErrors.isEmpty() ? fieldErrors.get(0) : null);
     }
 
-
     public Class<?> getFieldType(String field) {
         Object value = getFieldValue(field);
         return (value != null ? value.getClass() : null);
@@ -166,7 +165,6 @@ public abstract class AbstractErrors implements Errors, Serializable {
         return (endIndex >= 0 && field.charAt(endIndex) == '*' &&
                 (endIndex == 0 || field.regionMatches(0, fieldError.getField(), 0, endIndex)));
     }
-
 
     @Override
     public String toString() {

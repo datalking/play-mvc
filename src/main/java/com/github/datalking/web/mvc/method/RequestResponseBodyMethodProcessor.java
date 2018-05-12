@@ -26,6 +26,8 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 /**
+ * 处理@RequestBody和@ResponseBody
+ *
  * @author yaoo on 4/26/18
  */
 public class RequestResponseBodyMethodProcessor extends AbstractMessageConverterMethodProcessor {
@@ -40,28 +42,31 @@ public class RequestResponseBodyMethodProcessor extends AbstractMessageConverter
         super(messageConverters, contentNegotiationManager);
     }
 
-
+    @Override
     public boolean supportsParameter(MethodParameter parameter) {
         return parameter.hasParameterAnnotation(RequestBody.class);
     }
 
+    @Override
     public boolean supportsReturnType(MethodParameter returnType) {
         return (returnType.getMethodAnnotation(ResponseBody.class) != null);
     }
 
-
+    @Override
     public Object resolveArgument(MethodParameter parameter,
                                   ModelAndViewContainer mavContainer,
                                   WebRequest webRequest,
                                   WebDataBinderFactory binderFactory) throws Exception {
 
         Object arg = readWithMessageConverters(webRequest, parameter, parameter.getGenericParameterType());
+
         String name = Conventions.getVariableNameForParameter(parameter);
+
         WebDataBinder binder = binderFactory.createBinder(webRequest, arg, name);
+
         if (arg != null) {
             validate(binder, parameter);
         }
-//        mavContainer.addAttribute(BindingResult.MODEL_KEY_PREFIX + name, binder.getBindingResult());
         mavContainer.addAttribute(BindingResult.MODEL_KEY_PREFIX + name, binder.getBindingResult());
         return arg;
     }
@@ -69,10 +74,12 @@ public class RequestResponseBodyMethodProcessor extends AbstractMessageConverter
 
     private void validate(WebDataBinder binder, MethodParameter methodParam) {
         Annotation[] annotations = methodParam.getParameterAnnotations();
+
         for (Annotation ann : annotations) {
             if (ann.annotationType().getSimpleName().startsWith("Valid")) {
                 Object hints = AnnotationUtils.getValue(ann);
 //                binder.validate(hints instanceof Object[] ? (Object[]) hints : new Object[]{hints});
+
                 BindingResult bindingResult = binder.getBindingResult();
                 if (bindingResult.hasErrors() && isBindExceptionRequired(binder, methodParam)) {
 //                    throw new MethodArgumentNotValidException(methodParam, bindingResult);
@@ -130,6 +137,10 @@ public class RequestResponseBodyMethodProcessor extends AbstractMessageConverter
         return super.readWithMessageConverters(inputMessage, methodParam, paramType);
     }
 
+    /**
+     * 返回值处理
+     */
+    @Override
     public void handleReturnValue(Object returnValue,
                                   MethodParameter returnType,
                                   ModelAndViewContainer mavContainer,
@@ -137,6 +148,7 @@ public class RequestResponseBodyMethodProcessor extends AbstractMessageConverter
 
         mavContainer.setRequestHandled(true);
         if (returnValue != null) {
+
             writeWithMessageConverters(returnValue, returnType, webRequest);
         }
     }

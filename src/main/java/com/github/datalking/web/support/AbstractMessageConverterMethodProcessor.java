@@ -27,6 +27,8 @@ import java.util.Locale;
 import java.util.Set;
 
 /**
+ * 同时支持http请求处理方法的参数解析和返回值处理，同时支持数据类型转换
+ *
  * @author yaoo on 4/29/18
  */
 public abstract class AbstractMessageConverterMethodProcessor extends AbstractMessageConverterMethodArgumentResolver
@@ -43,8 +45,8 @@ public abstract class AbstractMessageConverterMethodProcessor extends AbstractMe
         RAW_URL_PATH_HELPER.setUrlDecode(false);
     }
 
-    // Extensions associated with the built-in message converters
-    private static final Set<String> WHITELISTED_EXTENSIONS = new HashSet<String>(Arrays.asList(
+    // 内置消息转换器支持的格式
+    private static final Set<String> WHITELISTED_EXTENSIONS = new HashSet<>(Arrays.asList(
             "txt", "text", "json", "xml", "atom", "rss", "png", "jpe", "jpeg", "jpg", "gif", "wbmp", "bmp"));
 
     private final ContentNegotiationManager contentNegotiationManager;
@@ -87,7 +89,7 @@ public abstract class AbstractMessageConverterMethodProcessor extends AbstractMe
         List<MediaType> requestedMediaTypes = getAcceptableMediaTypes(servletRequest);
         List<MediaType> producibleMediaTypes = getProducibleMediaTypes(servletRequest, returnValueClass);
 
-        Set<MediaType> compatibleMediaTypes = new LinkedHashSet<MediaType>();
+        Set<MediaType> compatibleMediaTypes = new LinkedHashSet<>();
         for (MediaType requestedType : requestedMediaTypes) {
             for (MediaType producibleType : producibleMediaTypes) {
                 if (requestedType.isCompatibleWith(producibleType)) {
@@ -100,7 +102,7 @@ public abstract class AbstractMessageConverterMethodProcessor extends AbstractMe
 //            throw new HttpMediaTypeNotAcceptableException(producibleMediaTypes);
         }
 
-        List<MediaType> mediaTypes = new ArrayList<MediaType>(compatibleMediaTypes);
+        List<MediaType> mediaTypes = new ArrayList<>(compatibleMediaTypes);
 //        MediaType.sortBySpecificityAndQuality(mediaTypes);
 
         MediaType selectedMediaType = null;
@@ -133,15 +135,6 @@ public abstract class AbstractMessageConverterMethodProcessor extends AbstractMe
 
     }
 
-    /**
-     * Returns the media types that can be produced:
-     * <ul>
-     * <li>The producible media types specified in the request mappings, or
-     * <li>Media types of configured converters that can write the specific return value, or
-     * <li>{@link MediaType#ALL}
-     * </ul>
-     */
-    @SuppressWarnings("unchecked")
     protected List<MediaType> getProducibleMediaTypes(HttpServletRequest request, Class<?> returnValueClass) {
         Set<MediaType> mediaTypes = (Set<MediaType>) request.getAttribute(HandlerMapping.PRODUCIBLE_MEDIA_TYPES_ATTRIBUTE);
         if (!CollectionUtils.isEmpty(mediaTypes)) {

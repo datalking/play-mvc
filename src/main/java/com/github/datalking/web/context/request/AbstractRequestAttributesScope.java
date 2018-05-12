@@ -41,7 +41,6 @@ public abstract class AbstractRequestAttributesScope implements Scope {
         return attributes.resolveReference(key);
     }
 
-
     protected abstract int getScope();
 
 }

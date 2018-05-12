@@ -17,6 +17,7 @@ import java.util.List;
 public class StringHttpMessageConverter extends AbstractHttpMessageConverter<String> {
 
     public static final Charset DEFAULT_CHARSET = Charset.forName("ISO-8859-1");
+//    public static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
 
     private final Charset defaultCharset;
 
@@ -31,13 +32,12 @@ public class StringHttpMessageConverter extends AbstractHttpMessageConverter<Str
     public StringHttpMessageConverter(Charset defaultCharset) {
         super(new MediaType("text", "plain", defaultCharset), MediaType.ALL);
         this.defaultCharset = defaultCharset;
-        this.availableCharsets = new ArrayList<Charset>(Charset.availableCharsets().values());
+        this.availableCharsets = new ArrayList<>(Charset.availableCharsets().values());
     }
 
     public void setWriteAcceptCharset(boolean writeAcceptCharset) {
         this.writeAcceptCharset = writeAcceptCharset;
     }
-
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -70,7 +70,6 @@ public class StringHttpMessageConverter extends AbstractHttpMessageConverter<Str
         Charset charset = getContentTypeCharset(outputMessage.getHeaders().getContentType());
         StreamUtils.copy(str, charset, outputMessage.getBody());
     }
-
 
     protected List<Charset> getAcceptedCharsets() {
         return this.availableCharsets;

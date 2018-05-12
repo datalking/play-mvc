@@ -9,9 +9,9 @@ import java.util.Set;
  */
 public final class StringToBooleanConverter implements Converter<String, Boolean> {
 
-	private static final Set<String> trueValues = new HashSet<String>(4);
+	private static final Set<String> trueValues = new HashSet<>(4);
 
-	private static final Set<String> falseValues = new HashSet<String>(4);
+	private static final Set<String> falseValues = new HashSet<>(4);
 
 	static {
 		trueValues.add("true");

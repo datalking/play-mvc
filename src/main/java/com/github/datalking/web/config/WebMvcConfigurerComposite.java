@@ -24,7 +24,6 @@ public class WebMvcConfigurerComposite implements WebMvcConfigurer {
         }
     }
 
-
 //
 //    public void addFormatters(FormatterRegistry registry) {
 //        for (WebMvcConfigurer delegate : this.delegates) {

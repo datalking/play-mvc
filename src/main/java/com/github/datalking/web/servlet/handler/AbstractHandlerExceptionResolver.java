@@ -33,7 +33,6 @@ public abstract class AbstractHandlerExceptionResolver implements HandlerExcepti
 
     private boolean preventResponseCaching = false;
 
-
     public void setOrder(int order) {
         this.order = order;
     }
@@ -58,7 +57,8 @@ public abstract class AbstractHandlerExceptionResolver implements HandlerExcepti
         this.preventResponseCaching = preventResponseCaching;
     }
 
-    public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response,
+    public ModelAndView resolveException(HttpServletRequest request,
+                                         HttpServletResponse response,
                                          Object handler, Exception ex) {
 
         if (shouldApplyTo(request, handler)) {
@@ -67,7 +67,9 @@ public abstract class AbstractHandlerExceptionResolver implements HandlerExcepti
                 logger.debug("Resolving exception from handler [" + handler + "]: " + ex);
             }
             logException(ex, request);
+
             prepareResponse(ex, response);
+
             return doResolveException(request, response, handler, ex);
         } else {
             return null;

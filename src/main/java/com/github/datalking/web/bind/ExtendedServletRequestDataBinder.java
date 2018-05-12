@@ -26,7 +26,7 @@ public class ExtendedServletRequestDataBinder extends ServletRequestDataBinder {
         if (uriVars != null) {
             for (Map.Entry<String, String> entry : uriVars.entrySet()) {
                 if (mpvs.contains(entry.getKey())) {
-//                    logger.warn("Skipping URI variable '" + entry.getKey() + "' since the request contains a bind value with the same name.");
+                    logger.warn("Skipping URI variable '" + entry.getKey() + "' since request contains a value with same name.");
                 } else {
                     mpvs.addPropertyValue(entry.getKey(), entry.getValue());
                 }

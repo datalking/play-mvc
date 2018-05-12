@@ -27,7 +27,6 @@ public abstract class AbstractController extends WebContentGenerator implements 
 
 //        checkAndPrepare(request, response, this instanceof LastModified);
 
-        // Execute handleRequestInternal in synchronized block if required.
         if (this.synchronizeOnSession) {
             HttpSession session = request.getSession(false);
             if (session != null) {
@@ -41,7 +40,6 @@ public abstract class AbstractController extends WebContentGenerator implements 
         return handleRequestInternal(request, response);
     }
 
-    protected abstract ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response)
-            throws Exception;
+    protected abstract ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception;
 
 }

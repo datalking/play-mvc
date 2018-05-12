@@ -59,7 +59,6 @@ public class ServletWebRequest extends ServletRequestAttributes implements WebRe
         return WebUtils.getNativeRequest(getRequest(), requiredType);
     }
 
-
     public Object getNativeResponse() {
         return getResponse();
     }

@@ -1,10 +1,13 @@
-package com.github.datalking.web.mvc;
+package com.github.datalking.web.bind;
 
 import com.github.datalking.common.BindingResult;
+import com.github.datalking.web.mvc.ExtendedModelMap;
 
 import java.util.Map;
 
 /**
+ * 自定义的map，目标属性移除后自动移除BindingResult
+ *
  * @author yaoo on 4/29/18
  */
 public class BindingAwareModelMap extends ExtendedModelMap {

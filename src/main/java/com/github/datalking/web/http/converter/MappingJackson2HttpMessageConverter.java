@@ -112,9 +112,9 @@ public class MappingJackson2HttpMessageConverter extends AbstractHttpMessageConv
     protected void writeInternal(Object object, HttpOutputMessage outputMessage) throws IOException {
 
         JsonEncoding encoding = getJsonEncoding(outputMessage.getHeaders().getContentType());
-        JsonGenerator jsonGenerator = this.objectMapper.getJsonFactory().createJsonGenerator(outputMessage.getBody(), encoding);
+        JsonGenerator jsonGenerator = this.objectMapper.getFactory().createGenerator(outputMessage.getBody(), encoding);
 
-        // A workaround for JsonGenerators not applying serialization features https://github.com/FasterXML/jackson-databind/issues/12
+        // A workaround for JsonGenerators not applying serialization - https://github.com/FasterXML/jackson-databind/issues/12
         if (this.objectMapper.isEnabled(SerializationFeature.INDENT_OUTPUT)) {
             jsonGenerator.useDefaultPrettyPrinter();
         }

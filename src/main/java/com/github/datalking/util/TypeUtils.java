@@ -11,12 +11,6 @@ import java.lang.reflect.WildcardType;
 public abstract class TypeUtils {
 
     /**
-     * Check if the right-hand side type may be assigned to the left-hand side
-     * type following the Java generics rules.
-     *
-     * @param lhsType the target type
-     * @param rhsType the value type that should be assigned to the target type
-     * @return true if rhs is assignable to lhs
      */
     public static boolean isAssignable(Type lhsType, Type rhsType) {
         Assert.notNull(lhsType, "Left-hand side type must not be null");
@@ -58,7 +52,7 @@ public abstract class TypeUtils {
                     return ClassUtils.isAssignable((Class<?>) lhsRaw, (Class<?>) rhsType);
                 }
             } else if (rhsType instanceof ParameterizedType) {
-                return isAssignable((ParameterizedType) lhsType, (ParameterizedType) rhsType);
+                return isAssignable(lhsType, rhsType);
             }
         }
 
@@ -79,7 +73,7 @@ public abstract class TypeUtils {
         }
 
         if (lhsType instanceof WildcardType) {
-            return isAssignable((WildcardType) lhsType, rhsType);
+            return isAssignable(lhsType, rhsType);
         }
 
         return false;

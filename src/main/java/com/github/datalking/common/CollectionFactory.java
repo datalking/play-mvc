@@ -22,6 +22,10 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
+ * 集合工厂类 方法都static
+ * <p>
+ * 目标是减少运行时对具体java版本的依赖
+ *
  * @author yaoo on 5/10/18
  */
 public abstract class CollectionFactory {
@@ -30,9 +34,9 @@ public abstract class CollectionFactory {
 
     private static Class navigableMapClass = null;
 
-    private static final Set<Class> approximableCollectionTypes = new HashSet<Class>(10);
+    private static final Set<Class> approximableCollectionTypes = new HashSet<>(10);
 
-    private static final Set<Class> approximableMapTypes = new HashSet<Class>(6);
+    private static final Set<Class> approximableMapTypes = new HashSet<>(6);
 
     static {
         // Standard collection interfaces
@@ -78,7 +82,7 @@ public abstract class CollectionFactory {
 
     @Deprecated
     public static <K, V> Map<K, V> createLinkedMapIfPossible(int initialCapacity) {
-        return new LinkedHashMap<K, V>(initialCapacity);
+        return new LinkedHashMap<>(initialCapacity);
     }
 
     @Deprecated
@@ -135,7 +139,7 @@ public abstract class CollectionFactory {
             try {
                 return (Collection) collectionType.newInstance();
             } catch (Exception ex) {
-                throw new IllegalArgumentException("Could not instantiate Collection type: " +
+                throw new IllegalArgumentException("Could not instantiate Collection : " +
                         collectionType.getName(), ex);
             }
         }

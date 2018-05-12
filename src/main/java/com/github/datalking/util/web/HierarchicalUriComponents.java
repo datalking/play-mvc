@@ -27,8 +27,7 @@ import java.util.Map;
  * @see <a href="http://tools.ietf.org/html/rfc3986#section-1.2.3">Hierarchical URIs</a>
  * @since 3.1.3
  */
-@SuppressWarnings("serial")
-final class HierarchicalUriComponents extends UriComponents {
+public class HierarchicalUriComponents extends UriComponents {
 
     private static final char PATH_DELIMITER = '/';
 
@@ -306,7 +305,6 @@ final class HierarchicalUriComponents extends UriComponents {
 
     /**
      * Normalize the path removing sequences like "path/..".
-     *
      */
     @Override
     public UriComponents normalize() {

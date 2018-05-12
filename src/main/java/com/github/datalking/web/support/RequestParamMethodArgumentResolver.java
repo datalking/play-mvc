@@ -11,11 +11,13 @@ import com.github.datalking.web.context.request.WebRequest;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 /**
+ * 如果controller的方法没有任何参数的注解，但有参数对象而且参数对象的类型是简单类型，
+ * 则会默认调用RequestParamMethodArgumentResolver类进行解析
+ * 从httpServletRequest中获取parameter，然后调用参数对象的set方法进行注入
+ *
  * @author yaoo on 4/29/18
  */
 public class RequestParamMethodArgumentResolver extends AbstractNamedValueMethodArgumentResolver {
@@ -33,8 +35,11 @@ public class RequestParamMethodArgumentResolver extends AbstractNamedValueMethod
         this.useDefaultResolution = useDefaultResolution;
     }
 
+    @Override
     public boolean supportsParameter(MethodParameter parameter) {
         Class<?> paramType = parameter.getParameterType();
+
+        // 检查方法参数是否有@RequestParam注解
         if (parameter.hasParameterAnnotation(RequestParam.class)) {
             if (Map.class.isAssignableFrom(paramType)) {
                 String paramName = parameter.getParameterAnnotation(RequestParam.class).value();
@@ -63,6 +68,9 @@ public class RequestParamMethodArgumentResolver extends AbstractNamedValueMethod
         return (ann != null ? new RequestParamNamedValueInfo(ann) : new RequestParamNamedValueInfo());
     }
 
+    /**
+     * 从webRequest中解析参数
+     */
     @Override
     protected Object resolveName(String name, MethodParameter parameter, WebRequest webRequest) throws Exception {
         HttpServletRequest servletRequest = webRequest.getNativeRequest(HttpServletRequest.class);
@@ -127,7 +135,6 @@ public class RequestParamMethodArgumentResolver extends AbstractNamedValueMethod
             e.printStackTrace();
         }
     }
-
 
     private static class RequestParamNamedValueInfo extends NamedValueInfo {
 

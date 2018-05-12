@@ -40,6 +40,7 @@ public class HandlerExceptionResolverComposite implements HandlerExceptionResolv
                                          Exception ex) {
         if (resolvers != null) {
             for (HandlerExceptionResolver handlerExceptionResolver : resolvers) {
+
                 ModelAndView mav = handlerExceptionResolver.resolveException(request, response, handler, ex);
                 if (mav != null) {
                     return mav;

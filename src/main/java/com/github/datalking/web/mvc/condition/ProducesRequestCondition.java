@@ -17,7 +17,7 @@ import java.util.Set;
 
 /**
  */
-public final class ProducesRequestCondition extends AbstractRequestCondition<ProducesRequestCondition> {
+public class ProducesRequestCondition extends AbstractRequestCondition<ProducesRequestCondition> {
 
     private final List<ProduceMediaTypeExpression> MEDIA_TYPE_ALL_LIST =
             Collections.singletonList(new ProduceMediaTypeExpression("*/*"));
@@ -28,7 +28,7 @@ public final class ProducesRequestCondition extends AbstractRequestCondition<Pro
 
 
     public ProducesRequestCondition(String... produces) {
-        this(produces, (String[]) null);
+        this(produces, null);
     }
 
     public ProducesRequestCondition(String[] produces, String[] headers) {
@@ -98,7 +98,6 @@ public final class ProducesRequestCondition extends AbstractRequestCondition<Pro
     protected String getToStringInfix() {
         return " || ";
     }
-
 
     public ProducesRequestCondition combine(ProducesRequestCondition other) {
         return (!other.expressions.isEmpty() ? other : this);
@@ -188,7 +187,6 @@ public final class ProducesRequestCondition extends AbstractRequestCondition<Pro
     private List<ProduceMediaTypeExpression> getExpressionsToCompare() {
         return (this.expressions.isEmpty() ? MEDIA_TYPE_ALL_LIST : this.expressions);
     }
-
 
     class ProduceMediaTypeExpression extends AbstractMediaTypeExpression {
 

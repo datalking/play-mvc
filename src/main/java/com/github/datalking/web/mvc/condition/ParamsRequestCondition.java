@@ -11,7 +11,7 @@ import java.util.Set;
 /**
  * @author yaoo on 4/28/18
  */
-public final class ParamsRequestCondition extends AbstractRequestCondition<ParamsRequestCondition> {
+public class ParamsRequestCondition extends AbstractRequestCondition<ParamsRequestCondition> {
 
     private final Set<ParamExpression> expressions;
 
@@ -20,12 +20,11 @@ public final class ParamsRequestCondition extends AbstractRequestCondition<Param
     }
 
     private ParamsRequestCondition(Collection<ParamExpression> conditions) {
-        this.expressions = Collections.unmodifiableSet(new LinkedHashSet<ParamExpression>(conditions));
+        this.expressions = Collections.unmodifiableSet(new LinkedHashSet<>(conditions));
     }
 
-
     private static Collection<ParamExpression> parseExpressions(String... params) {
-        Set<ParamExpression> expressions = new LinkedHashSet<ParamExpression>();
+        Set<ParamExpression> expressions = new LinkedHashSet<>();
         if (params != null) {
             for (String param : params) {
                 expressions.add(new ParamExpression(param));
@@ -34,12 +33,8 @@ public final class ParamsRequestCondition extends AbstractRequestCondition<Param
         return expressions;
     }
 
-
-    /**
-     * Return the contained request parameter expressions.
-     */
     public Set<NameValueExpression<String>> getExpressions() {
-        return new LinkedHashSet<NameValueExpression<String>>(this.expressions);
+        return new LinkedHashSet<>(this.expressions);
     }
 
     @Override
@@ -52,20 +47,12 @@ public final class ParamsRequestCondition extends AbstractRequestCondition<Param
         return " && ";
     }
 
-    /**
-     * Returns a new instance with the union of the param expressions
-     * from "this" and the "other" instance.
-     */
     public ParamsRequestCondition combine(ParamsRequestCondition other) {
-        Set<ParamExpression> set = new LinkedHashSet<ParamExpression>(this.expressions);
+        Set<ParamExpression> set = new LinkedHashSet<>(this.expressions);
         set.addAll(other.expressions);
         return new ParamsRequestCondition(set);
     }
 
-    /**
-     * Returns "this" instance if the request matches all param expressions;
-     * or {@code null} otherwise.
-     */
     public ParamsRequestCondition getMatchingCondition(HttpServletRequest request) {
         for (ParamExpression expression : expressions) {
             if (!expression.match(request)) {
@@ -75,11 +62,9 @@ public final class ParamsRequestCondition extends AbstractRequestCondition<Param
         return this;
     }
 
-
     public int compareTo(ParamsRequestCondition other, HttpServletRequest request) {
         return (other.expressions.size() - this.expressions.size());
     }
-
 
     static class ParamExpression extends AbstractNameValueExpression<String> {
 

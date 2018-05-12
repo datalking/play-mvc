@@ -40,9 +40,8 @@ public class ExceptionHandlerMethodResolver {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private List<Class<? extends Throwable>> detectExceptionMappings(Method method) {
-        List<Class<? extends Throwable>> result = new ArrayList<Class<? extends Throwable>>();
+        List<Class<? extends Throwable>> result = new ArrayList<>();
         detectAnnotationExceptionMappings(method, result);
         if (result.isEmpty()) {
             for (Class<?> paramType : method.getParameterTypes()) {
@@ -63,9 +62,7 @@ public class ExceptionHandlerMethodResolver {
     private void addExceptionMapping(Class<? extends Throwable> exceptionType, Method method) {
         Method oldMethod = this.mappedMethods.put(exceptionType, method);
         if (oldMethod != null && !oldMethod.equals(method)) {
-            throw new IllegalStateException(
-                    "Ambiguous @ExceptionHandler method mapped for [" + exceptionType + "]: {" +
-                            oldMethod + ", " + method + "}.");
+            throw new IllegalStateException("Ambiguous @ExceptionHandler method mapped for " + exceptionType);
         }
     }
 
@@ -87,7 +84,7 @@ public class ExceptionHandlerMethodResolver {
     }
 
     private Method getMappedMethod(Class<? extends Exception> exceptionType) {
-        List<Class<? extends Throwable>> matches = new ArrayList<Class<? extends Throwable>>();
+        List<Class<? extends Throwable>> matches = new ArrayList<>();
         for (Class<? extends Throwable> mappedException : this.mappedMethods.keySet()) {
             if (mappedException.isAssignableFrom(exceptionType)) {
                 matches.add(mappedException);

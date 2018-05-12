@@ -8,7 +8,7 @@ import com.github.datalking.util.web.WebUtils;
 import com.github.datalking.web.context.WebApplicationContext;
 import com.github.datalking.web.mvc.ModelAndView;
 import com.github.datalking.web.mvc.View;
-import com.github.datalking.web.servlet.flash.FlashMapManager;
+import com.github.datalking.web.servlet.FlashMapManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -246,8 +246,10 @@ public class DispatcherServlet extends FrameworkServlet {
                     return;
                 }
 
-                // ==== 实际执行请求处理方法
-                mv = ha.handle(processedRequest, response, handlerExecutionChain.getHandler());
+                Object handler = handlerExecutionChain.getHandler();
+
+                // ==== 实际执行请求处理方法，包括 参数解析、返回结果处理
+                mv = ha.handle(processedRequest, response, handler);
 
 //                if (asyncManager.isConcurrentHandlingStarted()) {
 //                    return;
