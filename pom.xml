@@ -1,15 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.github.datalking</groupId>
     <artifactId>play-mvc</artifactId>
-    <version>0.0.3</version>
+    <version>0.0.4</version>
 
     <packaging>jar</packaging>
     <name>play-mvc</name>
     <description>simple mvc framework based on java servlet.</description>
-    <url>https://github.com/uptonking/play-mvc</url>
+    <url>https://github.com/datalking/play-mvc</url>
+
+    <!--<modules>-->
+    <!--<module>mybatis-play-mvc</module>-->
+    <!--</modules>-->
 
     <dependencies>
         <!--common utils-->
@@ -67,7 +72,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
+            <version>4.11</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
