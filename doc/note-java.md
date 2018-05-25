@@ -24,6 +24,9 @@ java笔记
 ## summary
 
 
+- java class
+    - Class 类的对象表示 JVM 中的一个类或接口
+    - 数组也被映射为Class对象，所有元素类型相同且维数相同的数组都共享同一个 Class 对象 。
 
 - java.beans.PropertyEditor属性编辑器接口，它规定了将外部设置值转换为内部JavaBean属性值的转换接口方法
     - Object getValue()：返回属性的当前值。基本类型被封装成对应的包装类实例；
@@ -111,6 +114,10 @@ Person[] ints;
     - getDeclaredAnnotations()：获取元素上的所有注解，该方法将忽略继承的注解，如果没有注释直接存在于此元素上，则返回长度为零的一个数组
     - getAnnotations()：返回该程序元素上存在的所有注解
     - Method.isBridge()：判断是否是桥接方法，对于覆盖父类或接口方法时有用
+    - getMethods()获取的是所有public方法，包括：类自身声明的public方法、父类中的public方法、实现的接口方法。不包括private和protected方法
+    - getDeclaredMethods()获取的是本类中所有方法，包括：类自身的方法、重写的父类的方法、实现的接口方法。不包括继承自父类的方法。
+      
+
 - java 字符串 替换
     - replace函数只实现简单的替换功能，默认替换所有
     - replaceAll函数实现了正则表达式替换功能。

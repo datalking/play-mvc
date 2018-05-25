@@ -29,6 +29,10 @@
 - [x] 基本IoC
 
 ## later
+
+- [ ] mybatis与spring纯注解整合   
+- [ ] spring-jdbc原理  
+
 - [ ] bean销毁的声明周期   
 - [ ] BeanAware接口   
 - [ ] BeanWrapper用于属性类型转换，暂未使用   
