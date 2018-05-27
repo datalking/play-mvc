@@ -1,6 +1,5 @@
 package com.soecode.lyf.config;
 
-//import org.springframework.context.annotation.Import;
 //import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 import com.github.datalking.annotation.Bean;
@@ -12,9 +11,9 @@ import com.github.datalking.annotation.Import;
 @Import({DaoConfig.class, WebConfig.class})
 public class RootConfig {
 
-//    @Bean
-//    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
-//        return new PropertySourcesPlaceholderConfigurer();
-//    }
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+        return new PropertySourcesPlaceholderConfigurer();
+    }
 
 }

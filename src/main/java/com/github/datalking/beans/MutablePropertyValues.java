@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * PropertyValues 默认实现类
@@ -71,6 +70,11 @@ public class MutablePropertyValues implements PropertyValues, Serializable {
 
     public MutablePropertyValues addPropertyValue(String propertyName, Object propertyValue) {
         return addPropertyValue(new PropertyValue(propertyName, propertyValue));
+    }
+
+    public MutablePropertyValues add(String propertyName, Object propertyValue) {
+        this.addPropertyValue(new PropertyValue(propertyName, propertyValue));
+        return this;
     }
 
     public MutablePropertyValues addPropertyValue(PropertyValue kv) {

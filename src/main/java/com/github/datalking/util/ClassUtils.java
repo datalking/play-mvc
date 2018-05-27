@@ -518,4 +518,11 @@ public abstract class ClassUtils {
         }
     }
 
+    public static boolean matchesTypeName(Class<?> clazz, String typeName) {
+        return (typeName != null &&
+                (typeName.equals(clazz.getName()) || typeName.equals(clazz.getSimpleName()) ||
+                        (clazz.isArray() && typeName.equals(getQualifiedNameForArray(clazz)))));
+    }
+
+
 }

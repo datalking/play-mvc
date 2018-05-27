@@ -1,8 +1,9 @@
 package com.github.datalking.beans.factory.support;
 
 import com.github.datalking.beans.MutablePropertyValues;
+import com.github.datalking.beans.factory.config.AutowireCapableBeanFactory;
 import com.github.datalking.beans.factory.config.BeanDefinition;
-import com.github.datalking.io.Resource;
+import com.github.datalking.beans.factory.config.ConstructorArgumentValues;
 
 /**
  * BeanDefinition抽象类
@@ -26,8 +27,16 @@ public abstract class AbstractBeanDefinition implements BeanDefinition, Cloneabl
 
     private String factoryMethodName;
 
-//    private ConstructorArgumentValues constructorArgumentValues;
-//    private int autowireMode = AUTOWIRE_NO;
+    private int autowireMode;
+
+    /// 依赖注入的方式
+    public static final int AUTOWIRE_NO = AutowireCapableBeanFactory.AUTOWIRE_NO;
+    public static final int AUTOWIRE_BY_NAME = AutowireCapableBeanFactory.AUTOWIRE_BY_NAME;
+    public static final int AUTOWIRE_BY_TYPE = AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE;
+    public static final int AUTOWIRE_CONSTRUCTOR = AutowireCapableBeanFactory.AUTOWIRE_CONSTRUCTOR;
+
+
+    private ConstructorArgumentValues constructorArgumentValues;
 //    private boolean autowireCandidate = true;
 //    private String[] dependsOn;
 //    private String initMethodName;
@@ -144,6 +153,17 @@ public abstract class AbstractBeanDefinition implements BeanDefinition, Cloneabl
         this.factoryMethodName = factoryMethodName;
     }
 
+    public ConstructorArgumentValues getConstructorArgumentValues() {
+        return this.constructorArgumentValues;
+    }
+
+    public void setAutowireMode(int autowireMode) {
+        this.autowireMode = autowireMode;
+    }
+
+    public int getAutowireMode() {
+        return this.autowireMode;
+    }
 
     @Override
     public Object clone() {

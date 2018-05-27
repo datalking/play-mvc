@@ -8,6 +8,9 @@ import java.io.InputStream;
  */
 public interface Resource {
 
+    boolean exists();
+
     InputStream getInputStream() throws IOException;
+
 
 }

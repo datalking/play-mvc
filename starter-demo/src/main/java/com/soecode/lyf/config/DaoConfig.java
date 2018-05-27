@@ -54,10 +54,15 @@ public class DaoConfig {
         properties.put("useGeneratedKeys", true);
         properties.put("useColumnLabel", true);
         properties.put("mapUnderscoreToCamelCase", true);
+
         SqlSessionFactoryBean bean = new SqlSessionFactoryBean();
+
         bean.setTypeAliasesPackage("com.soecode.lyf.entity");
+
         bean.setConfigurationProperties(properties);
+
         bean.setDataSource(dataSource);
+
         return bean;
     }
 

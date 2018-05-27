@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-public class ClassPathResource {
+public class ClassPathResource implements Resource {
 
     private final String path;
 
@@ -52,11 +52,10 @@ public class ClassPathResource {
         return (this.clazz != null ? this.clazz.getClassLoader() : this.classLoader);
     }
 
-
+    @Override
     public boolean exists() {
         return (resolveURL() != null);
     }
-
 
     protected URL resolveURL() {
         if (this.clazz != null) {
@@ -68,6 +67,7 @@ public class ClassPathResource {
         }
     }
 
+    @Override
     public InputStream getInputStream() throws IOException {
         InputStream is;
         if (this.clazz != null) {

@@ -11,13 +11,19 @@ import com.github.datalking.beans.factory.BeanFactory;
  */
 public interface AutowireCapableBeanFactory extends BeanFactory {
 
+    /// 依赖注入的方式
+    int AUTOWIRE_NO = 0;
+    int AUTOWIRE_BY_NAME = 1;
+    int AUTOWIRE_BY_TYPE = 2;
+    int AUTOWIRE_CONSTRUCTOR = 3;
+
     <T> T createBean(Class<T> beanClass) throws Exception;
 
     Object applyBeanPostProcessorsBeforeInitialization(Object existingBean, String beanName);
 
     Object applyBeanPostProcessorsAfterInitialization(Object existingBean, String beanName);
 
-//    void applyBeanPropertyValues(Object existingBean, String beanName);
+    //    void applyBeanPropertyValues(Object existingBean, String beanName);
 //    Object autowire(Class<?> beanClass, int autowireMode, boolean dependencyCheck);
 //    void autowireBean(Object existingBean) ;
 //    void autowireBeanProperties(Object existingBean, int autowireMode, boolean dependencyCheck);

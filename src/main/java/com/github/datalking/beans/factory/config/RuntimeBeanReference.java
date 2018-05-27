@@ -8,8 +8,8 @@ package com.github.datalking.beans.factory.config;
 public class RuntimeBeanReference {
 
     private final String beanName;
-    private Object source;
 
+    private Object source;
 
     public RuntimeBeanReference(String beanName) {
         this.beanName = beanName;

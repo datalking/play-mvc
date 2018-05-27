@@ -1,6 +1,7 @@
 package com.github.datalking.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -444,6 +445,14 @@ public abstract class StringUtils {
         }
         sb.append(str.substring(1));
         return sb.toString();
+    }
+
+    public static String[] sortStringArray(String[] array) {
+        if (ObjectUtils.isEmpty(array)) {
+            return new String[0];
+        }
+        Arrays.sort(array);
+        return array;
     }
 
 }

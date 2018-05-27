@@ -8,6 +8,8 @@ import com.github.datalking.beans.factory.support.AnnotatedGenericBeanDefinition
 import com.github.datalking.beans.factory.support.BeanDefinitionReaderUtils;
 import com.github.datalking.beans.factory.support.BeanDefinitionRegistry;
 import com.github.datalking.util.ResourceUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -22,6 +24,8 @@ import static com.github.datalking.util.ClassUtils.getCamelCaseNameFromClass;
  * @author yaoo on 4/9/18
  */
 public class ClassPathBeanDefinitionScanner {
+
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final BeanDefinitionRegistry registry;
 
@@ -106,7 +110,7 @@ public class ClassPathBeanDefinitionScanner {
      * @param clazz 类对象
      * @return 是否有
      */
-    private boolean isCandidateComponent(Class clazz) {
+    protected boolean isCandidateComponent(Class clazz) {
 
         /// 忽略已注册过的bean
         if (this.registry.containsBeanDefinition(getCamelCaseNameFromClass(clazz))) {
@@ -129,6 +133,32 @@ public class ClassPathBeanDefinitionScanner {
         }
 
         return false;
+    }
+
+    protected boolean checkCandidate(String beanName, BeanDefinition beanDefinition) throws IllegalStateException {
+        if (!this.registry.containsBeanDefinition(beanName)) {
+            return true;
+        } else {
+            BeanDefinition existingDef = this.registry.getBeanDefinition(beanName);
+//            BeanDefinition originatingDef = existingDef.getOriginatingBeanDefinition();
+            BeanDefinition originatingDef = null;
+            if (originatingDef != null) {
+                existingDef = originatingDef;
+            }
+
+            if (this.isCompatible(beanDefinition, existingDef)) {
+                return false;
+            } else {
+                throw new IllegalStateException("Annotation-specified bean name '" + beanName + "' for bean class [" + beanDefinition.getBeanClassName() + "] conflicts with existing, non-compatible bean definition of same name and class [" + existingDef.getBeanClassName() + "]");
+            }
+        }
+    }
+
+    protected boolean isCompatible(BeanDefinition newDefinition, BeanDefinition existingDefinition) {
+//        return !(existingDefinition instanceof ScannedGenericBeanDefinition) ||
+//                newDefinition.getSource().equals(existingDefinition.getSource()) ||
+//                newDefinition.equals(existingDefinition);
+        return newDefinition.equals(existingDefinition);
     }
 
     public BeanDefinitionRegistry getRegistry() {
