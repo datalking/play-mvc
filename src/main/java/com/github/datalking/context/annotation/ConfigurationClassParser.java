@@ -1,7 +1,6 @@
 package com.github.datalking.context.annotation;
 
 import com.github.datalking.annotation.Bean;
-import com.github.datalking.annotation.Component;
 import com.github.datalking.annotation.ComponentScan;
 import com.github.datalking.annotation.Import;
 import com.github.datalking.annotation.meta.AnnotationAttributes;
@@ -14,21 +13,22 @@ import com.github.datalking.beans.factory.config.BeanDefinitionHolder;
 import com.github.datalking.beans.factory.support.AbstractAutowireCapableBeanFactory;
 import com.github.datalking.beans.factory.support.AbstractBeanDefinition;
 import com.github.datalking.beans.factory.support.BeanDefinitionRegistry;
+import com.github.datalking.common.env.Environment;
+import com.github.datalking.common.env.PropertySource;
+import com.github.datalking.io.ResourcePropertySource;
 import com.github.datalking.util.AnnoScanUtils;
 import com.github.datalking.util.ClassUtils;
+import com.github.datalking.util.StringUtils;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Deque;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 
 /**
  * @author yaoo on 4/13/18
@@ -40,6 +40,10 @@ public class ConfigurationClassParser {
     private final ComponentScanAnnotationParser componentScanParser;
 
     private final Map<ConfigurationClass, ConfigurationClass> configurationClasses = new LinkedHashMap<>();
+
+    private final Environment environment;
+
+    private final Stack<PropertySource<?>> propertySources = new Stack<>();
 
 
     public ConfigurationClassParser(BeanDefinitionRegistry registry) {
@@ -92,6 +96,17 @@ public class ConfigurationClassParser {
      */
     private void doProcessConfigurationClass(ConfigurationClass configClass) {
 
+        // 如果configClass标注有@PropertySource
+        Set<AnnotationAttributes> propertySources = attributesForRepeatable(
+                configClass.getMetadata(), null, com.github.datalking.annotation.PropertySource.class);
+        if (!propertySources.isEmpty()) {
+
+            for (AnnotationAttributes propertySource : propertySources) {
+
+                processPropertySource(propertySource);
+            }
+        }
+
         // ==== 如果configClass标注有@ComponentScan，则获取该注解的所有属性map
         // Set<AnnotationAttributes> componentScans = attributesForRepeatable(configClass.getMetadata(), ComponentScans.class, ComponentScan.class);
         Set<AnnotationAttributes> componentScans = attributesForRepeatable(configClass.getMetadata(), null, ComponentScan.class);
@@ -134,8 +149,43 @@ public class ConfigurationClassParser {
 
     }
 
+    private void processPropertySource(AnnotationAttributes propertySource)  {
+
+        String name = propertySource.getString("name");
+        String[] locations = propertySource.getStringArray("value");
+
+        int locationCount = locations.length;
+        if (locationCount == 0) {
+            throw new IllegalArgumentException("At least one @PropertySource(value) location is required");
+        }
+
+        for (int i = 0; i < locationCount; i++) {
+            locations[i] = this.environment.resolveRequiredPlaceholders(locations[i]);
+        }
+
+//        ClassLoader classLoader = this.resourceLoader.getClassLoader();
+        ClassLoader classLoader = this.getClass().getClassLoader();
+        if (!StringUtils.hasText(name)) {
+            for (String location : locations) {
+                this.propertySources.push(new ResourcePropertySource(location, classLoader));
+            }
+        } else {
+            if (locationCount == 1) {
+                this.propertySources.push(new ResourcePropertySource(name, locations[0], classLoader));
+            } else {
+                CompositePropertySource ps = new CompositePropertySource(name);
+                for (int i = locations.length - 1; i >= 0; i--) {
+                    ps.addPropertySource(new ResourcePropertySource(locations[i], classLoader));
+                }
+                this.propertySources.push(ps);
+            }
+        }
+    }
+
+
     /**
      * 将@Import的类加入beanDefinitionMap
+     * 包括@EnableAspectJAutoProxy
      */
     private void processImports(ConfigurationClass configClass, Collection<ConfigurationClass> importCandidates) {
 

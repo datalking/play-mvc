@@ -1,11 +1,11 @@
 package com.github.datalking.common.convert;
 
+import com.github.datalking.common.ConfigurableConversionService;
 import com.github.datalking.common.GenericTypeResolver;
 import com.github.datalking.common.convert.converter.ConditionalConverter;
 import com.github.datalking.common.convert.converter.ConditionalGenericConverter;
 import com.github.datalking.common.convert.converter.Converter;
 import com.github.datalking.common.convert.converter.ConverterFactory;
-import com.github.datalking.common.convert.converter.ConverterRegistry;
 import com.github.datalking.common.convert.converter.GenericConverter;
 import com.github.datalking.common.convert.converter.GenericConverter.ConvertiblePair;
 import com.github.datalking.common.convert.descriptor.TypeDescriptor;
@@ -29,7 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @author yaoo on 5/10/18
  */
-public class GenericConversionService implements ConversionService, ConverterRegistry {
+public class GenericConversionService implements ConfigurableConversionService {
 
     private static final GenericConverter NO_OP_CONVERTER = new NoOpConverter("NO_OP");
 

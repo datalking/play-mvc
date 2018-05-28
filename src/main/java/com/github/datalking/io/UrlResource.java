@@ -32,4 +32,10 @@ public class UrlResource implements Resource {
     public String getFilename() {
         return null;
     }
+
+    public String getDescription() {
+        return "URL [" + this.url + "]";
+    }
+
+
 }

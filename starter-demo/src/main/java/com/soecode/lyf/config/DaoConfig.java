@@ -4,17 +4,19 @@ import com.github.datalking.SqlSessionFactoryBean;
 import com.github.datalking.annotation.Bean;
 import com.github.datalking.annotation.Configuration;
 import com.github.datalking.annotation.MapperScan;
+import com.github.datalking.annotation.PropertySource;
 import com.github.datalking.annotation.Value;
 import com.github.datalking.mapper.MapperFactoryBean;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import com.soecode.lyf.dao.AppointmentDao;
 import com.soecode.lyf.dao.BookDao;
 import org.apache.ibatis.session.SqlSessionFactory;
-//import org.springframework.context.annotation.PropertySource;
 
 import javax.sql.DataSource;
 import java.beans.PropertyVetoException;
 import java.util.Properties;
+
+//import org.springframework.context.annotation.PropertySource;
 
 @Configuration
 @PropertySource("classpath:jdbc.properties")

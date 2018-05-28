@@ -14,4 +14,6 @@ public interface Resource {
 
     String getFilename();
 
+    String getDescription();
+
 }
