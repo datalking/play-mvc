@@ -3,7 +3,6 @@ package com.github.datalking.beans;
 import com.github.datalking.common.convert.TypeConverterDelegate;
 import com.github.datalking.common.convert.descriptor.Property;
 import com.github.datalking.common.convert.descriptor.TypeDescriptor;
-import com.github.datalking.util.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +23,9 @@ public class BeanWrapperImpl extends AbstractPropertyAccessor implements BeanWra
 
     private static final Logger logger = LoggerFactory.getLogger(BeanWrapperImpl.class);
 
+    // 封装的对象
     private Object wrappedObject;
+
 //    Object rootObject;
 
     private String nestedPath = "";

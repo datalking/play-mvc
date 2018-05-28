@@ -13,7 +13,9 @@ public interface InstantiationAwareBeanPostProcessor extends BeanPostProcessor {
 
     boolean postProcessAfterInstantiation(Object bean, String beanName);
 
-    PropertyValues postProcessPropertyValues(PropertyValues pvs, PropertyDescriptor[] pds, Object bean, String beanName);
-
+    PropertyValues postProcessPropertyValues(PropertyValues pvs,
+                                             PropertyDescriptor[] pds,
+                                             Object bean,
+                                             String beanName);
 
 }

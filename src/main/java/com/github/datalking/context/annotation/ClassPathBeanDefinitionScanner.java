@@ -7,6 +7,8 @@ import com.github.datalking.beans.factory.config.BeanDefinitionHolder;
 import com.github.datalking.beans.factory.support.AnnotatedGenericBeanDefinition;
 import com.github.datalking.beans.factory.support.BeanDefinitionReaderUtils;
 import com.github.datalking.beans.factory.support.BeanDefinitionRegistry;
+import com.github.datalking.beans.factory.support.BeanNameGenerator;
+import com.github.datalking.io.ResourceLoader;
 import com.github.datalking.util.ResourceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +31,8 @@ public class ClassPathBeanDefinitionScanner {
 
     private final BeanDefinitionRegistry registry;
 
+    private BeanNameGenerator beanNameGenerator;
+
     public ClassPathBeanDefinitionScanner(BeanDefinitionRegistry registry) {
         this(registry, true);
     }
@@ -36,7 +40,6 @@ public class ClassPathBeanDefinitionScanner {
     public ClassPathBeanDefinitionScanner(BeanDefinitionRegistry registry, boolean useDefaultFilters) {
         this.registry = registry;
     }
-
 
     public void scan(String... basePackages) {
 
@@ -159,6 +162,15 @@ public class ClassPathBeanDefinitionScanner {
 //                newDefinition.getSource().equals(existingDefinition.getSource()) ||
 //                newDefinition.equals(existingDefinition);
         return newDefinition.equals(existingDefinition);
+    }
+
+    public void setResourceLoader(ResourceLoader resourceLoader) {
+//        this.resourcePatternResolver = ResourcePatternUtils.getResourcePatternResolver(resourceLoader);
+//        this.metadataReaderFactory = new CachingMetadataReaderFactory(resourceLoader);
+    }
+
+    public void setBeanNameGenerator(BeanNameGenerator beanNameGenerator) {
+        this.beanNameGenerator = (BeanNameGenerator)(beanNameGenerator != null ? beanNameGenerator : new AnnotationBeanNameGenerator());
     }
 
     public BeanDefinitionRegistry getRegistry() {

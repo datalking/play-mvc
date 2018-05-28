@@ -1,6 +1,9 @@
 package com.github.datalking.beans.factory.config;
 
+import com.github.datalking.beans.TypeConverter;
 import com.github.datalking.beans.factory.BeanFactory;
+
+import java.util.Set;
 
 /**
  * AutowireCapableBeanFactory 接口
@@ -33,6 +36,11 @@ public interface AutowireCapableBeanFactory extends BeanFactory {
 //    void destroyBean(Object existingBean);
     Object initializeBean(Object existingBean, String beanName);
 //    <T> NamedBeanHolder<T> resolveNamedBean(Class<T> requiredType);
+
+    Object resolveDependency(DependencyDescriptor descriptor,
+                             String beanName,
+                             Set<String> autowiredBeanNames,
+                             TypeConverter typeConverter);
 
 
 }

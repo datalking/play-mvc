@@ -2,10 +2,8 @@ package com.github.datalking.beans.factory.support;
 
 
 import com.github.datalking.beans.factory.config.BeanDefinition;
+import com.github.datalking.io.DefaultResourceLoader;
 import com.github.datalking.io.ResourceLoader;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 从配置中读取BeanDefinition 抽象类
@@ -26,13 +24,13 @@ public abstract class AbstractBeanDefinitionReader implements BeanDefinitionRead
 
     public AbstractBeanDefinitionReader(BeanDefinitionRegistry registry) {
         this.registry = registry;
-        this.resourceLoader = new ResourceLoader();
+        this.resourceLoader = new DefaultResourceLoader();
     }
 
     @Deprecated
     public AbstractBeanDefinitionReader(ResourceLoader resourceLoader) {
         this.registry = new DefaultListableBeanFactory();
-        this.resourceLoader = new ResourceLoader();
+        this.resourceLoader = new DefaultResourceLoader();
     }
 
 

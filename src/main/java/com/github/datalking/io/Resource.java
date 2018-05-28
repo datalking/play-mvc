@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Resource是统一定位资源的接口
+ * Resource代表统一资源 接口
  */
 public interface Resource {
 
@@ -12,5 +12,6 @@ public interface Resource {
 
     InputStream getInputStream() throws IOException;
 
+    String getFilename();
 
 }

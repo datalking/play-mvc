@@ -17,7 +17,7 @@ import java.util.Arrays;
 import java.util.Set;
 
 /**
- * 扫描Mapper接口 实现类
+ * 扫描Mapper接口
  * A  ClassPathBeanDefinitionScanner that registers Mappers by
  * {@code basePackage}, {@code annotationClass}, or {@code markerInterface}.
  * If an {@code annotationClass} and/or {@code markerInterface} is specified,
@@ -197,13 +197,13 @@ public class ClassPathMapperScanner extends ClassPathBeanDefinitionScanner {
         }
     }
 
-//    @Override
+    //    @Override
     protected boolean isCandidateComponent(AnnotatedBeanDefinition beanDefinition) {
 //        return beanDefinition.getMetadata().isInterface() && beanDefinition.getMetadata().isIndependent();
-        return beanDefinition.getMetadata().isInterface() ;
+        return beanDefinition.getMetadata().isInterface();
     }
 
-//    @Override
+    //    @Override
     protected boolean checkCandidate(String beanName, BeanDefinition beanDefinition) {
         if (super.checkCandidate(beanName, beanDefinition)) {
             return true;

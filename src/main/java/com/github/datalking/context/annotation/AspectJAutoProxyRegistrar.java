@@ -21,13 +21,14 @@ public class AspectJAutoProxyRegistrar implements ImportBeanDefinitionRegistrar 
      * 注册 AnnotationAwareAspectJAutoProxyCreator  beanDefinition
      */
     @Override
-    public BeanDefinition registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
+    public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
 
         Assert.notNull(registry, "BeanDefinitionRegistry must not be null");
 
         if (registry.containsBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME)) {
 
-            return registry.getBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME);
+//            return registry.getBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME);
+            return ;
         }
 
         Class cls = AnnotationAwareAspectJAutoProxyCreator.class;
@@ -36,7 +37,8 @@ public class AspectJAutoProxyRegistrar implements ImportBeanDefinitionRegistrar 
 
 //        beanDefinition.getPropertyValues().addPropertyValue("order", -9999);
         registry.registerBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME, beanDefinition);
-        return beanDefinition;
+
+//        return beanDefinition;
     }
 
 

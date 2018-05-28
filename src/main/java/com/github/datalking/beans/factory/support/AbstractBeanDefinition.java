@@ -29,12 +29,13 @@ public abstract class AbstractBeanDefinition implements BeanDefinition, Cloneabl
 
     private int autowireMode;
 
+    private int role = BeanDefinition.ROLE_APPLICATION;
+
     /// 依赖注入的方式
     public static final int AUTOWIRE_NO = AutowireCapableBeanFactory.AUTOWIRE_NO;
     public static final int AUTOWIRE_BY_NAME = AutowireCapableBeanFactory.AUTOWIRE_BY_NAME;
     public static final int AUTOWIRE_BY_TYPE = AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE;
     public static final int AUTOWIRE_CONSTRUCTOR = AutowireCapableBeanFactory.AUTOWIRE_CONSTRUCTOR;
-
 
     private ConstructorArgumentValues constructorArgumentValues;
 //    private boolean autowireCandidate = true;
@@ -157,12 +158,20 @@ public abstract class AbstractBeanDefinition implements BeanDefinition, Cloneabl
         return this.constructorArgumentValues;
     }
 
+    public int getAutowireMode() {
+        return this.autowireMode;
+    }
+
     public void setAutowireMode(int autowireMode) {
         this.autowireMode = autowireMode;
     }
 
-    public int getAutowireMode() {
-        return this.autowireMode;
+    public int getRole() {
+        return this.role;
+    }
+
+    public void setRole(int role) {
+        this.role = role;
     }
 
     @Override

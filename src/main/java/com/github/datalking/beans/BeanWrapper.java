@@ -1,6 +1,5 @@
 package com.github.datalking.beans;
 
-import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 
 /**
@@ -14,11 +13,11 @@ public interface BeanWrapper extends ConfigurablePropertyAccessor {
 
     Class<?> getWrappedClass();
 
-    void setPropertyValues(PropertyValues pvs);
-
     PropertyDescriptor[] getPropertyDescriptors();
 
     PropertyDescriptor getPropertyDescriptor(String propertyName);
+
+    void setPropertyValues(PropertyValues pvs);
 
 //    void setAutoGrowNestedPaths(boolean autoGrowNestedPaths);
 //    boolean isAutoGrowNestedPaths();

@@ -9,6 +9,14 @@ import com.github.datalking.beans.MutablePropertyValues;
  */
 public interface BeanDefinition {
 
+    /// bean的用途分类，3类
+    // 应用程序重要的bean，多是用户定义的bean
+    int ROLE_APPLICATION = 0;
+    // 辅助类的bean，如配置类
+    int ROLE_SUPPORT = 1;
+    // 基础类的bean，多内部使用
+    int ROLE_INFRASTRUCTURE = 2;
+
     String getBeanClassName();
 
     void setBeanClassName(String beanClassName);
@@ -22,9 +30,15 @@ public interface BeanDefinition {
     boolean isSingleton();
 
     String getFactoryBeanName();
+
     void setFactoryBeanName(String factoryBeanName);
+
     String getFactoryMethodName();
+
     void setFactoryMethodName(String factoryMethodName);
+
+    int getRole();
+
 
 //    void setDependsOn(String... dependsOn);
 //

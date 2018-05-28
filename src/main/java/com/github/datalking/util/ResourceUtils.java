@@ -18,6 +18,8 @@ import java.util.jar.JarFile;
  */
 public abstract class ResourceUtils {
 
+    public static final String CLASSPATH_URL_PREFIX = "classpath:";
+
     /**
      * 获取指定包下的所有class对象
      *
@@ -133,8 +135,6 @@ public abstract class ResourceUtils {
         return clazzs;
 
     }
-
-
 
 
 }

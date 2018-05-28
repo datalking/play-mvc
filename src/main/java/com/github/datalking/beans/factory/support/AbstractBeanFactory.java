@@ -1,21 +1,21 @@
 package com.github.datalking.beans.factory.support;
 
+import com.github.datalking.beans.TypeConverter;
 import com.github.datalking.beans.factory.BeanFactory;
 import com.github.datalking.beans.factory.FactoryBean;
 import com.github.datalking.beans.factory.ObjectFactory;
 import com.github.datalking.beans.factory.config.BeanDefinition;
 import com.github.datalking.beans.factory.config.BeanDefinitionHolder;
-import com.github.datalking.beans.factory.config.BeanExpressionContext;
 import com.github.datalking.beans.factory.config.BeanExpressionResolver;
 import com.github.datalking.beans.factory.config.BeanPostProcessor;
 import com.github.datalking.beans.factory.config.ConfigurableBeanFactory;
 import com.github.datalking.beans.factory.config.InstantiationAwareBeanPostProcessor;
-import com.github.datalking.beans.factory.config.Scope;
 import com.github.datalking.common.StringValueResolver;
+import com.github.datalking.common.convert.ConversionService;
+import com.github.datalking.common.convert.SimpleTypeConverter;
 import com.github.datalking.exception.NoSuchBeanDefinitionException;
 import com.github.datalking.util.Assert;
 import com.github.datalking.util.ClassUtils;
-import com.github.datalking.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,11 +44,16 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
 
     private BeanExpressionResolver beanExpressionResolver;
 
+    private ConversionService conversionService;
+
+    private TypeConverter typeConverter;
+
+
     //    private boolean hasDestructionAwareBeanPostProcessors;
 
     //    private boolean cacheBeanMetadata = true;
 
-    // ======== abstract methods
+    // ======== abstract methods ========
 
     protected abstract Object createBean(String beanName, RootBeanDefinition bd, Object[] args);
 
@@ -389,6 +394,31 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
 
     public BeanExpressionResolver getBeanExpressionResolver() {
         return this.beanExpressionResolver;
+    }
+
+    public TypeConverter getTypeConverter() {
+//        TypeConverter customConverter = getCustomTypeConverter();
+//        if (customConverter != null) {
+//            return customConverter;
+//        } else {
+            // Build default TypeConverter, registering custom editors.
+            SimpleTypeConverter typeConverter = new SimpleTypeConverter();
+            typeConverter.setConversionService(getConversionService());
+//            registerCustomEditors(typeConverter);
+            return typeConverter;
+//        }
+    }
+
+    public ConversionService getConversionService() {
+        return this.conversionService;
+    }
+
+    public void setConversionService(ConversionService conversionService) {
+        this.conversionService = conversionService;
+    }
+
+    public void setTypeConverter(TypeConverter typeConverter) {
+        this.typeConverter = typeConverter;
     }
 
 //    protected Object evaluateBeanDefinitionString(String value, BeanDefinition beanDefinition) {

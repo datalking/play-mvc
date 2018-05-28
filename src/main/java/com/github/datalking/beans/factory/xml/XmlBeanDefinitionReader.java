@@ -33,6 +33,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
     // 加载资源，将inputStream传递给doLoadBeanDefinitions()
     @Override
     public void loadBeanDefinitions(String location) throws Exception {
+//        InputStream inputStream = getResourceLoader().getResource(location).getInputStream();
         InputStream inputStream = getResourceLoader().getResource(location).getInputStream();
         doLoadBeanDefinitions(inputStream);
     }

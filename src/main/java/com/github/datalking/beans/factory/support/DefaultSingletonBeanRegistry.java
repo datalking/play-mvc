@@ -6,7 +6,6 @@ import com.github.datalking.util.Assert;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -43,7 +42,37 @@ public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
      */
     private final Map<String, ObjectFactory<?>> singletonFactories = new HashMap<String, ObjectFactory<?>>(16);
 
-    private final Set<String> registeredSingletons = new LinkedHashSet<String>(256);
+    private final Set<String> registeredSingletons = new LinkedHashSet<>(256);
+
+//    例子
+//    <bean id="A" class="com.demo.app.Cat" depends-on="B;C"></bean>
+//    <bean id="B" class="com.demo.app.Cat"></bean>
+//    <bean id="C" class="com.demo.app.Cat" depends-on="B;D"></bean>
+//    <bean id="D" class="com.demo.app.Cat"></bean>
+//
+//    dependenciesForBeanMap
+//    {A=[B,C], C=[B,D]}
+//
+//    dependentBeanMap
+//    {B=[A,C],C=[A],D=[C]}
+
+    /**
+     * ConcurrentHashMap
+     * key-bean名
+     * value-key所依赖的bean
+     * Map between depending bean names: bean name --> Set of bean names for the bean's dependencies
+     */
+    private final Map<String, Set<String>> dependenciesForBeanMap = new ConcurrentHashMap<>(64);
+
+
+    /**
+     * ConcurrentHashMap
+     * key-bean名
+     * value-依赖key的bean
+     * Map between dependent bean names: bean name --> Set of dependent bean names
+     */
+    private final Map<String, Set<String>> dependentBeanMap = new ConcurrentHashMap<>(64);
+
 //private final Map<String, Object> disposableBeans = new LinkedHashMap<String, Object>();
 
 
@@ -75,7 +104,7 @@ public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
     }
 
     // 用于提前注册bean，避免循环依赖
-    protected void addSingletonFactory(String beanName, ObjectFactory<?> singletonFactory)  {
+    protected void addSingletonFactory(String beanName, ObjectFactory<?> singletonFactory) {
         Assert.notNull(singletonFactory, "Singleton factory must not be null");
         synchronized (this.singletonObjects) {
             if (!this.singletonObjects.containsKey(beanName)) {
@@ -89,7 +118,7 @@ public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
     }
 
     @Override
-    public Object getSingleton(String beanName)  {
+    public Object getSingleton(String beanName) {
         return getSingleton(beanName, true);
 
     }
@@ -210,6 +239,31 @@ public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
     protected void afterSingletonCreation(String beanName) {
         this.singletonsCurrentlyInCreation.remove(beanName);
     }
+
+    public void registerDependentBean(String beanName, String dependentBeanName) {
+//        String canonicalName = canonicalName(beanName);
+        String canonicalName = beanName;
+
+        synchronized (this.dependentBeanMap) {
+            Set<String> dependentBeans = this.dependentBeanMap.get(canonicalName);
+            if (dependentBeans == null) {
+                dependentBeans = new LinkedHashSet<>(8);
+                this.dependentBeanMap.put(canonicalName, dependentBeans);
+            }
+            dependentBeans.add(dependentBeanName);
+        }
+
+        synchronized (this.dependenciesForBeanMap) {
+            Set<String> dependenciesForBean = this.dependenciesForBeanMap.get(dependentBeanName);
+            if (dependenciesForBean == null) {
+                dependenciesForBean = new LinkedHashSet<>(8);
+                this.dependenciesForBeanMap.put(dependentBeanName, dependenciesForBean);
+            }
+            dependenciesForBean.add(canonicalName);
+        }
+
+    }
+
 
 //    public void destroySingleton(String beanName) {
 //        removeSingleton(beanName);

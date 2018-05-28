@@ -1,5 +1,6 @@
 package com.github.datalking.context.support;
 
+import com.github.datalking.beans.factory.DisposableBean;
 import com.github.datalking.beans.factory.config.AutowireCapableBeanFactory;
 import com.github.datalking.beans.factory.config.BeanFactoryPostProcessor;
 import com.github.datalking.beans.factory.config.ConfigurableListableBeanFactory;
@@ -12,6 +13,9 @@ import com.github.datalking.context.ConfigurableApplicationContext;
 import com.github.datalking.context.MessageSource;
 import com.github.datalking.context.MessageSourceResolvable;
 import com.github.datalking.context.message.DelegatingMessageSource;
+import com.github.datalking.io.DefaultResourceLoader;
+import com.github.datalking.io.Resource;
+import com.github.datalking.io.ResourcePatternResolver;
 import com.github.datalking.util.Assert;
 import com.github.datalking.util.ObjectUtils;
 
@@ -23,7 +27,8 @@ import java.util.Map;
 /**
  * ApplicationContext 抽象类
  */
-public abstract class AbstractApplicationContext implements ConfigurableApplicationContext {
+public abstract class AbstractApplicationContext extends DefaultResourceLoader
+        implements ConfigurableApplicationContext, DisposableBean {
 
     // messageSource默认bean名称
     public static final String MESSAGE_SOURCE_BEAN_NAME = "messageSource";
@@ -39,6 +44,8 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
 
     private String displayName = this.getClass().getName() + "@" + this.hashCode();
 
+    private ResourcePatternResolver resourcePatternResolver;
+
     // parent默认为null
     private ApplicationContext parent;
 
@@ -50,14 +57,13 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
 
     public AbstractApplicationContext() {
         // 当使用注解而不使用xml时，configLocation默认为空字符串
-        this.configLocation = "";
-        this.beanFactory = new DefaultListableBeanFactory();
-
+        this("");
     }
 
     public AbstractApplicationContext(String configLocation) {
         this.configLocation = configLocation;
         this.beanFactory = new DefaultListableBeanFactory();
+        this.resourcePatternResolver = getResourcePatternResolver();
 
     }
 
@@ -249,6 +255,10 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
 
     }
 
+//    protected void destroyBeans() {
+//        getBeanFactory().destroySingletons();
+//    }
+
     // ======== ApplicationContext interface ========
     @Override
     public String getId() {
@@ -297,6 +307,15 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
 //        }
 //    }
 
+    public Resource[] getResources(String locationPattern) {
+        return this.resourcePatternResolver.getResources(locationPattern);
+    }
+
+    protected ResourcePatternResolver getResourcePatternResolver() {
+//        return new PathMatchingResourcePatternResolver(this);
+        // todo 资源解析
+        return null;
+    }
 
     // ======== ListableBeanFactory Interface ========
     @Override
@@ -347,6 +366,12 @@ public abstract class AbstractApplicationContext implements ConfigurableApplicat
             throw new IllegalStateException("MessageSource not initialized - call 'refresh' before accessing messages via the context: " + this);
         }
         return this.messageSource;
+    }
+
+    // ======== misc ========
+    @Override
+    public void destroy() {
+        close();
     }
 
     protected abstract void loadBeanDefinitions(DefaultListableBeanFactory beanFactory);

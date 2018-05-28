@@ -1,7 +1,6 @@
 package com.github.datalking.context.annotation;
 
 import com.github.datalking.annotation.meta.AnnotationMetadata;
-import com.github.datalking.beans.factory.config.BeanDefinition;
 import com.github.datalking.beans.factory.support.BeanDefinitionRegistry;
 
 /**
@@ -9,6 +8,6 @@ import com.github.datalking.beans.factory.support.BeanDefinitionRegistry;
  */
 public interface ImportBeanDefinitionRegistrar {
 
-    BeanDefinition registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry);
+    void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry);
 
 }

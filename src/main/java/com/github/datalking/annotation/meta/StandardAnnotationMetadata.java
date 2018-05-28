@@ -49,6 +49,20 @@ public class StandardAnnotationMetadata extends StandardClassMetadata implements
         return false;
     }
 
+    public boolean isAnnotated(String annotationType) {
+        Annotation[] anns = getIntrospectedClass().getAnnotations();
+        for (Annotation ann : anns) {
+            if (ann.annotationType().getName().equals(annotationType)) {
+                return true;
+            }
+            for (Annotation metaAnn : ann.annotationType().getAnnotations()) {
+                if (metaAnn.annotationType().getName().equals(annotationType)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
     @Override
     public Set<MethodMetadata> getAnnotatedMethods(String annotationName) {
@@ -117,12 +131,27 @@ public class StandardAnnotationMetadata extends StandardClassMetadata implements
 
         String annotationName = annotationClass.getName();
         final String componentScanAnnoFullPack = "com.github.datalking.annotation.ComponentScan";
+
         if (componentScanAnnoFullPack.equals(annotationName)) {
             annoMap.put("basePackages", getIntrospectedClass().getAnnotation(ComponentScan.class).basePackages());
             annoMap.put("basePackageClasses", getIntrospectedClass().getAnnotation(ComponentScan.class).basePackageClasses());
             annoMap.put("value", getIntrospectedClass().getAnnotation(ComponentScan.class).value());
         }
+
         return annoMap;
+    }
+
+
+    public Map<String, Object> getAnnotationAttributes(String annotationName) {
+
+        Class clazz= null;
+        try {
+            clazz = Class.forName(annotationName);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return this.getAnnotationAttributes(clazz, false);
     }
 
 //    public boolean isAnnotated(String annotationName) {

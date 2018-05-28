@@ -23,7 +23,13 @@ java笔记
 
 ## summary
 
-
+- java class name
+    - 1、getCanonicalName顾名思义的正规的名字，与之对应的是getName
+    - 2、大部分情况下，getName和getCanonicalName没有什么不同的， 但是对于array和内部类就不一样了
+    - 3、对于数组：getCanonicalName是正规的（最后带有[]表示数组），getName是编译器的（前面带有[表示一维数组）
+    - 4、对于内部类：getCanonicalName是空，getName是带有$的
+    - 5、getSimpleName是简单的名字，是getName去掉了包名和$（内部类时候带有$）的余下的类自身的名字；getName带有包名和$（内部类时候带有$）
+      
 - java class
     - Class 类的对象表示 JVM 中的一个类或接口
     - 数组也被映射为Class对象，所有元素类型相同且维数相同的数组都共享同一个 Class 对象 。

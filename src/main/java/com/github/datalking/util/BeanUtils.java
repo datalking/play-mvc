@@ -1,5 +1,7 @@
 package com.github.datalking.util;
 
+import com.github.datalking.beans.CachedIntrospectionResults;
+import com.github.datalking.beans.GenericTypeAwarePropertyDescriptor;
 import com.github.datalking.common.MethodParameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,13 +11,10 @@ import java.beans.PropertyEditor;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.net.URI;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -207,36 +206,34 @@ public abstract class BeanUtils {
         }
     }
 
-
-//    public static PropertyDescriptor[] getPropertyDescriptors(Class<?> clazz)  {
-//        CachedIntrospectionResults cr = CachedIntrospectionResults.forClass(clazz);
-//        return cr.getPropertyDescriptors();
-//    }
-
-
-//    public static PropertyDescriptor getPropertyDescriptor(Class<?> clazz, String propertyName)
-//             {
-//
-//        CachedIntrospectionResults cr = CachedIntrospectionResults.forClass(clazz);
-//        return cr.getPropertyDescriptor(propertyName);
-//    }
+    public static PropertyDescriptor[] getPropertyDescriptors(Class<?> clazz) {
+        CachedIntrospectionResults cr = CachedIntrospectionResults.forClass(clazz);
+        return cr.getPropertyDescriptors();
+    }
 
 
-//    public static PropertyDescriptor findPropertyForMethod(Method method)  {
-//        return findPropertyForMethod(method, method.getDeclaringClass());
-//    }
-//
-//
-//    public static PropertyDescriptor findPropertyForMethod(Method method, Class<?> clazz)  {
-//        Assert.notNull(method, "Method must not be null");
-//        PropertyDescriptor[] pds = getPropertyDescriptors(clazz);
-//        for (PropertyDescriptor pd : pds) {
-//            if (method.equals(pd.getReadMethod()) || method.equals(pd.getWriteMethod())) {
-//                return pd;
-//            }
-//        }
-//        return null;
-//    }
+    public static PropertyDescriptor getPropertyDescriptor(Class<?> clazz, String propertyName) {
+
+        CachedIntrospectionResults cr = CachedIntrospectionResults.forClass(clazz);
+        return cr.getPropertyDescriptor(propertyName);
+    }
+
+
+    public static PropertyDescriptor findPropertyForMethod(Method method) {
+        return findPropertyForMethod(method, method.getDeclaringClass());
+    }
+
+
+    public static PropertyDescriptor findPropertyForMethod(Method method, Class<?> clazz) {
+        Assert.notNull(method, "Method must not be null");
+        PropertyDescriptor[] pds = getPropertyDescriptors(clazz);
+        for (PropertyDescriptor pd : pds) {
+            if (method.equals(pd.getReadMethod()) || method.equals(pd.getWriteMethod())) {
+                return pd;
+            }
+        }
+        return null;
+    }
 
 
     public static PropertyEditor findEditorByConvention(Class<?> targetType) {
@@ -280,27 +277,26 @@ public abstract class BeanUtils {
         }
     }
 
+    public static Class<?> findPropertyType(String propertyName, Class<?>... beanClasses) {
+        if (beanClasses != null) {
+            for (Class<?> beanClass : beanClasses) {
+                PropertyDescriptor pd = getPropertyDescriptor(beanClass, propertyName);
+                if (pd != null) {
+                    return pd.getPropertyType();
+                }
+            }
+        }
+        return Object.class;
+    }
 
-//    public static Class<?> findPropertyType(String propertyName, Class<?>... beanClasses) {
-//        if (beanClasses != null) {
-//            for (Class<?> beanClass : beanClasses) {
-//                PropertyDescriptor pd = getPropertyDescriptor(beanClass, propertyName);
-//                if (pd != null) {
-//                    return pd.getPropertyType();
-//                }
-//            }
-//        }
-//        return Object.class;
-//    }
+    public static MethodParameter getWriteMethodParameter(PropertyDescriptor pd) {
+        if (pd instanceof GenericTypeAwarePropertyDescriptor) {
+            return new MethodParameter(((GenericTypeAwarePropertyDescriptor) pd).getWriteMethodParameter());
+        } else {
+            return new MethodParameter(pd.getWriteMethod(), 0);
+        }
+    }
 
-
-    //    public static MethodParameter getWriteMethodParameter(PropertyDescriptor pd) {
-//        if (pd instanceof GenericTypeAwarePropertyDescriptor) {
-//            return new MethodParameter(((GenericTypeAwarePropertyDescriptor) pd).getWriteMethodParameter());
-//        } else {
-//            return new MethodParameter(pd.getWriteMethod(), 0);
-//        }
-//}
     public static boolean isSimpleProperty(Class<?> clazz) {
         Assert.notNull(clazz, "Class must not be null");
         return isSimpleValueType(clazz) || (clazz.isArray() && isSimpleValueType(clazz.getComponentType()));

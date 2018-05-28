@@ -6,6 +6,7 @@ import java.lang.reflect.Field;
 
 /**
  * 数据类型转换 接口
+ * 基于propertyEditor
  *
  * @author yaoo on 5/9/18
  */

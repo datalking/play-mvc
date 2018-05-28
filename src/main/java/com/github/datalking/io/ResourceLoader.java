@@ -1,11 +1,14 @@
 package com.github.datalking.io;
 
-import java.net.URL;
+import com.github.datalking.util.ResourceUtils;
 
 /**
  * 资源加载类
  */
-public class ResourceLoader {
+public interface ResourceLoader {
+
+    // Pseudo URL prefix for loading from the class path: "classpath:"
+    String CLASSPATH_URL_PREFIX = ResourceUtils.CLASSPATH_URL_PREFIX;
 
     /**
      * 加载资源
@@ -13,9 +16,6 @@ public class ResourceLoader {
      * @param location 资源路径
      * @return 加载完资源的Resource对象
      */
-    public Resource getResource(String location) {
-        URL resource = this.getClass().getClassLoader().getResource(location);
-        return new UrlResource(resource);
-    }
-
+    Resource getResource(String location);
 }
+

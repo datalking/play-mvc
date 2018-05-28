@@ -1,5 +1,6 @@
 package com.github.datalking.beans.factory.config;
 
+import com.github.datalking.beans.TypeConverter;
 import com.github.datalking.beans.factory.BeanFactory;
 
 /**
@@ -20,8 +21,18 @@ public interface ConfigurableBeanFactory extends BeanFactory {
 
     BeanExpressionResolver getBeanExpressionResolver();
 
+    void registerDependentBean(String beanName, String dependentBeanName);
+
+    String[] getDependentBeans(String beanName);
+
+//    String[] getDependenciesForBean(String beanName);
+
+    TypeConverter getTypeConverter();
+
+    void setTypeConverter(TypeConverter typeConverter);
+
+
 //void destroyBean(String beanName, Object beanInstance);
 //void registerAlias(String beanName, String alias) ;
-
 
 }

@@ -17,9 +17,19 @@ public class UrlResource implements Resource {
     }
 
     @Override
+    public boolean exists() {
+        return false;
+    }
+
+    @Override
     public InputStream getInputStream() throws IOException {
         URLConnection urlConnection = url.openConnection();
         urlConnection.connect();
         return urlConnection.getInputStream();
+    }
+
+    @Override
+    public String getFilename() {
+        return null;
     }
 }

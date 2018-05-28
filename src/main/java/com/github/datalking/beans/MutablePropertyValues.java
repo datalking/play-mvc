@@ -3,8 +3,10 @@ package com.github.datalking.beans;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * PropertyValues 默认实现类
@@ -15,7 +17,7 @@ public class MutablePropertyValues implements PropertyValues, Serializable {
 
     private final List<PropertyValue> propertyValueList;
 
-    // private Set<String> processedProperties;
+    private Set<String> processedProperties;
 
     public MutablePropertyValues() {
         this.propertyValueList = new ArrayList<>(0);
@@ -75,6 +77,19 @@ public class MutablePropertyValues implements PropertyValues, Serializable {
     public MutablePropertyValues add(String propertyName, Object propertyValue) {
         this.addPropertyValue(new PropertyValue(propertyName, propertyValue));
         return this;
+    }
+
+    public void registerProcessedProperty(String propertyName) {
+        if (this.processedProperties == null) {
+            this.processedProperties = new HashSet<>();
+        }
+        this.processedProperties.add(propertyName);
+    }
+
+    public void clearProcessedProperty(String propertyName) {
+        if (this.processedProperties != null) {
+            this.processedProperties.remove(propertyName);
+        }
     }
 
     public MutablePropertyValues addPropertyValue(PropertyValue kv) {

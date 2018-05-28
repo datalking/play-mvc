@@ -49,9 +49,6 @@ public class SpringManagedTransaction implements Transaction {
         this.dataSource = dataSource;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Connection getConnection() throws SQLException {
         if (this.connection == null) {

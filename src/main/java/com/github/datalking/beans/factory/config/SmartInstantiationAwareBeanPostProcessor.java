@@ -1,12 +1,9 @@
 package com.github.datalking.beans.factory.config;
 
-import java.lang.reflect.Constructor;
-
 /**
  * @author yaoo on 4/18/18
  */
 public interface SmartInstantiationAwareBeanPostProcessor extends InstantiationAwareBeanPostProcessor {
-
 
 //    Class<?> predictBeanType(Class<?> beanClass, String beanName);
 //

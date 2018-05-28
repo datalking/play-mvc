@@ -1,5 +1,8 @@
 package com.github.datalking.annotation;
 
+import com.github.datalking.beans.factory.support.BeanNameGenerator;
+import com.github.datalking.mapper.MapperFactoryBean;
+
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -8,7 +11,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 标注要在哪些包下扫描Mapper接口
+ * 标注要扫描哪些包下的Mapper接口
  * Use this annotation to register MyBatis mapper interfaces when using Java Config.
  * It performs when same work as MapperScannerConfigurer via {@link MapperScannerRegistrar}.
  *
@@ -56,6 +59,7 @@ public @interface MapperScan {
     String[] value() default {};
 
     /**
+     * 指定要扫描的包，只扫描接口，不扫描实现类
      * Base packages to scan for MyBatis interfaces.
      * Note that only interfaces with at least one method will be registered;
      * concrete classes will be ignored.
@@ -75,8 +79,7 @@ public @interface MapperScan {
     /**
      * This property specifies the annotation that the scanner will search for.
      * <p>
-     * The scanner will register all interfaces in the base package that also have
-     * the specified annotation.
+     * The scanner will register all interfaces in the base package that also have the specified annotation.
      * <p>
      * Note this can be combined with markerInterface.
      */
@@ -93,14 +96,14 @@ public @interface MapperScan {
     Class<?> markerInterface() default Class.class;
 
     /**
-     * Specifies which {@code SqlSessionTemplate} to use in the case that there is
+     * Specifies which SqlSessionTemplate to use in the case that there is
      * more than one in the spring context. Usually this is only needed when you
      * have more than one datasource.
      */
     String sqlSessionTemplateRef() default "";
 
     /**
-     * Specifies which {@code SqlSessionFactory} to use in the case that there is
+     * Specifies which SqlSessionFactory to use in the case that there is
      * more than one in the spring context. Usually this is only needed when you
      * have more than one datasource.
      */

@@ -203,5 +203,17 @@ public abstract class ReflectionUtils {
         return methods.toArray(new Method[methods.size()]);
     }
 
+    public static Object invokeMethod(Method method, Object target) {
+        return invokeMethod(method, target, new Object[0]);
+    }
+
+    public static Object invokeMethod(Method method, Object target, Object... args) {
+        try {
+            return method.invoke(target, args);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        throw new IllegalStateException("Should never get here");
+    }
 
 }

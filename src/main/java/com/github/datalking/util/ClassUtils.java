@@ -524,5 +524,8 @@ public abstract class ClassUtils {
                         (clazz.isArray() && typeName.equals(getQualifiedNameForArray(clazz)))));
     }
 
+    public static boolean hasMethod(Class<?> clazz, String methodName, Class<?>... paramTypes) {
+        return (getMethodIfAvailable(clazz, methodName, paramTypes) != null);
+    }
 
 }
