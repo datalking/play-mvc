@@ -10,7 +10,6 @@ import com.github.datalking.util.ClassUtils;
 import com.github.datalking.util.StringUtils;
 
 import java.beans.Introspector;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -39,31 +38,34 @@ public class AnnotationBeanNameGenerator implements BeanNameGenerator {
         AnnotationMetadata amd = annotatedDef.getMetadata();
         Set<String> types = amd.getAnnotationTypes();
         String beanName = null;
-        Iterator var5 = types.iterator();
-
-        while (var5.hasNext()) {
-            String type = (String) var5.next();
-            AnnotationAttributes attributes = AnnotationConfigUtils.attributesFor(amd, type);
-            if (this.isStereotypeWithNameValue(type, amd.getMetaAnnotationTypes(type), attributes)) {
+        for (String type : types) {
+            AnnotationAttributes attributes = MetadataUtils.attributesFor(amd, type);
+            if (isStereotypeWithNameValue(type, amd.getMetaAnnotationTypes(type), attributes)) {
                 Object value = attributes.get("value");
                 if (value instanceof String) {
                     String strVal = (String) value;
                     if (StringUtils.hasLength(strVal)) {
                         if (beanName != null && !strVal.equals(beanName)) {
-                            throw new IllegalStateException("Stereotype annotations suggest inconsistent component names: '" + beanName + "' versus '" + strVal + "'");
+                            throw new IllegalStateException("Stereotype annotations suggest inconsistent " +
+                                    "component names: '" + beanName + "' versus '" + strVal + "'");
                         }
-
                         beanName = strVal;
                     }
                 }
             }
         }
-
         return beanName;
     }
 
     protected boolean isStereotypeWithNameValue(String annotationType, Set<String> metaAnnotationTypes, Map<String, Object> attributes) {
-        boolean isStereotype = annotationType.equals("org.springframework.stereotype.Component") || metaAnnotationTypes != null && metaAnnotationTypes.contains("org.springframework.stereotype.Component") || annotationType.equals("javax.annotation.ManagedBean") || annotationType.equals("javax.inject.Named");
+
+//        boolean isStereotype = annotationType.equals("org.springframework.stereotype.Component")
+        boolean isStereotype = annotationType.equals("com.github.datalking.annotation.Component")
+                || metaAnnotationTypes != null
+                && metaAnnotationTypes.contains("com.github.datalking.annotation.Component")
+                || annotationType.equals("javax.annotation.ManagedBean")
+                || annotationType.equals("javax.inject.Named");
+
         return isStereotype && attributes != null && attributes.containsKey("value");
     }
 

@@ -1,6 +1,8 @@
 
 package com.github.datalking.util;
 
+import com.github.datalking.annotation.meta.AnnotationAttributes;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
@@ -162,6 +164,53 @@ public abstract class AnnotationUtils {
         return found;
     }
 
+    public static Map<String, Object> getAnnotationAttributes(Annotation annotation) {
+        return getAnnotationAttributes(annotation, false, false);
+    }
+
+    public static AnnotationAttributes getAnnotationAttributes(Annotation annotation,
+                                                               boolean classValuesAsString,
+                                                               boolean nestedAnnotationsAsMap) {
+
+        AnnotationAttributes attrs = new AnnotationAttributes();
+        Method[] methods = annotation.annotationType().getDeclaredMethods();
+        for (Method method : methods) {
+            if (method.getParameterTypes().length == 0 && method.getReturnType() != void.class) {
+                try {
+                    Object value = method.invoke(annotation);
+                    if (classValuesAsString) {
+                        if (value instanceof Class) {
+                            value = ((Class<?>) value).getName();
+                        } else if (value instanceof Class[]) {
+                            Class<?>[] clazzArray = (Class[]) value;
+                            String[] newValue = new String[clazzArray.length];
+                            for (int i = 0; i < clazzArray.length; i++) {
+                                newValue[i] = clazzArray[i].getName();
+                            }
+                            value = newValue;
+                        }
+                    }
+                    if (nestedAnnotationsAsMap && value instanceof Annotation) {
+                        attrs.put(method.getName(),
+                                getAnnotationAttributes((Annotation) value, classValuesAsString, true));
+                    } else if (nestedAnnotationsAsMap && value instanceof Annotation[]) {
+                        Annotation[] realAnnotations = (Annotation[]) value;
+                        AnnotationAttributes[] mappedAnnotations = new AnnotationAttributes[realAnnotations.length];
+                        for (int i = 0; i < realAnnotations.length; i++) {
+                            mappedAnnotations[i] = getAnnotationAttributes(realAnnotations[i], classValuesAsString, true);
+                        }
+                        attrs.put(method.getName(), mappedAnnotations);
+                    } else {
+                        attrs.put(method.getName(), value);
+                    }
+                } catch (Exception ex) {
+                    throw new IllegalStateException("Could not obtain annotation attribute values", ex);
+                }
+            }
+        }
+        return attrs;
+    }
+
 
     public static <A extends Annotation> A getAnnotation(Method method, Class<A> annotationType) {
 //        Method resolvedMethod = BridgeMethodResolver.findBridgedMethod(method);
@@ -239,6 +288,22 @@ public abstract class AnnotationUtils {
             Method method = annotation.annotationType().getDeclaredMethod(attributeName);
             ReflectionUtils.makeAccessible(method);
             return method.invoke(annotation);
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+
+    public static Object getDefaultValue(Annotation annotation) {
+        return getDefaultValue(annotation, VALUE);
+    }
+
+    public static Object getDefaultValue(Annotation annotation, String attributeName) {
+        return getDefaultValue(annotation.annotationType(), attributeName);
+    }
+
+    public static Object getDefaultValue(Class<? extends Annotation> annotationType, String attributeName) {
+        try {
+            return annotationType.getDeclaredMethod(attributeName).getDefaultValue();
         } catch (Exception ex) {
             return null;
         }

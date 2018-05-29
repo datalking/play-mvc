@@ -21,11 +21,15 @@ public interface AnnotationMetadata extends ClassMetadata {
 
     Map<String, Object> getAnnotationAttributes(Class<?> annotationName, boolean classValuesAsString);
 
+    Map<String, Object> getAnnotationAttributes(String annotationName, boolean classValuesAsString);
+
     Map<String, Object> getAnnotationAttributes(String annotationName);
 
     Annotation[] getAnnotations();
 
     boolean isAnnotated(String annotationType);
+
+    Set<String> getMetaAnnotationTypes(String annotationType);
 
 //    boolean hasAnnotatedMethods(String annotationName);
 

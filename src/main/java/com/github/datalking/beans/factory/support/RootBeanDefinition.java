@@ -19,9 +19,17 @@ public class RootBeanDefinition extends AbstractBeanDefinition {
     // 记录是否已经执行post processor
     volatile Boolean beforeInstantiationResolved;
 
-    // volatile ResolvableType factoryMethodReturnType;
-    // Object[] resolvedConstructorArguments;
+    Object resolvedConstructorOrFactoryMethod;
 
+    boolean constructorArgumentsResolved = false;
+
+    Object[] resolvedConstructorArguments;
+
+    Object[] preparedConstructorArguments;
+
+    boolean isFactoryMethodUnique = false;
+
+    // volatile ResolvableType factoryMethodReturnType;
 
     public RootBeanDefinition() {
         super();
@@ -44,6 +52,8 @@ public class RootBeanDefinition extends AbstractBeanDefinition {
         super(original);
         this.targetType = original.targetType;
         this.decoratedDefinition = original.decoratedDefinition;
+        this.isFactoryMethodUnique = original.isFactoryMethodUnique;
+
 
     }
 
@@ -65,6 +75,14 @@ public class RootBeanDefinition extends AbstractBeanDefinition {
 
     public boolean isFactoryMethod(Method candidate) {
         return (candidate != null && candidate.getName().equals(getFactoryMethodName()));
+    }
+
+    public Method getResolvedFactoryMethod() {
+
+//        synchronized (this.constructorArgumentLock) {
+        Object candidate = this.resolvedConstructorOrFactoryMethod;
+        return (candidate instanceof Method ? (Method) candidate : null);
+//        }
     }
 
     @Override

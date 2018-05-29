@@ -216,4 +216,9 @@ public abstract class ReflectionUtils {
         throw new IllegalStateException("Should never get here");
     }
 
+    public static boolean isPublicStaticFinal(Field field) {
+        int modifiers = field.getModifiers();
+        return (Modifier.isPublic(modifiers) && Modifier.isStatic(modifiers) && Modifier.isFinal(modifiers));
+    }
+
 }

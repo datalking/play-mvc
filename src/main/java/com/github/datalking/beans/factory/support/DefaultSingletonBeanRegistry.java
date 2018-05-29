@@ -3,6 +3,7 @@ package com.github.datalking.beans.factory.support;
 import com.github.datalking.beans.factory.ObjectFactory;
 import com.github.datalking.beans.factory.config.SingletonBeanRegistry;
 import com.github.datalking.util.Assert;
+import com.github.datalking.util.StringUtils;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -262,6 +263,22 @@ public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
             dependenciesForBean.add(canonicalName);
         }
 
+    }
+
+    public String[] getDependentBeans(String beanName) {
+        Set<String> dependentBeans = this.dependentBeanMap.get(beanName);
+        if (dependentBeans == null) {
+            return new String[0];
+        }
+        return StringUtils.toStringArray(dependentBeans);
+    }
+
+    public String[] getDependenciesForBean(String beanName) {
+        Set<String> dependenciesForBean = this.dependenciesForBeanMap.get(beanName);
+        if (dependenciesForBean == null) {
+            return new String[0];
+        }
+        return dependenciesForBean.toArray(new String[dependenciesForBean.size()]);
     }
 
 

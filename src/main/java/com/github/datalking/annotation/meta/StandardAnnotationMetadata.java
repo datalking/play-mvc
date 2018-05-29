@@ -1,6 +1,7 @@
 package com.github.datalking.annotation.meta;
 
 import com.github.datalking.annotation.ComponentScan;
+import com.github.datalking.util.AnnotationUtils;
 import com.github.datalking.util.StringUtils;
 
 import java.lang.annotation.Annotation;
@@ -120,7 +121,6 @@ public class StandardAnnotationMetadata extends StandardClassMetadata implements
      * @param classValuesAsString 值是否转为str，默认false
      * @return 键值对
      */
-    //public Map<String, Object> getAnnotationAttributes(String annotationName, boolean classValuesAsString) {
     public Map<String, Object> getAnnotationAttributes(Class<?> annotationClass, boolean classValuesAsString) {
 
         if (!getIntrospectedClass().isAnnotationPresent((Class<? extends Annotation>) annotationClass)) {
@@ -141,10 +141,31 @@ public class StandardAnnotationMetadata extends StandardClassMetadata implements
         return annoMap;
     }
 
+    public Map<String, Object> getAnnotationAttributes(String annotationType, boolean classValuesAsString) {
+
+        Annotation[] anns = getIntrospectedClass().getAnnotations();
+
+        for (Annotation ann : anns) {
+            if (ann.annotationType().getName().equals(annotationType)) {
+//                return AnnotationUtils.getAnnotationAttributes(ann, classValuesAsString, this.nestedAnnotationsAsMap);
+                return AnnotationUtils.getAnnotationAttributes(ann, classValuesAsString, false);
+            }
+        }
+        for (Annotation ann : anns) {
+            for (Annotation metaAnn : ann.annotationType().getAnnotations()) {
+                if (metaAnn.annotationType().getName().equals(annotationType)) {
+                    return AnnotationUtils.getAnnotationAttributes(
+                            metaAnn, classValuesAsString, false);
+//                            metaAnn, classValuesAsString, this.nestedAnnotationsAsMap);
+                }
+            }
+        }
+        return null;
+    }
 
     public Map<String, Object> getAnnotationAttributes(String annotationName) {
 
-        Class clazz= null;
+        Class clazz = null;
         try {
             clazz = Class.forName(annotationName);
         } catch (ClassNotFoundException e) {
@@ -153,6 +174,31 @@ public class StandardAnnotationMetadata extends StandardClassMetadata implements
 
         return this.getAnnotationAttributes(clazz, false);
     }
+
+    public Set<String> getMetaAnnotationTypes(String annotationType) {
+
+        Annotation[] anns = getIntrospectedClass().getAnnotations();
+
+        for (Annotation ann : anns) {
+
+            if (ann.annotationType().getName().equals(annotationType)) {
+                Set<String> types = new LinkedHashSet<>();
+                Annotation[] metaAnns = ann.annotationType().getAnnotations();
+
+                for (Annotation metaAnn : metaAnns) {
+                    types.add(metaAnn.annotationType().getName());
+
+                    for (Annotation metaMetaAnn : metaAnn.annotationType().getAnnotations()) {
+                        types.add(metaMetaAnn.annotationType().getName());
+                    }
+                }
+
+                return types;
+            }
+        }
+        return null;
+    }
+
 
 //    public boolean isAnnotated(String annotationName) {
 //        return (this.annotations.length > 0 &&

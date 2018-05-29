@@ -1,9 +1,18 @@
 package com.github.datalking.beans.factory.support;
 
+import com.github.datalking.beans.BeanMetadataAttributeAccessor;
 import com.github.datalking.beans.MutablePropertyValues;
 import com.github.datalking.beans.factory.config.AutowireCapableBeanFactory;
 import com.github.datalking.beans.factory.config.BeanDefinition;
 import com.github.datalking.beans.factory.config.ConstructorArgumentValues;
+import com.github.datalking.common.MethodOverrides;
+import com.github.datalking.util.Assert;
+
+import java.lang.reflect.Constructor;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * BeanDefinition抽象类
@@ -11,7 +20,23 @@ import com.github.datalking.beans.factory.config.ConstructorArgumentValues;
  *
  * @author yaoo on 4/3/18
  */
-public abstract class AbstractBeanDefinition implements BeanDefinition, Cloneable {
+public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccessor
+        implements BeanDefinition, Cloneable {
+
+    /// 依赖注入的方式
+    public static final int AUTOWIRE_NO = AutowireCapableBeanFactory.AUTOWIRE_NO;
+    public static final int AUTOWIRE_BY_NAME = AutowireCapableBeanFactory.AUTOWIRE_BY_NAME;
+    public static final int AUTOWIRE_BY_TYPE = AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE;
+    public static final int AUTOWIRE_CONSTRUCTOR = AutowireCapableBeanFactory.AUTOWIRE_CONSTRUCTOR;
+    public static final int AUTOWIRE_AUTODETECT = AutowireCapableBeanFactory.AUTOWIRE_AUTODETECT;
+
+    private boolean autowireCandidate = true;
+
+    private boolean primary = false;
+
+    private final Map<String, AutowireCandidateQualifier> qualifiers = new LinkedHashMap<>(0);
+
+    private ConstructorArgumentValues constructorArgumentValues;
 
     /**
      * 一般情况下，beanDefinitionReader阶段是字符串，createBean阶段是class对象
@@ -23,6 +48,12 @@ public abstract class AbstractBeanDefinition implements BeanDefinition, Cloneabl
     // 懒加载默认false
     private boolean lazyInit = false;
 
+    private boolean nonPublicAccessAllowed = true;
+
+    // 确定构造函数是是否使用宽松构造的方式
+    // 默认值true，即默认为宽松模式，即使多个构造函数的参数数量相同、类型存在父子类、接口实现类关系，也能正常创建bean
+    private boolean lenientConstructorResolution = true;
+
     private String factoryBeanName;
 
     private String factoryMethodName;
@@ -31,14 +62,9 @@ public abstract class AbstractBeanDefinition implements BeanDefinition, Cloneabl
 
     private int role = BeanDefinition.ROLE_APPLICATION;
 
-    /// 依赖注入的方式
-    public static final int AUTOWIRE_NO = AutowireCapableBeanFactory.AUTOWIRE_NO;
-    public static final int AUTOWIRE_BY_NAME = AutowireCapableBeanFactory.AUTOWIRE_BY_NAME;
-    public static final int AUTOWIRE_BY_TYPE = AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE;
-    public static final int AUTOWIRE_CONSTRUCTOR = AutowireCapableBeanFactory.AUTOWIRE_CONSTRUCTOR;
+    private MethodOverrides methodOverrides = new MethodOverrides();
 
-    private ConstructorArgumentValues constructorArgumentValues;
-//    private boolean autowireCandidate = true;
+
 //    private String[] dependsOn;
 //    private String initMethodName;
 //    private String destroyMethodName;
@@ -65,6 +91,23 @@ public abstract class AbstractBeanDefinition implements BeanDefinition, Cloneabl
         }
     }
 
+    public int getResolvedAutowireMode() {
+
+        if (this.autowireMode == AUTOWIRE_AUTODETECT) {
+            // Work out whether to apply setter autowiring or constructor autowiring.
+            // If it has a no-arg constructor it's deemed to be setter autowiring,
+            // otherwise we'll try constructor autowiring.
+            Constructor<?>[] constructors = getBeanClass().getConstructors();
+            for (Constructor<?> constructor : constructors) {
+                if (constructor.getParameterTypes().length == 0) {
+                    return AUTOWIRE_BY_TYPE;
+                }
+            }
+            return AUTOWIRE_CONSTRUCTOR;
+        } else {
+            return this.autowireMode;
+        }
+    }
 
     public Class<?> getBeanClass() throws IllegalStateException {
         Object beanClassObject = this.beanClass;
@@ -166,6 +209,43 @@ public abstract class AbstractBeanDefinition implements BeanDefinition, Cloneabl
         this.autowireMode = autowireMode;
     }
 
+    public boolean isAutowireCandidate() {
+        return this.autowireCandidate;
+    }
+
+    public void setAutowireCandidate(boolean autowireCandidate) {
+        this.autowireCandidate = autowireCandidate;
+    }
+
+    public void setPrimary(boolean primary) {
+        this.primary = primary;
+    }
+
+    public boolean isPrimary() {
+        return this.primary;
+    }
+
+    public void addQualifier(AutowireCandidateQualifier qualifier) {
+        this.qualifiers.put(qualifier.getTypeName(), qualifier);
+    }
+
+    public boolean hasQualifier(String typeName) {
+        return this.qualifiers.keySet().contains(typeName);
+    }
+
+    public AutowireCandidateQualifier getQualifier(String typeName) {
+        return this.qualifiers.get(typeName);
+    }
+
+    public Set<AutowireCandidateQualifier> getQualifiers() {
+        return new LinkedHashSet<>(this.qualifiers.values());
+    }
+
+    public void copyQualifiersFrom(AbstractBeanDefinition source) {
+        Assert.notNull(source, "Source must not be null");
+        this.qualifiers.putAll(source.qualifiers);
+    }
+
     public int getRole() {
         return this.role;
     }
@@ -174,10 +254,37 @@ public abstract class AbstractBeanDefinition implements BeanDefinition, Cloneabl
         this.role = role;
     }
 
+    public boolean isNonPublicAccessAllowed() {
+        return this.nonPublicAccessAllowed;
+    }
+
+    public void setNonPublicAccessAllowed(boolean nonPublicAccessAllowed) {
+        this.nonPublicAccessAllowed = nonPublicAccessAllowed;
+    }
+
+    public void setLenientConstructorResolution(boolean lenientConstructorResolution) {
+        this.lenientConstructorResolution = lenientConstructorResolution;
+    }
+
+    public boolean isLenientConstructorResolution() {
+        return this.lenientConstructorResolution;
+    }
+
+    public void setMethodOverrides(MethodOverrides methodOverrides) {
+        this.methodOverrides = (methodOverrides != null ? methodOverrides : new MethodOverrides());
+    }
+
+    public MethodOverrides getMethodOverrides() {
+        return this.methodOverrides;
+    }
+
+
+
     @Override
     public Object clone() {
         return cloneBeanDefinition();
     }
+
 
     public abstract AbstractBeanDefinition cloneBeanDefinition();
 

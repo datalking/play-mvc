@@ -1,5 +1,7 @@
 package com.github.datalking.annotation.meta;
 
+import java.util.Map;
+
 /**
  * 获取java方法元数据 接口
  *
@@ -16,5 +18,7 @@ public interface MethodMetadata {
 //    boolean isFinal();
 //    boolean isStatic();
 //    boolean isAbstract();
+
+    Map<String, Object> getAnnotationAttributes(String annotationType);
 
 }

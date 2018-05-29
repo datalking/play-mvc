@@ -1,6 +1,7 @@
 package com.github.datalking.web.config;
 
 import com.github.datalking.context.ApplicationContext;
+import com.github.datalking.io.DefaultResourceLoader;
 import com.github.datalking.io.ResourceLoader;
 import com.github.datalking.util.Assert;
 import com.github.datalking.web.HttpRequestHandler;
@@ -35,7 +36,7 @@ public class ResourceHandlerRegistry {
         Assert.notNull(applicationContext, "ApplicationContext is required");
         this.applicationContext = applicationContext;
         this.servletContext = servletContext;
-        this.resourceLoader = new ResourceLoader();
+        this.resourceLoader = new DefaultResourceLoader();
     }
 
 

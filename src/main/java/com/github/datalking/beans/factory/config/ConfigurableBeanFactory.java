@@ -25,11 +25,13 @@ public interface ConfigurableBeanFactory extends BeanFactory {
 
     String[] getDependentBeans(String beanName);
 
-//    String[] getDependenciesForBean(String beanName);
+    String[] getDependenciesForBean(String beanName);
 
     TypeConverter getTypeConverter();
 
     void setTypeConverter(TypeConverter typeConverter);
+
+    BeanDefinition getMergedBeanDefinition(String beanName);
 
 
 //void destroyBean(String beanName, Object beanInstance);

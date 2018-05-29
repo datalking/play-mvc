@@ -1,5 +1,7 @@
 package com.github.datalking.beans.factory.config;
 
+import com.github.datalking.util.ObjectUtils;
+
 /**
  * BeanDefinition的包装类
  * 存放别名
@@ -33,6 +35,11 @@ public class BeanDefinitionHolder {
 
     public String[] getAliases() {
         return aliases;
+    }
+
+    public boolean matchesName(String candidateName) {
+        return (candidateName != null
+                && (candidateName.equals(this.beanName) || ObjectUtils.containsElement(this.aliases, candidateName)));
     }
 
 

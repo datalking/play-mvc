@@ -39,6 +39,10 @@ public interface BeanDefinition {
 
     int getRole();
 
+    ConstructorArgumentValues getConstructorArgumentValues();
+
+    boolean isAutowireCandidate();
+
 
 //    void setDependsOn(String... dependsOn);
 //

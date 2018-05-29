@@ -48,6 +48,10 @@ public abstract class StringUtils {
         return (str == null || "".equals(str));
     }
 
+    public static boolean isEmpty(Object str) {
+        return (str == null || "".equals(str));
+    }
+
     public static boolean isNotEmpty(String str) {
         return (str != null && str.length() > 0);
     }
@@ -475,6 +479,20 @@ public abstract class StringUtils {
             sb.deleteCharAt(sb.length() - 1);
         }
         return sb.toString();
+    }
+
+    public static boolean substringMatch(CharSequence str, int index, CharSequence substring) {
+        for (int j = 0; j < substring.length(); j++) {
+            int i = index + j;
+            if (i >= str.length() || str.charAt(i) != substring.charAt(j)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static String capitalize(String str) {
+        return changeFirstCharacterCase(str, true);
     }
 
 }

@@ -1,5 +1,6 @@
 package com.github.datalking.beans.factory.support;
 
+import com.github.datalking.beans.BeanWrapper;
 import com.github.datalking.beans.TypeConverter;
 import com.github.datalking.beans.factory.BeanFactory;
 import com.github.datalking.beans.factory.FactoryBean;
@@ -173,7 +174,7 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
 
     }
 
-    @Override
+    //    @Override
     public boolean containsBean(String name) {
         //String beanName = transformedBeanName(name);
         String beanName = name;
@@ -401,11 +402,11 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
 //        if (customConverter != null) {
 //            return customConverter;
 //        } else {
-            // Build default TypeConverter, registering custom editors.
-            SimpleTypeConverter typeConverter = new SimpleTypeConverter();
-            typeConverter.setConversionService(getConversionService());
+        // Build default TypeConverter, registering custom editors.
+        SimpleTypeConverter typeConverter = new SimpleTypeConverter();
+        typeConverter.setConversionService(getConversionService());
 //            registerCustomEditors(typeConverter);
-            return typeConverter;
+        return typeConverter;
 //        }
     }
 
@@ -419,6 +420,23 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
 
     public void setTypeConverter(TypeConverter typeConverter) {
         this.typeConverter = typeConverter;
+    }
+
+    public BeanDefinition getMergedBeanDefinition(String name) {
+//        String beanName = transformedBeanName(name);
+        String beanName = name;
+
+        // Efficiently check whether bean definition exists in this factory.
+//        if (!containsBeanDefinition(beanName) && getParentBeanFactory() instanceof ConfigurableBeanFactory) {
+//            return ((ConfigurableBeanFactory) getParentBeanFactory()).getMergedBeanDefinition(beanName);
+//        }
+        // Resolve merged bean definition locally.
+        return getMergedLocalBeanDefinition(beanName);
+    }
+
+    protected void initBeanWrapper(BeanWrapper bw) {
+        bw.setConversionService(getConversionService());
+//        registerCustomEditors(bw);
     }
 
 //    protected Object evaluateBeanDefinitionString(String value, BeanDefinition beanDefinition) {

@@ -1,10 +1,9 @@
 package com.github.datalking.beans;
 
-import com.github.datalking.common.BridgeMethodResolver;
 import com.github.datalking.common.GenericTypeResolver;
 import com.github.datalking.common.MethodParameter;
 import com.github.datalking.util.ClassUtils;
-import com.sun.xml.internal.ws.util.StringUtils;
+import com.github.datalking.util.StringUtils;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;

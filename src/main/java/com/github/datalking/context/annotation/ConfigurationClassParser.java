@@ -13,8 +13,10 @@ import com.github.datalking.beans.factory.config.BeanDefinitionHolder;
 import com.github.datalking.beans.factory.support.AbstractAutowireCapableBeanFactory;
 import com.github.datalking.beans.factory.support.AbstractBeanDefinition;
 import com.github.datalking.beans.factory.support.BeanDefinitionRegistry;
+import com.github.datalking.common.env.CompositePropertySource;
 import com.github.datalking.common.env.Environment;
 import com.github.datalking.common.env.PropertySource;
+import com.github.datalking.common.env.StandardEnvironment;
 import com.github.datalking.io.ResourcePropertySource;
 import com.github.datalking.util.AnnoScanUtils;
 import com.github.datalking.util.ClassUtils;
@@ -41,10 +43,9 @@ public class ConfigurationClassParser {
 
     private final Map<ConfigurationClass, ConfigurationClass> configurationClasses = new LinkedHashMap<>();
 
-    private final Environment environment;
-
     private final Stack<PropertySource<?>> propertySources = new Stack<>();
 
+    private  Environment environment = new StandardEnvironment();
 
     public ConfigurationClassParser(BeanDefinitionRegistry registry) {
         this.registry = registry;

@@ -5,16 +5,12 @@
 
     <groupId>com.github.datalking</groupId>
     <artifactId>play-mvc</artifactId>
-    <version>0.0.4</version>
+    <version>0.0.5</version>
 
     <packaging>jar</packaging>
     <name>play-mvc</name>
     <description>simple mvc framework based on java servlet.</description>
     <url>https://github.com/datalking/play-mvc</url>
-
-    <!--<modules>-->
-    <!--<module>mybatis-play-mvc</module>-->
-    <!--</modules>-->
 
     <dependencies>
         <!--common utils-->
@@ -52,6 +48,12 @@
             <version>1.2</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+            <version>1</version>
+        </dependency>
+
         <!--logging-->
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -82,7 +84,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.5.1</version>
+                <version>3.6.1</version>
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>

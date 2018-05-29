@@ -16,7 +16,10 @@ public interface ConfigurableListableBeanFactory
     void preInstantiateSingletons() throws Exception;
 
 //    void freezeConfiguration();
-//    void registerResolvableDependency(Class<?> dependencyType, Object autowiredValue);
+
+    void registerResolvableDependency(Class<?> dependencyType, Object autowiredValue);
+
+    boolean isAutowireCandidate(String beanName, DependencyDescriptor descriptor);
 
 
 }

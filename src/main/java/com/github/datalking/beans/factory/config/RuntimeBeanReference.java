@@ -5,7 +5,7 @@ package com.github.datalking.beans.factory.config;
  *
  * @author yaoo on 4/6/18
  */
-public class RuntimeBeanReference {
+public class RuntimeBeanReference implements BeanReference {
 
     private final String beanName;
 
@@ -20,6 +20,7 @@ public class RuntimeBeanReference {
      *
      * @return beanName
      */
+    @Override
     public String getBeanName() {
         return this.beanName;
     }

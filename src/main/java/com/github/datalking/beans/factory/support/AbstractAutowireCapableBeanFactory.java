@@ -12,14 +12,12 @@ import com.github.datalking.beans.factory.config.AutowireCapableBeanFactory;
 import com.github.datalking.beans.factory.config.BeanDefinition;
 import com.github.datalking.beans.factory.config.BeanPostProcessor;
 import com.github.datalking.beans.factory.config.InstantiationAwareBeanPostProcessor;
-import com.github.datalking.beans.factory.config.SmartInstantiationAwareBeanPostProcessor;
+import com.github.datalking.common.LocalVariableTableParameterNameDiscoverer;
+import com.github.datalking.common.ParameterNameDiscoverer;
 import com.github.datalking.util.ObjectUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.security.AccessController;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +31,11 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         implements AutowireCapableBeanFactory {
 
     private boolean allowCircularReferences = true;
+
+    public ParameterNameDiscoverer parameterNameDiscoverer = new LocalVariableTableParameterNameDiscoverer();
+
+    //    private InstantiationStrategy instantiationStrategy = new CglibSubclassingInstantiationStrategy();
+    private InstantiationStrategy instantiationStrategy = new SimpleInstantiationStrategy();
 
     public AbstractAutowireCapableBeanFactory() {
         super();
@@ -246,7 +249,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         }
 
         // ==== 批量设置值
-            bw.setPropertyValues(new MutablePropertyValues(deepCopy));
+        bw.setPropertyValues(new MutablePropertyValues(deepCopy));
 
     }
 
@@ -462,6 +465,22 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         }
 
         return null;
+    }
+
+    public void setParameterNameDiscoverer(ParameterNameDiscoverer parameterNameDiscoverer) {
+        this.parameterNameDiscoverer = parameterNameDiscoverer;
+    }
+
+    protected ParameterNameDiscoverer getParameterNameDiscoverer() {
+        return this.parameterNameDiscoverer;
+    }
+
+    public void setInstantiationStrategy(InstantiationStrategy instantiationStrategy) {
+        this.instantiationStrategy = instantiationStrategy;
+    }
+
+    protected InstantiationStrategy getInstantiationStrategy() {
+        return this.instantiationStrategy;
     }
 
 

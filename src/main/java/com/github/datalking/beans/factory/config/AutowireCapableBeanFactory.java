@@ -19,6 +19,8 @@ public interface AutowireCapableBeanFactory extends BeanFactory {
     int AUTOWIRE_BY_NAME = 1;
     int AUTOWIRE_BY_TYPE = 2;
     int AUTOWIRE_CONSTRUCTOR = 3;
+    int AUTOWIRE_AUTODETECT = 4;
+
 
     <T> T createBean(Class<T> beanClass) throws Exception;
 
@@ -36,6 +38,8 @@ public interface AutowireCapableBeanFactory extends BeanFactory {
 //    void destroyBean(Object existingBean);
     Object initializeBean(Object existingBean, String beanName);
 //    <T> NamedBeanHolder<T> resolveNamedBean(Class<T> requiredType);
+
+    Object resolveDependency(DependencyDescriptor descriptor, String beanName);
 
     Object resolveDependency(DependencyDescriptor descriptor,
                              String beanName,
