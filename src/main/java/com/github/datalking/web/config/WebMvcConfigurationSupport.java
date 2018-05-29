@@ -212,10 +212,15 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 
     @Bean
     public HandlerMapping defaultServletHandlerMapping() {
+
         DefaultServletHandlerConfigurer configurer = new DefaultServletHandlerConfigurer(servletContext);
+
         configureDefaultServletHandling(configurer);
+
         AbstractHandlerMapping handlerMapping = configurer.getHandlerMapping();
+
         handlerMapping = handlerMapping != null ? handlerMapping : new EmptyHandlerMapping();
+
         return handlerMapping;
     }
 

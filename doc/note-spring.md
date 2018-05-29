@@ -12,6 +12,13 @@ spring笔记
 
 #### spring mvc
 
+
+- `<mvc:default-servlet-handler />` 对应的实现类为DefaultServletHttpRequestHandler，它会像对进入DispatcherServlet的URL进行筛查，
+  如果发现是静态资源的请求，就将该请求转发给Web应用服务器默认的Servlet处理，如果不是静态资源的请求，才由DispatcherServlet继续处理
+- `<mvc:resources />` 则由Spring MVC框架自己处理静态资源，将请求交给SimpleUrlHandlerMapping，
+    - 支持将静态的资源映射为classpath中的资源（jar 包中），这样就可以使用dojo等技术对静态资源指定版本。防止服务器端更新了而客户端使用老版本的问题
+    - 支持cache-period属性，减少客户端因为获取静态资源而访问服务器的次数
+
 - controller的返回值
     - ModelAndView
     - Model
@@ -80,8 +87,9 @@ spring笔记
     就将该请求转由Web应用服务器默认的Servlet处理，如果不是静态资源的请求，才由DispatcherServlet继续处理
 
 - 获取DispatcherServlet的映射信息
-    - `/`：拦截所有请求（包括静态资源（xx.js,xx.png）），但是不包括*.jsp；
-    - `/*`：拦截所有请求；连*.jsp页面都拦截，jsp页面是tomcat的jsp引擎解析的；
+    - `/`：拦截所有请求，包括静态资源xx.js,xx.png，但是不包括*.jsp
+    - `/*`：拦截所有请求；连*.jsp页面都拦截，jsp页面是tomcat的jsp引擎解析的
+    - `/*` 的优先级大于 `.jsp` 的优先级，.jsp的优先级大于 `/` 
 - @WebServlet和@WebFilter进行Servlet或Filter配置的情况，两个注解都提供了asyncSupported 属性，默认该属性的取值为false，默认不支持异步处理
 
 - Servlet3.0提供了ServletContainerInitializer接口，支持web应用启动阶段动态注册servlet，filter和listener

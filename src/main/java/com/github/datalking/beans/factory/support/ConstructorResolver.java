@@ -1,14 +1,23 @@
 package com.github.datalking.beans.factory.support;
 
+import com.github.datalking.beans.BeanMetadataAttributeAccessor;
 import com.github.datalking.beans.BeanWrapper;
 import com.github.datalking.beans.BeanWrapperImpl;
 import com.github.datalking.beans.TypeConverter;
 import com.github.datalking.beans.factory.config.ConstructorArgumentValues;
 import com.github.datalking.beans.factory.config.ConstructorArgumentValues.ValueHolder;
+import com.github.datalking.beans.factory.config.DependencyDescriptor;
+import com.github.datalking.common.GenericTypeResolver;
+import com.github.datalking.common.MethodParameter;
 import com.github.datalking.common.ParameterNameDiscoverer;
 import com.github.datalking.exception.BeanCreationException;
 import com.github.datalking.exception.BeanDefinitionStoreException;
+import com.github.datalking.exception.BeansException;
+import com.github.datalking.exception.TypeMismatchException;
+import com.github.datalking.exception.UnsatisfiedDependencyException;
 import com.github.datalking.util.ClassUtils;
+import com.github.datalking.util.MethodInvoker;
+import com.github.datalking.util.ObjectUtils;
 import com.github.datalking.util.ReflectionUtils;
 import com.github.datalking.util.StringUtils;
 
@@ -574,16 +583,16 @@ public class ConstructorResolver {
     private ArgumentsHolder createArgumentArray(
             String beanName, RootBeanDefinition mbd, ConstructorArgumentValues resolvedValues,
             BeanWrapper bw, Class<?>[] paramTypes, String[] paramNames, Object methodOrCtor,
-            boolean autowiring) throws UnsatisfiedDependencyException {
+            boolean autowiring) {
 
         String methodType = (methodOrCtor instanceof Constructor ? "constructor" : "factory method");
-        TypeConverter customConverter = this.beanFactory.getCustomTypeConverter();
+//        TypeConverter customConverter = this.beanFactory.getCustomTypeConverter();
+        TypeConverter customConverter = null;
         TypeConverter converter = (customConverter != null ? customConverter : bw);
 
         ArgumentsHolder args = new ArgumentsHolder(paramTypes.length);
-        Set<ConstructorArgumentValues.ValueHolder> usedValueHolders =
-                new HashSet<ConstructorArgumentValues.ValueHolder>(paramTypes.length);
-        Set<String> autowiredBeanNames = new LinkedHashSet<String>(4);
+        Set<ValueHolder> usedValueHolders = new HashSet<>(paramTypes.length);
+        Set<String> autowiredBeanNames = new LinkedHashSet<>(4);
 
         for (int paramIndex = 0; paramIndex < paramTypes.length; paramIndex++) {
             Class<?> paramType = paramTypes[paramIndex];
@@ -602,7 +611,7 @@ public class ConstructorResolver {
                 // Do not consider the same value definition multiple times!
                 usedValueHolders.add(valueHolder);
                 Object originalValue = valueHolder.getValue();
-                Object convertedValue;
+                Object convertedValue = null;
                 if (valueHolder.isConverted()) {
                     convertedValue = valueHolder.getConvertedValue();
                     args.preparedArguments[paramIndex] = convertedValue;
@@ -625,12 +634,10 @@ public class ConstructorResolver {
                         args.resolveNecessary = true;
                         args.preparedArguments[paramIndex] = sourceValue;
                         // }
-                    } catch (TypeMismatchException ex) {
-                        throw new UnsatisfiedDependencyException(
-                                mbd.getBeanClassName(), beanName, paramIndex, paramType,
-                                "Could not convert " + methodType + " argument value of type [" +
-                                        ObjectUtils.nullSafeClassName(valueHolder.getValue()) +
-                                        "] to required type [" + paramType.getName() + "]: " + ex.getMessage());
+//                    } catch (TypeMismatchException ex) {
+//                        throw new UnsatisfiedDependencyException(mbd.getBeanClassName(), beanName, paramIndex, paramType, "Could not convert " + methodType + " argument value of type [" + ObjectUtils.nullSafeClassName(valueHolder.getValue()) + "] to required type [" + paramType.getName() + "]: " + ex.getMessage());
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
                     }
                 }
                 args.arguments[paramIndex] = convertedValue;
@@ -652,18 +659,17 @@ public class ConstructorResolver {
                     args.preparedArguments[paramIndex] = new AutowiredArgumentMarker();
                     args.resolveNecessary = true;
                 } catch (BeansException ex) {
-                    throw new UnsatisfiedDependencyException(
-                            mbd.getBeanClassName(), beanName, paramIndex, paramType, ex);
+                    throw new UnsatisfiedDependencyException(mbd.getBeanClassName(), beanName, paramIndex, paramType, ex);
                 }
             }
         }
 
         for (String autowiredBeanName : autowiredBeanNames) {
             this.beanFactory.registerDependentBean(autowiredBeanName, beanName);
-            if (this.beanFactory.logger.isDebugEnabled()) {
-                this.beanFactory.logger.debug("Autowiring by type from bean name '" + beanName +
-                        "' via " + methodType + " to bean named '" + autowiredBeanName + "'");
-            }
+//            if (this.beanFactory.logger.isDebugEnabled()) {
+//                this.beanFactory.logger.debug("Autowiring by type from bean name '" + beanName +
+//                        "' via " + methodType + " to bean named '" + autowiredBeanName + "'");
+//            }
         }
 
         return args;
@@ -672,15 +678,19 @@ public class ConstructorResolver {
     /**
      * Resolve the prepared arguments stored in the given bean definition.
      */
-    private Object[] resolvePreparedArguments(
-            String beanName, RootBeanDefinition mbd, BeanWrapper bw, Member methodOrCtor, Object[] argsToResolve) {
+    private Object[] resolvePreparedArguments(String beanName,
+                                              RootBeanDefinition mbd,
+                                              BeanWrapper bw,
+                                              Member methodOrCtor,
+                                              Object[] argsToResolve) {
 
-        TypeConverter customConverter = this.beanFactory.getCustomTypeConverter();
+//        TypeConverter customConverter = this.beanFactory.getCustomTypeConverter();
+        TypeConverter customConverter = null;
         TypeConverter converter = (customConverter != null ? customConverter : bw);
-        BeanDefinitionValueResolver valueResolver =
-                new BeanDefinitionValueResolver(this.beanFactory, beanName, mbd, converter);
+        BeanDefinitionValueResolver valueResolver = new BeanDefinitionValueResolver(this.beanFactory, beanName, mbd, converter);
         Class<?>[] paramTypes = (methodOrCtor instanceof Method ?
-                ((Method) methodOrCtor).getParameterTypes() : ((Constructor<?>) methodOrCtor).getParameterTypes());
+                ((Method) methodOrCtor).getParameterTypes() :
+                ((Constructor<?>) methodOrCtor).getParameterTypes());
 
         Object[] resolvedArgs = new Object[argsToResolve.length];
         for (int argIndex = 0; argIndex < argsToResolve.length; argIndex++) {
@@ -689,7 +699,8 @@ public class ConstructorResolver {
             GenericTypeResolver.resolveParameterType(methodParam, methodOrCtor.getDeclaringClass());
             if (argValue instanceof AutowiredArgumentMarker) {
                 argValue = resolveAutowiredArgument(methodParam, beanName, null, converter);
-            } else if (argValue instanceof BeanMetadataElement) {
+//            } else if (argValue instanceof BeanMetadataElement) {
+            } else if (argValue instanceof BeanMetadataAttributeAccessor) {
                 argValue = valueResolver.resolveValueIfNecessary("constructor argument", argValue);
             } else if (argValue instanceof String) {
                 argValue = this.beanFactory.evaluateBeanDefinitionString((String) argValue, mbd);
@@ -770,15 +781,15 @@ public class ConstructorResolver {
         }
 
         public void storeCache(RootBeanDefinition mbd, Object constructorOrFactoryMethod) {
-            synchronized (mbd.constructorArgumentLock) {
-                mbd.resolvedConstructorOrFactoryMethod = constructorOrFactoryMethod;
-                mbd.constructorArgumentsResolved = true;
-                if (this.resolveNecessary) {
-                    mbd.preparedConstructorArguments = this.preparedArguments;
-                } else {
-                    mbd.resolvedConstructorArguments = this.arguments;
-                }
+//            synchronized (mbd.constructorArgumentLock) {
+            mbd.resolvedConstructorOrFactoryMethod = constructorOrFactoryMethod;
+            mbd.constructorArgumentsResolved = true;
+            if (this.resolveNecessary) {
+                mbd.preparedConstructorArguments = this.preparedArguments;
+            } else {
+                mbd.resolvedConstructorArguments = this.arguments;
             }
+//            }
         }
     }
 

@@ -215,7 +215,12 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
                 new BeanDefinitionHolder(mbd, beanName, getAliases(beanName)), descriptor);
     }
 
-    // ======== ListableBeanFactory interface ========
+    public String[] getAliases(String name) {
+
+        return new String[0];
+    }
+
+        // ======== ListableBeanFactory interface ========
     @Override
     public boolean containsBeanDefinition(String beanName) {
         Assert.notNull(beanName, "Bean name must not be null");
@@ -323,6 +328,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
                                          Set<String> autowiredBeanNames,
                                          TypeConverter typeConverter) {
 
+        // 获取@Value注解的值
         Object value = getAutowireCandidateResolver().getSuggestedValue(descriptor);
         if (value != null) {
             if (value instanceof String) {
@@ -424,6 +430,51 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
         }
     }
 
+    protected String determinePrimaryCandidate(Map<String, Object> candidateBeans, DependencyDescriptor descriptor) {
+        String primaryBeanName = null;
+        String fallbackBeanName = null;
+        for (Map.Entry<String, Object> entry : candidateBeans.entrySet()) {
+            String candidateBeanName = entry.getKey();
+            Object beanInstance = entry.getValue();
+            if (isPrimary(candidateBeanName, beanInstance)) {
+                if (primaryBeanName != null) {
+                    boolean candidateLocal = containsBeanDefinition(candidateBeanName);
+                    boolean primaryLocal = containsBeanDefinition(primaryBeanName);
+                    if (candidateLocal == primaryLocal) {
+                        throw new NoUniqueBeanDefinitionException(descriptor.getDependencyType(), candidateBeans.size(),                                "more than one 'primary' bean found among candidates: " + candidateBeans.keySet());
+                    }
+                    else if (candidateLocal && !primaryLocal) {
+                        primaryBeanName = candidateBeanName;
+                    }
+                }
+                else {
+                    primaryBeanName = candidateBeanName;
+                }
+            }
+            if (primaryBeanName == null &&
+                    (this.resolvableDependencies.values().contains(beanInstance) ||
+                            matchesBeanName(candidateBeanName, descriptor.getDependencyName()))) {
+                fallbackBeanName = candidateBeanName;
+            }
+        }
+        return (primaryBeanName != null ? primaryBeanName : fallbackBeanName);
+    }
+
+    protected boolean isPrimary(String beanName, Object beanInstance) {
+
+        if (containsBeanDefinition(beanName)) {
+            return getMergedLocalBeanDefinition(beanName).isPrimary();
+        }
+
+        BeanFactory parentFactory = getParentBeanFactory();
+        return (parentFactory instanceof DefaultListableBeanFactory &&
+                ((DefaultListableBeanFactory) parentFactory).isPrimary(beanName, beanInstance));
+    }
+
+    protected boolean matchesBeanName(String beanName, String candidateName) {
+        return (candidateName != null &&
+                (candidateName.equals(beanName) || ObjectUtils.containsElement(getAliases(beanName), candidateName)));
+    }
 
     private void raiseNoSuchBeanDefinitionException(Class<?> type,
                                                     String dependencyDescription,

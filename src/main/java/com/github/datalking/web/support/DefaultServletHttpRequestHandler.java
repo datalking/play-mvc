@@ -12,13 +12,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * servlet容器处理静态资源使用的默认servlet名称
+ * servlet容器处理静态资源使用的默认servlet
  *
  * @author yaoo on 5/4/18
  */
 public class DefaultServletHttpRequestHandler implements HttpRequestHandler, ServletContextAware {
 
-    // Tomcat, Jetty, JBoss,GlassFish 使用的默认servlet名称
+    // Tomcat, Jetty, JBoss,GlassFish 使用的默认servlet名称，默认处理静态资源
     private static final String COMMON_DEFAULT_SERVLET_NAME = "default";
 
     // Google App Engine 使用的默认Default Servlet name
@@ -69,6 +69,7 @@ public class DefaultServletHttpRequestHandler implements HttpRequestHandler, Ser
             throw new IllegalStateException("RequestDispatcher cannot be located for default servlet '" + this.defaultServletName + "'");
         }
 
+        // 转发给web容器自身的servlet处理
         rd.forward(request, response);
     }
 

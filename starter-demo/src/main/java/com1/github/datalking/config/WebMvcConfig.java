@@ -13,6 +13,16 @@ import com.github.datalking.web.servlet.ViewResolver;
 @ComponentScan(basePackages = {"com1.github.datalking"})
 public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
+//    @Override
+//    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+//        registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
+//    }
+
+//    @Override
+//    public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+//        configurer.enable();
+//    }
+
     @Bean
     public ViewResolver resolver() {
         InternalResourceViewResolver resolver = new InternalResourceViewResolver();

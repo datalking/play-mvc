@@ -1,6 +1,8 @@
 package com.github.datalking.web.config;
 
 import com.github.datalking.util.CollectionUtils;
+import com.github.datalking.web.support.HandlerMethodArgumentResolver;
+import com.github.datalking.web.support.HandlerMethodReturnValueHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,13 +20,7 @@ public class WebMvcConfigurerComposite implements WebMvcConfigurer {
         }
     }
 
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        for (WebMvcConfigurer delegate : this.delegates) {
-            delegate.addResourceHandlers(registry);
-        }
-    }
 
-//
 //    public void addFormatters(FormatterRegistry registry) {
 //        for (WebMvcConfigurer delegate : this.delegates) {
 //            delegate.addFormatters(registry);
@@ -55,17 +51,17 @@ public class WebMvcConfigurerComposite implements WebMvcConfigurer {
 //        }
 //    }
 //
-//    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
-//        for (WebMvcConfigurer delegate : this.delegates) {
-//            delegate.addArgumentResolvers(argumentResolvers);
-//        }
-//    }
-//
-//    public void addReturnValueHandlers(List<HandlerMethodReturnValueHandler> returnValueHandlers) {
-//        for (WebMvcConfigurer delegate : this.delegates) {
-//            delegate.addReturnValueHandlers(returnValueHandlers);
-//        }
-//    }
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+        for (WebMvcConfigurer delegate : this.delegates) {
+            delegate.addArgumentResolvers(argumentResolvers);
+        }
+    }
+
+    public void addReturnValueHandlers(List<HandlerMethodReturnValueHandler> returnValueHandlers) {
+        for (WebMvcConfigurer delegate : this.delegates) {
+            delegate.addReturnValueHandlers(returnValueHandlers);
+        }
+    }
 //
 //    public void configureHandlerExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers) {
 //        for (WebMvcConfigurer delegate : this.delegates) {
@@ -79,19 +75,28 @@ public class WebMvcConfigurerComposite implements WebMvcConfigurer {
 //        }
 //    }
 //
-//    public void addViewControllers(ViewControllerRegistry registry) {
-//        for (WebMvcConfigurer delegate : this.delegates) {
-//            delegate.addViewControllers(registry);
-//        }
-//    }
-//
+    public void addViewControllers(ViewControllerRegistry registry) {
+        for (WebMvcConfigurer delegate : this.delegates) {
+            delegate.addViewControllers(registry);
+        }
+    }
 
-//
-//    public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
-//        for (WebMvcConfigurer delegate : this.delegates) {
-//            delegate.configureDefaultServletHandling(configurer);
-//        }
-//    }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        for (WebMvcConfigurer delegate : this.delegates) {
+            delegate.addResourceHandlers(registry);
+        }
+    }
+
+    @Override
+    public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+
+        for (WebMvcConfigurer delegate : this.delegates) {
+            delegate.configureDefaultServletHandling(configurer);
+        }
+
+    }
 //
 //    public Validator getValidator() {
 //        List<Validator> candidates = new ArrayList<Validator>();
@@ -116,11 +121,15 @@ public class WebMvcConfigurerComposite implements WebMvcConfigurer {
 //    }
 
     private <T> T selectSingleInstance(List<T> instances, Class<T> instanceType) {
+
         if (instances.size() > 1) {
+
             throw new IllegalStateException("Only one [" + instanceType + "] was expected but multiple instances were provided: " + instances);
         } else if (instances.size() == 1) {
+
             return instances.get(0);
         } else {
+
             return null;
         }
     }

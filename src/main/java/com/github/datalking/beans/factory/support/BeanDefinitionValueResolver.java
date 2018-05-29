@@ -1,5 +1,7 @@
 package com.github.datalking.beans.factory.support;
 
+import com.github.datalking.beans.TypeConverter;
+import com.github.datalking.beans.factory.config.BeanDefinition;
 import com.github.datalking.beans.factory.config.RuntimeBeanReference;
 
 /**
@@ -9,14 +11,30 @@ import com.github.datalking.beans.factory.config.RuntimeBeanReference;
  */
 public class BeanDefinitionValueResolver {
 
-    private final AbstractBeanFactory beanFactory;
+    private AbstractBeanFactory beanFactory;
 
+    private String beanName;
+
+    private BeanDefinition beanDefinition;
+
+    private TypeConverter typeConverter;
 
     public BeanDefinitionValueResolver(AbstractBeanFactory beanFactory) {
         this.beanFactory = beanFactory;
     }
 
-    public Object resolveValueIfNecessary(Object argName, Object value) throws Exception {
+    public BeanDefinitionValueResolver(AbstractBeanFactory beanFactory,
+                                       String beanName,
+                                       BeanDefinition beanDefinition,
+                                       TypeConverter typeConverter) {
+
+        this.beanFactory = beanFactory;
+        this.beanName = beanName;
+        this.beanDefinition = beanDefinition;
+        this.typeConverter = typeConverter;
+    }
+
+    public Object resolveValueIfNecessary(Object argName, Object value) {
 
         if (value instanceof RuntimeBeanReference) {
 
@@ -32,7 +50,7 @@ public class BeanDefinitionValueResolver {
         return null;
     }
 
-    private Object resolveReference(Object argName, RuntimeBeanReference ref) throws Exception {
+    private Object resolveReference(Object argName, RuntimeBeanReference ref) {
 
         String refName = ref.getBeanName();
 

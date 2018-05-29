@@ -12,6 +12,7 @@ public class RootConfig {
 
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+
         return new PropertySourcesPlaceholderConfigurer();
     }
 

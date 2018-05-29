@@ -2,6 +2,8 @@ package com.github.datalking.web.config;
 
 import com.github.datalking.annotation.Autowired;
 import com.github.datalking.annotation.Configuration;
+import com.github.datalking.web.support.HandlerMethodArgumentResolver;
+import com.github.datalking.web.support.HandlerMethodReturnValueHandler;
 
 import java.util.List;
 
@@ -26,6 +28,12 @@ public class DelegatingWebMvcConfiguration extends WebMvcConfigurationSupport {
         this.configurers.addResourceHandlers(registry);
     }
 
+
+    @Override
+    protected void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+        this.configurers.configureDefaultServletHandling(configurer);
+    }
+
 //    @Override
 //    protected void addInterceptors(InterceptorRegistry registry) {
 //        this.configurers.addInterceptors(registry);
@@ -41,25 +49,20 @@ public class DelegatingWebMvcConfiguration extends WebMvcConfigurationSupport {
 //        this.configurers.configurePathMatch(configurer);
 //    }
 //
-//    @Override
-//    protected void addViewControllers(ViewControllerRegistry registry) {
-//        this.configurers.addViewControllers(registry);
-//    }
-//
-//    @Override
-//    protected void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
-//        this.configurers.configureDefaultServletHandling(configurer);
-//    }
-//
-//    @Override
-//    protected void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
-//        this.configurers.addArgumentResolvers(argumentResolvers);
-//    }
-//
-//    @Override
-//    protected void addReturnValueHandlers(List<HandlerMethodReturnValueHandler> returnValueHandlers) {
-//        this.configurers.addReturnValueHandlers(returnValueHandlers);
-//    }
+    @Override
+    protected void addViewControllers(ViewControllerRegistry registry) {
+        this.configurers.addViewControllers(registry);
+    }
+
+    @Override
+    protected void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+        this.configurers.addArgumentResolvers(argumentResolvers);
+    }
+
+    @Override
+    protected void addReturnValueHandlers(List<HandlerMethodReturnValueHandler> returnValueHandlers) {
+        this.configurers.addReturnValueHandlers(returnValueHandlers);
+    }
 //
 //    @Override
 //    protected void configureMessageConverters(List<HttpMessageConverter<?>> converters) {

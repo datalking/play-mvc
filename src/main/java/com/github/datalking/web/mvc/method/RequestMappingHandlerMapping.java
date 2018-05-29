@@ -24,7 +24,8 @@ import java.util.List;
  *
  * @author yaoo on 4/28/18
  */
-public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMapping implements EmbeddedValueResolverAware {
+public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMapping
+        implements EmbeddedValueResolverAware {
 
     private boolean useSuffixPatternMatch = true;
 

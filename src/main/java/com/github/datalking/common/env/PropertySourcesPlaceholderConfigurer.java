@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.util.Properties;
 
 /**
+ * properties配置文件属性占位符解析
+ *
  * @author yaoo on 5/29/18
  */
 public class PropertySourcesPlaceholderConfigurer extends PlaceholderConfigurerSupport

@@ -16,8 +16,6 @@ import javax.sql.DataSource;
 import java.beans.PropertyVetoException;
 import java.util.Properties;
 
-//import org.springframework.context.annotation.PropertySource;
-
 @Configuration
 @PropertySource("classpath:jdbc.properties")
 @MapperScan("com.soecode.lyf.dao")

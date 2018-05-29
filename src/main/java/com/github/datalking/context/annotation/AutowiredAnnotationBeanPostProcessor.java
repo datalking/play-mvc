@@ -47,6 +47,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 自动注入bean到字段和setter方法
+ * 会解析@Autowired和@Value
  *
  * @author yaoo on 5/28/18
  */
@@ -86,16 +87,6 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
         }
     }
 
-
-    /**
-     * Set the 'autowired' annotation type, to be used on constructors, fields,
-     * setter methods and arbitrary config methods.
-     * <p>The default autowired annotation type is the Spring-provided
-     * {@link Autowired} annotation, as well as {@link Value}.
-     * <p>This setter property exists so that developers can provide their own
-     * (non-Spring-specific) annotation type to indicate that a member is
-     * supposed to be autowired.
-     */
     public void setAutowiredAnnotationType(Class<? extends Annotation> autowiredAnnotationType) {
         Assert.notNull(autowiredAnnotationType, "'autowiredAnnotationType' must not be null");
         this.autowiredAnnotationTypes.clear();
@@ -229,17 +220,23 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
         return (candidateConstructors.length > 0 ? candidateConstructors : null);
     }
 
+    /**
+     * 解析属性占位符的入口，并注入属性
+     */
     @Override
     public PropertyValues postProcessPropertyValues(PropertyValues pvs,
                                                     PropertyDescriptor[] pds,
-                                                    Object bean, String beanName)  {
+                                                    Object bean, String beanName) {
 
         InjectionMetadata metadata = findAutowiringMetadata(beanName, bean.getClass(), pvs);
+
         try {
+
             metadata.inject(bean, beanName, pvs);
         } catch (Throwable ex) {
             throw new BeanCreationException(beanName, "Injection of autowired dependencies failed", ex);
         }
+
         return pvs;
     }
 
@@ -340,7 +337,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
      * @param type the type of the bean
      * @return the target beans, or an empty Collection if no bean of this type is found
      */
-    protected <T> Map<String, T> findAutowireCandidates(Class<T> type)  {
+    protected <T> Map<String, T> findAutowireCandidates(Class<T> type) {
         if (this.beanFactory == null) {
             throw new IllegalStateException("No BeanFactory configured - " +
                     "override the getBeanOfType method or specify the 'beanFactory' property");

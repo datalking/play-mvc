@@ -8,8 +8,15 @@ import java.util.Properties;
 import java.util.Set;
 
 /**
+ * 配置文件属性占位符解析
+ * 旧版本的实现
+ * deprecated in favor of {@link com.github.datalking.common.env.PropertySourcesPlaceholderConfigurer}
+ * <p>
+ * todo remove this class
+ *
  * @author yaoo on 5/29/18
  */
+@Deprecated
 public class PropertyPlaceholderConfigurer extends PlaceholderConfigurerSupport {
 
     /**

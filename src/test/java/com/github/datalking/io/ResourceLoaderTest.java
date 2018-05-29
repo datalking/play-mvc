@@ -13,7 +13,7 @@ public class ResourceLoaderTest {
 
     @Test
     public void test() throws IOException {
-        ResourceLoader resourceLoader = new ResourceLoader();
+        ResourceLoader resourceLoader = new DefaultResourceLoader();
         Resource resource = resourceLoader.getResource("beans.xml");
         InputStream inputStream = resource.getInputStream();
         Assert.assertNotNull(inputStream);

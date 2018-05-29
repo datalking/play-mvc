@@ -439,13 +439,14 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
 //        registerCustomEditors(bw);
     }
 
-//    protected Object evaluateBeanDefinitionString(String value, BeanDefinition beanDefinition) {
+    protected Object evaluateBeanDefinitionString(String value, BeanDefinition beanDefinition) {
 //        if (this.beanExpressionResolver == null) {
-//            return value;
+            return value;
 //        }
 //        Scope scope = (beanDefinition != null ? getRegisteredScope(beanDefinition.getScope()) : null);
 //        return this.beanExpressionResolver.evaluate(value, new BeanExpressionContext(this, scope));
-//    }
+    }
+
 
 
 //    protected boolean isFactoryBean(String beanName, RootBeanDefinition mbd) {

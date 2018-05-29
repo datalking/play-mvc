@@ -14,7 +14,7 @@ import java.util.List;
 
 /**
  * handler执行链
- * 包含handler对象和拦截方法，可以在此扩展自定义拦截方法
+ * 包含url对应的controller对象和拦截器，可以在此扩展自定义拦截方法
  *
  * @author yaoo on 4/25/18
  */
@@ -22,7 +22,7 @@ public class HandlerExecutionChain {
 
     private static final Logger logger = LoggerFactory.getLogger(HandlerExecutionChain.class);
 
-    // 实际执行对象
+    // url对应的实际执行对象，容器的任何bean都能成为handler
     private final Object handler;
 
     // 拦截器方法数组
@@ -65,7 +65,7 @@ public class HandlerExecutionChain {
 
     private List<HandlerInterceptor> initInterceptorList() {
         if (this.interceptorList == null) {
-            this.interceptorList = new ArrayList<HandlerInterceptor>();
+            this.interceptorList = new ArrayList<>();
             if (this.interceptors != null) {
                 // An interceptor array specified through the constructor
                 this.interceptorList.addAll(Arrays.asList(this.interceptors));

@@ -28,8 +28,13 @@ public class DefaultServletHandlerConfigurer {
         enable(null);
     }
 
+    /**
+     * 启用 Web容器的default Servlet处理未匹配的url，常用于静态资源处理
+     */
     public void enable(String defaultServletName) {
+
         handler = new DefaultServletHttpRequestHandler();
+
         handler.setDefaultServletName(defaultServletName);
         handler.setServletContext(servletContext);
     }
@@ -45,6 +50,7 @@ public class DefaultServletHandlerConfigurer {
         SimpleUrlHandlerMapping handlerMapping = new SimpleUrlHandlerMapping();
         handlerMapping.setOrder(Integer.MAX_VALUE);
         handlerMapping.setUrlMap(urlMap);
+
         return handlerMapping;
     }
 

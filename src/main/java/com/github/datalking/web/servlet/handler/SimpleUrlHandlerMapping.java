@@ -13,6 +13,9 @@ import java.util.Properties;
  */
 public class SimpleUrlHandlerMapping extends AbstractUrlHandlerMapping {
 
+    /**
+     * url -> 对应的controller对象
+     */
     private final Map<String, Object> urlMap = new HashMap<>();
 
     public void setMappings(Properties mappings) {

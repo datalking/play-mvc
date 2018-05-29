@@ -1,8 +1,6 @@
 package com.github.datalking.beans.factory.xml;
 
-import com.github.datalking.beans.factory.config.BeanDefinition;
-import com.github.datalking.beans.factory.xml.XmlBeanDefinitionReader;
-import com.github.datalking.io.ResourceLoader;
+import com.github.datalking.io.DefaultResourceLoader;
 import org.junit.Assert;
 import org.junit.Test;
 import org.w3c.dom.Document;
@@ -12,7 +10,6 @@ import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
@@ -22,7 +19,7 @@ public class XmlBeanDefinitionReaderTest {
 
     @Test
     public void test() throws Exception {
-        XmlBeanDefinitionReader xmlBeanDefinitionReader = new XmlBeanDefinitionReader(new ResourceLoader());
+        XmlBeanDefinitionReader xmlBeanDefinitionReader = new XmlBeanDefinitionReader(new DefaultResourceLoader());
 
         xmlBeanDefinitionReader.loadBeanDefinitions("beans.xml");
 
@@ -46,7 +43,7 @@ public class XmlBeanDefinitionReaderTest {
         int count = children.getLength();
         //System.out.println("根节点的child个数是：" + count);
 
-        assertEquals("5", count+"");
+        assertEquals("5", count + "");
 
 //        for (int i = 0; i < count; i++) {
 //            current = children.item(i);
@@ -64,7 +61,6 @@ public class XmlBeanDefinitionReaderTest {
 
 //        System.out.println(doc.getDocumentElement());
     }
-
 
 
 }

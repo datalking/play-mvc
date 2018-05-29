@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
+ * 匹配HttpRequestHandler中的方法
+ *
  * @author yaoo on 5/4/18
  */
 public class HttpRequestHandlerAdapter implements HandlerAdapter {
@@ -15,17 +17,19 @@ public class HttpRequestHandlerAdapter implements HandlerAdapter {
         return (handler instanceof HttpRequestHandler);
     }
 
-    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
-            throws Exception {
+    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
         ((HttpRequestHandler) handler).handleRequest(request, response);
+
         return null;
     }
 
     public long getLastModified(HttpServletRequest request, Object handler) {
+
         if (handler instanceof LastModified) {
             return ((LastModified) handler).getLastModified(request);
         }
+
         return -1L;
     }
 

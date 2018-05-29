@@ -145,18 +145,10 @@ public abstract class PropertiesLoaderSupport {
                 if (logger.isInfoEnabled()) {
                     logger.info("Loading properties file from " + location);
                 }
-                try {
-                    PropertiesLoaderUtils.fillProperties(
-                            props, new EncodedResource(location, this.fileEncoding), this.propertiesPersister);
-                } catch (IOException ex) {
-                    if (this.ignoreResourceNotFound) {
-                        if (logger.isWarnEnabled()) {
-                            logger.warn("Could not load properties from " + location + ": " + ex.getMessage());
-                        }
-                    } else {
-                        throw ex;
-                    }
-                }
+                PropertiesLoaderUtils.fillProperties(
+                        props,
+                        new EncodedResource(location, this.fileEncoding),
+                        this.propertiesPersister);
             }
         }
     }

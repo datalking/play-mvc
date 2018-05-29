@@ -6,8 +6,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * 处理器适配器，用于支持多种类型的处理器
- * 适配到handler对象的具体某个处理方法上，如controller中的方法，并返回ModelAndView
+ * url处理方法适配器
+ * 适配到handler对象的具体某个处理方法上，一般是@Controller类中的方法，并返回ModelAndView
  *
  * @author yaoo on 4/25/18
  */
