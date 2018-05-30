@@ -192,7 +192,7 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
 //            // else data access code won't see properly exposed transactions (i.e. transactions for the target DataSource).
 //            this.dataSource = ((TransactionAwareDataSourceProxy) dataSource).getTargetDataSource();
 //        } else {
-            this.dataSource = dataSource;
+        this.dataSource = dataSource;
 //        }
     }
 
@@ -235,28 +235,26 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
     }
 
     /**
-     * {@inheritDoc}
+     * 创建SqlSessionFactory对象
      */
     @Override
     public void afterPropertiesSet() {
         notNull(dataSource, "Property 'dataSource' is required");
         notNull(sqlSessionFactoryBuilder, "Property 'sqlSessionFactoryBuilder' is required");
-        state((configuration == null && configLocation == null) || !(configuration != null && configLocation != null),
-                "Property 'configuration' and 'configLocation' can not specified with together");
+        state((configuration == null && configLocation == null) || !(configuration != null && configLocation != null), "Property 'configuration' and 'configLocation' can not specified with together");
 
+        // ==== 创建SqlSessionFactory对象
         this.sqlSessionFactory = buildSqlSessionFactory();
     }
 
     /**
      * 创建SqlSessionFactory对象的方法
-     * Build a {@code SqlSessionFactory} instance.
      * <p>
      * The default implementation uses the standard MyBatis {@code XMLConfigBuilder} API to build a
      * {@code SqlSessionFactory} instance based on an Reader.
-     * Since 1.3.0, it can be specified a {@link Configuration} instance directly(without config file).
+     * It can be specified a {@link Configuration} instance directly(without config file).
      *
      * @return SqlSessionFactory
-     * @throws IOException if loading the config file failed
      */
     protected SqlSessionFactory buildSqlSessionFactory() {
 
@@ -314,8 +312,7 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
                     ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
 
             for (String packageToScan : typeAliasPackageArray) {
-                configuration
-                        .getTypeAliasRegistry()
+                configuration.getTypeAliasRegistry()
                         .registerAliases(packageToScan, typeAliasesSuperType == null ? Object.class : typeAliasesSuperType);
 
                 if (LOGGER.isDebugEnabled()) {
@@ -414,6 +411,7 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
                             configuration, mapperLocation.toString(),
                             configuration.getSqlFragments());
 
+                    // ==== 解析XxxMapper.xml
                     xmlMapperBuilder.parse();
                 } catch (Exception e) {
 //                    throw new NestedIOException("Failed to parse mapping resource: '" + mapperLocation + "'", e);
@@ -447,6 +445,7 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
 
     @Override
     public Class<? extends SqlSessionFactory> getObjectType() {
+
         return this.sqlSessionFactory == null ? SqlSessionFactory.class : this.sqlSessionFactory.getClass();
     }
 

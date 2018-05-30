@@ -20,7 +20,6 @@ public class StandardAnnotationMetadata extends StandardClassMetadata implements
 
     private final Annotation[] annotations;
 
-
     public StandardAnnotationMetadata(Class<?> introspectedClass) {
         super(introspectedClass);
         this.annotations = introspectedClass.getAnnotations();
@@ -82,7 +81,7 @@ public class StandardAnnotationMetadata extends StandardClassMetadata implements
 
         for (Method method : methods) {
 
-            /// 若是 非桥接方法，且方法上存在注解，且方法上有注解annotationName
+            /// 若是非桥接方法，且方法上存在注解，且方法上有注解annotationName
             if (!method.isBridge() && method.getAnnotations().length > 0 &&
                     method.isAnnotationPresent(clazz)) {
 

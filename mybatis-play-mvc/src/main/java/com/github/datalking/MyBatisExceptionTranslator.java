@@ -4,7 +4,7 @@ import com.github.datalking.jdbc.dao.DataAccessException;
 import com.github.datalking.jdbc.dao.PersistenceExceptionTranslator;
 import com.github.datalking.jdbc.support.SQLErrorCodeSQLExceptionTranslator;
 import com.github.datalking.jdbc.support.SQLExceptionTranslator;
-import com.github.datalking.jdbc.transaction.TransactionException;
+import com.github.datalking.jdbc.transaction.exception.TransactionException;
 import org.apache.ibatis.exceptions.PersistenceException;
 
 import javax.sql.DataSource;
@@ -12,12 +12,11 @@ import java.sql.SQLException;
 
 /**
  * 异常转换器
+ * 将mybatis的异常转换成spring的异常
  * Default exception translator.
  * <p>
  * Translates MyBatis SqlSession returned exception into a Spring {@code DataAccessException} using Spring's {@code SQLExceptionTranslator}
  * Can load {@code SQLExceptionTranslator} eagerly of when the first exception is translated.
- *
- * @author Eduardo Macarron
  */
 public class MyBatisExceptionTranslator implements PersistenceExceptionTranslator {
 

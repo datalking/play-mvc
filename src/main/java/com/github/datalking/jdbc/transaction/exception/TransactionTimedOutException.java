@@ -1,4 +1,4 @@
-package com.github.datalking.jdbc.transaction;
+package com.github.datalking.jdbc.transaction.exception;
 
 /**
  * @author yaoo on 5/27/18

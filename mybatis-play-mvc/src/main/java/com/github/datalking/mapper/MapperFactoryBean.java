@@ -11,8 +11,8 @@ import static com.github.datalking.util.Assert.notNull;
 /**
  * 自动创建Mapper接口实现类的代理对象
  * 直接将Mapper接口注入到Service层的Bean中，可以避免编写DAO层的实现类，直接使用Mapper接口对象
- * BeanFactory that enables injection of MyBatis mapper interfaces. It can be set up with a
- * SqlSessionFactory or a pre-configured SqlSessionTemplate.
+ * BeanFactory that enables injection of MyBatis mapper interfaces.
+ * It can be set up with a SqlSessionFactory or a pre-configured SqlSessionTemplate.
  * <p>
  * Sample configuration:
  *
@@ -33,12 +33,12 @@ import static com.github.datalking.util.Assert.notNull;
  * </pre>
  * <p>
  * Note that this factory can only inject <em>interfaces</em>, not concrete classes.
- *
  */
 public class MapperFactoryBean<T> extends SqlSessionDaoSupport implements FactoryBean<T> {
 
     private Class<T> mapperInterface;
 
+    // 是否将mapper接口添加到mybatis，默认true
     private boolean addToConfig = true;
 
     public MapperFactoryBean() {
@@ -74,21 +74,15 @@ public class MapperFactoryBean<T> extends SqlSessionDaoSupport implements Factor
      * 获取Mapper接口的代理对象
      */
     @Override
-    public T getObject()  {
+    public T getObject() {
         return getSqlSession().getMapper(this.mapperInterface);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Class<T> getObjectType() {
         return this.mapperInterface;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean isSingleton() {
         return true;
@@ -96,34 +90,20 @@ public class MapperFactoryBean<T> extends SqlSessionDaoSupport implements Factor
 
     //------------- mutators --------------
 
-    /**
-     * Sets the mapper interface of the MyBatis mapper
-     *
-     * @param mapperInterface class of the interface
-     */
     public void setMapperInterface(Class<T> mapperInterface) {
         this.mapperInterface = mapperInterface;
     }
 
-    /**
-     * Return the mapper interface of the MyBatis mapper
-     *
-     * @return class of the interface
-     */
     public Class<T> getMapperInterface() {
         return mapperInterface;
     }
 
     /**
-     * If addToConfig is false the mapper will not be added to MyBatis. This means
-     * it must have been included in mybatis-config.xml.
-     * <p/>
-     * If it is true, the mapper will be added to MyBatis in the case it is not already
-     * registered.
+     * If addToConfig is false, the mapper will not be added to MyBatis.
+     * This means it must have been included in mybatis-config.xml.
+     * If it is true, the mapper will be added to MyBatis in the case it is not already registered.
      * <p/>
      * By default addToCofig is true.
-     *
-     * @param addToConfig
      */
     public void setAddToConfig(boolean addToConfig) {
         this.addToConfig = addToConfig;
@@ -132,8 +112,7 @@ public class MapperFactoryBean<T> extends SqlSessionDaoSupport implements Factor
     /**
      * Return the flag for addition into MyBatis config.
      *
-     * @return true if the mapper will be added to MyBatis in the case it is not already
-     * registered.
+     * @return true if the mapper will be added to MyBatis in the case it is not already registered.
      */
     public boolean isAddToConfig() {
         return addToConfig;

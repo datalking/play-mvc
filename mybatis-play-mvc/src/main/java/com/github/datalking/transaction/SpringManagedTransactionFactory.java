@@ -10,9 +10,6 @@ import java.util.Properties;
 
 /**
  * spring事务管理器 工厂类
- * Creates a {@code SpringManagedTransaction}.
- *
- * @author Hunter Presnall
  */
 public class SpringManagedTransactionFactory implements TransactionFactory {
 

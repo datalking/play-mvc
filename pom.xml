@@ -7,10 +7,15 @@
     <artifactId>play-mvc</artifactId>
     <version>0.0.5</version>
 
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
     <name>play-mvc</name>
     <description>simple mvc framework based on java servlet.</description>
     <url>https://github.com/datalking/play-mvc</url>
+
+    <!--<modules>-->
+        <!--<module>starter-demo</module>-->
+        <!--<module>mybatis-play-mvc</module>-->
+    <!--</modules>-->
 
     <dependencies>
         <!--common utils-->

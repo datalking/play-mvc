@@ -16,17 +16,14 @@ import static com.github.datalking.util.Assert.notNull;
 /**
  * spring事务管理器
  * <p>
- * {@code SpringManagedTransaction} handles the lifecycle of a JDBC connection.
- * It retrieves a connection from Spring's transaction manager and returns it back to it
- * when it is no longer needed.
+ * SpringManagedTransactio} handles the lifecycle of a JDBC connection.
+ * It retrieves a connection from Spring's transaction manager and returns it back to it when no longer needed.
  * <p>
- * If Spring's transaction handling is active it will no-op all commit/rollback/close calls
+ * If Spring's transaction handling is active, it will no-op all commit/rollback/close calls
  * assuming that the Spring transaction manager will do the job.
  * <p>
- * If it is not it will behave like {@code JdbcTransaction}.
+ * If it is not, it will behave like {@code JdbcTransaction}.
  *
- * @author Hunter Presnall
- * @author Eduardo Macarron
  */
 public class SpringManagedTransaction implements Transaction {
 
@@ -86,9 +83,6 @@ public class SpringManagedTransaction implements Transaction {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void commit() throws SQLException {
 
@@ -98,9 +92,6 @@ public class SpringManagedTransaction implements Transaction {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void rollback() throws SQLException {
 
@@ -110,9 +101,6 @@ public class SpringManagedTransaction implements Transaction {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void close() throws SQLException {
 
@@ -120,9 +108,6 @@ public class SpringManagedTransaction implements Transaction {
         DataSourceUtils.releaseConnection(this.connection, this.dataSource);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Integer getTimeout() throws SQLException {
         ConnectionHolder holder = (ConnectionHolder) TransactionSynchronizationManager.getResource(dataSource);

@@ -15,7 +15,6 @@ public class StandardClassMetadata implements ClassMetadata {
         return this.introspectedClass;
     }
 
-
     @Override
     public String getClassName() {
         return this.introspectedClass.getName();

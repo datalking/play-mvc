@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 扫描@MapperScan注解标注的包，并注册Mapper接口
+ * <p>
  * A {@link ImportBeanDefinitionRegistrar} to allow annotation configuration of MyBatis mapper scanning.
  * Using an @Enable annotation allows beans to be registered via @Component configuration,
  * whereas implementing BeanDefinitionRegistryPostProcessor will work for XML configuration.
@@ -29,7 +31,10 @@ public class MapperScannerRegistrar implements ImportBeanDefinitionRegistrar, Re
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
 
-        AnnotationAttributes annoAttrs = AnnotationAttributes.fromMap(importingClassMetadata.getAnnotationAttributes(MapperScan.class.getName()));
+        AnnotationAttributes annoAttrs = AnnotationAttributes.fromMap(
+                importingClassMetadata.getAnnotationAttributes(MapperScan.class.getName()));
+
+        // 创建扫描器实例
         ClassPathMapperScanner scanner = new ClassPathMapperScanner(registry);
 
         if (resourceLoader != null) {
@@ -60,24 +65,27 @@ public class MapperScannerRegistrar implements ImportBeanDefinitionRegistrar, Re
         scanner.setSqlSessionFactoryBeanName(annoAttrs.getString("sqlSessionFactoryRef"));
 
         List<String> basePackages = new ArrayList<>();
+
         for (String pkg : annoAttrs.getStringArray("value")) {
             if (StringUtils.hasText(pkg)) {
                 basePackages.add(pkg);
             }
         }
+
         for (String pkg : annoAttrs.getStringArray("basePackages")) {
             if (StringUtils.hasText(pkg)) {
                 basePackages.add(pkg);
             }
         }
+
         for (Class<?> clazz : annoAttrs.getClassArray("basePackageClasses")) {
             basePackages.add(ClassUtils.getPackageName(clazz));
         }
 
         scanner.registerFilters();
 
+        // ==== 调用扫描Mapper接口的方法
         scanner.doScan(StringUtils.toStringArray(basePackages));
-
     }
 
     @Override

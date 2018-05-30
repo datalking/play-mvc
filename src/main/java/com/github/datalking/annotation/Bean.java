@@ -1,5 +1,8 @@
 package com.github.datalking.annotation;
 
+import com.github.datalking.beans.factory.config.Autowire;
+import com.github.datalking.beans.factory.support.AbstractBeanDefinition;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -20,9 +23,11 @@ public @interface Bean {
 
     String[] name() default {};
 
-//    Autowire autowire() default Autowire.NO;
-//    String initMethod() default "";
-//    String destroyMethod() default AbstractBeanDefinition.INFER_METHOD;
+    Autowire autowire() default Autowire.NO;
+
+    String initMethod() default "";
+
+    String destroyMethod() default AbstractBeanDefinition.INFER_METHOD;
 
 
 }

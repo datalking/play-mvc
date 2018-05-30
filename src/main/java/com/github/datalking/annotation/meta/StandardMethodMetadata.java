@@ -11,7 +11,6 @@ import java.util.Map;
  */
 public class StandardMethodMetadata implements MethodMetadata {
 
-
     private final Method introspectedMethod;
 
     public StandardMethodMetadata(Method introspectedMethod) {

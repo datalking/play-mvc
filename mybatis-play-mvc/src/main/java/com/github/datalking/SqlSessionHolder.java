@@ -24,12 +24,6 @@ public final class SqlSessionHolder extends ResourceHolderSupport {
 
     private final PersistenceExceptionTranslator exceptionTranslator;
 
-    /**
-     * Creates a new holder instance.
-     *
-     * @param sqlSession   the {@code SqlSession} has to be hold.
-     * @param executorType the {@code ExecutorType} has to be hold.
-     */
     public SqlSessionHolder(SqlSession sqlSession,
                             ExecutorType executorType,
                             PersistenceExceptionTranslator exceptionTranslator) {

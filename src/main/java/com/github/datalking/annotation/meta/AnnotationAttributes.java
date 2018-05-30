@@ -14,7 +14,9 @@ import java.util.Map;
 public class AnnotationAttributes extends LinkedHashMap<String, Object> {
 
     private static final String UNKNOWN = "unknown";
+
     private final Class<? extends Annotation> annotationType;
+
     // 用于断言验证
     private final String displayName;
 

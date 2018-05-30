@@ -23,6 +23,8 @@ import java.util.Set;
 public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccessor
         implements BeanDefinition, Cloneable {
 
+    public static final String INFER_METHOD = "(inferred)";
+
     /// 依赖注入的方式
     public static final int AUTOWIRE_NO = AutowireCapableBeanFactory.AUTOWIRE_NO;
     public static final int AUTOWIRE_BY_NAME = AutowireCapableBeanFactory.AUTOWIRE_BY_NAME;

@@ -19,6 +19,7 @@ import java.util.Properties;
  * <ul>
  * <li> PropertyOverrideConfigurer for "beanName.property=value" style overriding
  * (<i>pushing</i> values from a properties file into bean definitions)
+ *
  * <li> PropertyPlaceholderConfigurer for replacing "${...}" placeholders
  * (<i>pulling</i> values from a properties file into bean definitions)
  * </ul>

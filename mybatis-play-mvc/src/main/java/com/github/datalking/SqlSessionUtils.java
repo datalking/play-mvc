@@ -18,14 +18,11 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import static com.github.datalking.util.Assert.notNull;
 
 /**
- * SqlSession工具类 都是静态方法
+ * SqlSession操作 工具类
  * Handles MyBatis SqlSession life cycle. It can register and get SqlSessions from
  * Spring {@code TransactionSynchronizationManager}. Also works if no transaction is active.
- *
- * @author Hunter Presnall
- * @author Eduardo Macarron
  */
-public final class SqlSessionUtils {
+public abstract class SqlSessionUtils {
 
     private static final Log LOGGER = LogFactory.getLog(SqlSessionUtils.class);
 
@@ -37,15 +34,10 @@ public final class SqlSessionUtils {
         // do nothing
     }
 
-    /**
-     * Creates a new MyBatis {@code SqlSession} from the {@code SqlSessionFactory}
-     * provided as a parameter and using its {@code DataSource} and {@code ExecutorType}
-     *
-     * @param sessionFactory a MyBatis {@code SqlSessionFactory} to create new sessions
-     * @return a MyBatis {@code SqlSession}
-     */
     public static SqlSession getSqlSession(SqlSessionFactory sessionFactory) {
+
         ExecutorType executorType = sessionFactory.getConfiguration().getDefaultExecutorType();
+
         return getSqlSession(sessionFactory, executorType, null);
     }
 
@@ -59,7 +51,9 @@ public final class SqlSessionUtils {
      * @param executorType        The executor type of the SqlSession to create
      * @param exceptionTranslator Optional. Translates SqlSession.commit() exceptions to Spring exceptions.
      */
-    public static SqlSession getSqlSession(SqlSessionFactory sessionFactory, ExecutorType executorType, PersistenceExceptionTranslator exceptionTranslator) {
+    public static SqlSession getSqlSession(SqlSessionFactory sessionFactory,
+                                           ExecutorType executorType,
+                                           PersistenceExceptionTranslator exceptionTranslator) {
 
         notNull(sessionFactory, NO_SQL_SESSION_FACTORY_SPECIFIED);
         notNull(executorType, NO_EXECUTOR_TYPE_SPECIFIED);

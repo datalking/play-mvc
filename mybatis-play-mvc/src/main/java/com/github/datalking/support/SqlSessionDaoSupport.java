@@ -13,9 +13,7 @@ import static com.github.datalking.util.Assert.notNull;
  * It gives you access to the template which can then be used to execute SQL methods.
  * <p>
  * This class needs a SqlSessionTemplate or a SqlSessionFactory.
- * If both are set the SqlSessionFactory will be ignored.
- * <p>
- * Autowired was removed from setSqlSessionTemplate and setSqlSessionFactory in version 1.2.0.
+ * If both are set，the SqlSessionFactory will be ignored.
  */
 public abstract class SqlSessionDaoSupport extends DaoSupport {
 
@@ -35,8 +33,8 @@ public abstract class SqlSessionDaoSupport extends DaoSupport {
     }
 
     /**
-     * Users should use this method to get a SqlSession to call its statement methods
-     * This is SqlSession is managed by spring. Users should not commit/rollback/close it
+     * Users should use this method to get a SqlSession to call its statement methods.
+     * This SqlSession is managed by spring. Users should not commit/rollback/close it，
      * because it will be automatically done.
      *
      * @return Spring managed thread safe SqlSession

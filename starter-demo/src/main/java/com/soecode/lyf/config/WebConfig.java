@@ -15,7 +15,7 @@ import com.github.datalking.web.servlet.ViewResolver;
 @ComponentScan("com.soecode.lyf.web")
 public class WebConfig extends WebMvcConfigurerAdapter {
 
-//    @Override
+    @Override
     public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
         configurer.enable();
     }

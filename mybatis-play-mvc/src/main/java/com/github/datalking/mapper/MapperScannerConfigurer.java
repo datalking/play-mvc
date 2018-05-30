@@ -59,9 +59,7 @@ public class MapperScannerConfigurer
 
     /**
      * This property lets you set the base package for your mapper interface files.
-     * <p>
      * You can set more than one package by using a semicolon or comma as a separator.
-     * <p>
      * Mappers will be searched for recursively starting in the specified package(s).
      *
      * @param basePackage base package name
@@ -73,8 +71,7 @@ public class MapperScannerConfigurer
     /**
      * Same as {@code MapperFactoryBean#setAddToConfig(boolean)}.
      *
-     * @param addToConfig
-     * @see MapperFactoryBean#setAddToConfig(boolean)
+     * @param addToConfig mapper接口是否添加到mybatis
      */
     public void setAddToConfig(boolean addToConfig) {
         this.addToConfig = addToConfig;
@@ -82,10 +79,7 @@ public class MapperScannerConfigurer
 
     /**
      * This property specifies the annotation that the scanner will search for.
-     * <p>
-     * The scanner will register all interfaces in the base package that also have the
-     * specified annotation.
-     * <p>
+     * The scanner will register all interfaces in the base package that also have the specified annotation.
      * Note this can be combined with markerInterface.
      *
      * @param annotationClass annotation class
@@ -96,10 +90,7 @@ public class MapperScannerConfigurer
 
     /**
      * This property specifies the parent that the scanner will search for.
-     * <p>
-     * The scanner will register all interfaces in the base package that also have the
-     * specified interface class as a parent.
-     * <p>
+     * The scanner will register all interfaces in the base package that also have the specified interface class as a parent.
      * Note this can be combined with annotationClass.
      *
      * @param superClass parent class
@@ -109,9 +100,8 @@ public class MapperScannerConfigurer
     }
 
     /**
-     * Specifies which {@code SqlSessionTemplate} to use in the case that there is
-     * more than one in the spring context. Usually this is only needed when you
-     * have more than one datasource.
+     * Specifies which {@code SqlSessionTemplate} to use in the case that there is more than one in the spring context.
+     * Usually this is only needed when you have more than one datasource.
      * <p>
      *
      * @param sqlSessionTemplate

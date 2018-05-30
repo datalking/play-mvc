@@ -33,6 +33,8 @@ import java.util.Set;
 import java.util.Stack;
 
 /**
+ * 解析带有@Configuration注解的类下的其他注解，如@Import, @EnableXxx
+ *
  * @author yaoo on 4/13/18
  */
 public class ConfigurationClassParser {
@@ -45,7 +47,7 @@ public class ConfigurationClassParser {
 
     private final Stack<PropertySource<?>> propertySources = new Stack<>();
 
-    private  Environment environment = new StandardEnvironment();
+    private Environment environment = new StandardEnvironment();
 
     public ConfigurationClassParser(BeanDefinitionRegistry registry) {
         this.registry = registry;
@@ -100,7 +102,8 @@ public class ConfigurationClassParser {
         // 如果configClass标注有@PropertySource
         Set<AnnotationAttributes> propertySources = attributesForRepeatable(
                 configClass.getMetadata(), null, com.github.datalking.annotation.PropertySource.class);
-        if (!propertySources.isEmpty()) {
+
+        if (propertySources != null && !propertySources.isEmpty()) {
 
             for (AnnotationAttributes propertySource : propertySources) {
 
@@ -150,7 +153,7 @@ public class ConfigurationClassParser {
 
     }
 
-    private void processPropertySource(AnnotationAttributes propertySource)  {
+    private void processPropertySource(AnnotationAttributes propertySource) {
 
         String name = propertySource.getString("name");
         String[] locations = propertySource.getStringArray("value");

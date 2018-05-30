@@ -1,13 +1,14 @@
 package com.github.datalking.jdbc.transaction;
 
+import com.github.datalking.jdbc.transaction.exception.TransactionTimedOutException;
+
 import java.util.Date;
 
 /**
  * Convenient base class for resource holders.
  *
  * <p>Features rollback-only support for nested transactions.
- * Can expire after a certain number of seconds or milliseconds,
- * to determine transactional timeouts.
+ * Can expire after a certain number of seconds or milliseconds, to determine transactional timeouts.
  *
  */
 public abstract class ResourceHolderSupport implements ResourceHolder {

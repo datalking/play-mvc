@@ -17,11 +17,10 @@ import java.util.Arrays;
 import java.util.Set;
 
 /**
- * 扫描Mapper接口
- * A  ClassPathBeanDefinitionScanner that registers Mappers by
- * {@code basePackage}, {@code annotationClass}, or {@code markerInterface}.
+ * 扫描Mapper接口的入口
+ * A ClassPathBeanDefinitionScanner that registers Mappers by basePackage, annotationClass, or markerInterface.
  * If an {@code annotationClass} and/or {@code markerInterface} is specified,
- * only the specified types will be searched (searching for all interfaces will be disabled
+ * only the specified types will be searched. Searching for all interfaces will be disabled.
  */
 public class ClassPathMapperScanner extends ClassPathBeanDefinitionScanner {
 
@@ -126,8 +125,7 @@ public class ClassPathMapperScanner extends ClassPathBeanDefinitionScanner {
     /**
      * 实际执行扫描的方法
      * Calls the parent search that will search and register all the candidates.
-     * Then the registered objects are post processed to set them as
-     * MapperFactoryBeans
+     * Then the registered objects are post processed to set them as MapperFactoryBeans
      */
     @Override
     public Set<BeanDefinitionHolder> doScan(String... basePackages) {

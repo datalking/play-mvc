@@ -1,9 +1,9 @@
-package com.github.datalking.jdbc.transaction;
+package com.github.datalking.jdbc.transaction.exception;
 
 /**
  * @author yaoo on 5/27/18
  */
-public abstract class TransactionException extends RuntimeException {
+public class TransactionException extends RuntimeException {
 
     public TransactionException(String msg) {
         super(msg);
