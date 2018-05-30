@@ -77,8 +77,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
         try {
 
             this.autowiredAnnotationTypes.add((Class<? extends Annotation>)
-                    ClassUtils.forName("javax.inject.Inject",
-                            AutowiredAnnotationBeanPostProcessor.class.getClassLoader())
+                    ClassUtils.forName("javax.inject.Inject", AutowiredAnnotationBeanPostProcessor.class.getClassLoader())
             );
 
             logger.info("JSR-330 'javax.inject.Inject' annotation found and supported for autowiring");
@@ -93,39 +92,16 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
         this.autowiredAnnotationTypes.add(autowiredAnnotationType);
     }
 
-    /**
-     * Set the 'autowired' annotation types, to be used on constructors, fields,
-     * setter methods and arbitrary config methods.
-     * <p>The default autowired annotation type is the Spring-provided
-     * {@link Autowired} annotation, as well as {@link Value}.
-     * <p>This setter property exists so that developers can provide their own
-     * (non-Spring-specific) annotation types to indicate that a member is
-     * supposed to be autowired.
-     */
     public void setAutowiredAnnotationTypes(Set<Class<? extends Annotation>> autowiredAnnotationTypes) {
         Assert.notEmpty(autowiredAnnotationTypes.toArray(), "'autowiredAnnotationTypes' must not be empty");
         this.autowiredAnnotationTypes.clear();
         this.autowiredAnnotationTypes.addAll(autowiredAnnotationTypes);
     }
 
-    /**
-     * Set the name of a parameter of the annotation that specifies
-     * whether it is required.
-     *
-     * @see #setRequiredParameterValue(boolean)
-     */
     public void setRequiredParameterName(String requiredParameterName) {
         this.requiredParameterName = requiredParameterName;
     }
 
-    /**
-     * Set the boolean value that marks a dependency as required
-     * <p>For example if using 'required=true' (the default),
-     * this value should be {@code true}; but if using
-     * 'optional=false', this value should be {@code false}.
-     *
-     * @see #setRequiredParameterName(String)
-     */
     public void setRequiredParameterValue(boolean requiredParameterValue) {
         this.requiredParameterValue = requiredParameterValue;
     }
@@ -228,8 +204,8 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
                                                     PropertyDescriptor[] pds,
                                                     Object bean, String beanName) {
 
+        //
         InjectionMetadata metadata = findAutowiringMetadata(beanName, bean.getClass(), pvs);
-
         try {
 
             metadata.inject(bean, beanName, pvs);
@@ -254,7 +230,9 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
     private InjectionMetadata findAutowiringMetadata(String beanName, Class<?> clazz, PropertyValues pvs) {
         // Fall back to class name as cache key, for backwards compatibility with custom callers.
         String cacheKey = (StringUtils.hasLength(beanName) ? beanName : clazz.getName());
+
         // Quick check on the concurrent map first, with minimal locking.
+        //
         InjectionMetadata metadata = this.injectionMetadataCache.get(cacheKey);
         if (InjectionMetadata.needsRefresh(metadata, clazz)) {
             synchronized (this.injectionMetadataCache) {
@@ -331,12 +309,6 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
         return null;
     }
 
-    /**
-     * Obtain all beans of the given type as autowire candidates.
-     *
-     * @param type the type of the bean
-     * @return the target beans, or an empty Collection if no bean of this type is found
-     */
     protected <T> Map<String, T> findAutowireCandidates(Class<T> type) {
         if (this.beanFactory == null) {
             throw new IllegalStateException("No BeanFactory configured - " +
@@ -345,15 +317,6 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
         return BeanFactoryUtils.beansOfTypeIncludingAncestors(this.beanFactory, type);
     }
 
-    /**
-     * Determine if the annotated field or method requires its dependency.
-     * <p>A 'required' dependency means that autowiring should fail when no beans
-     * are found. Otherwise, the autowiring process will simply bypass the field
-     * or method when no beans are found.
-     *
-     * @param ann the Autowired annotation
-     * @return whether the annotation indicates that a dependency is required
-     */
     protected boolean determineRequiredStatus(Annotation ann) {
         try {
             Method method = ReflectionUtils.findMethod(ann.annotationType(), this.requiredParameterName);
@@ -370,9 +333,6 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
         }
     }
 
-    /**
-     * Register the specified bean as dependent on the autowired beans.
-     */
     private void registerDependentBeans(String beanName, Set<String> autowiredBeanNames) {
         if (beanName != null) {
             for (String autowiredBeanName : autowiredBeanNames) {
@@ -384,9 +344,6 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
         }
     }
 
-    /**
-     * Resolve the specified cached method argument or field value.
-     */
     private Object resolvedCachedArgument(String beanName, Object cachedArgument) {
 
         if (cachedArgument instanceof DependencyDescriptor) {
@@ -401,7 +358,6 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
             return cachedArgument;
         }
     }
-
 
     /**
      * 标注有@AutoWired注解的字段元信息

@@ -49,8 +49,9 @@ public class PostProcessorRegistrationDelegate {
             for (String ppName : postProcessorNames) {
                 priorityOrderedPostProcessors.add((BeanDefinitionRegistryPostProcessor) beanFactory.getBean(ppName));
             }
+//            sortPostProcessors(beanFactory, priorityOrderedPostProcessors);
 
-            // 扫描@Configuration、@Bean、@ComponentScan
+            // 执行扫描所有BeanDefinition中的@Configuration、@Bean、@ComponentScan
             // 注册AnnotationAwareAspectJAutoProxyCreator的BeanDefinition
             invokeBeanDefinitionRegistryPostProcessors(priorityOrderedPostProcessors, registry);
 

@@ -1,10 +1,11 @@
 package com.github.datalking.web.servlet;
 
-import com.github.datalking.common.AnnotationAwareOrderComparator;
 import com.github.datalking.common.GenericTypeResolver;
+import com.github.datalking.common.env.ConfigurableEnvironment;
 import com.github.datalking.context.ApplicationContext;
 import com.github.datalking.context.ApplicationContextInitializer;
 import com.github.datalking.context.ConfigurableApplicationContext;
+import com.github.datalking.context.ConfigurableWebEnvironment;
 import com.github.datalking.util.Assert;
 import com.github.datalking.util.ObjectUtils;
 import com.github.datalking.util.StringUtils;
@@ -14,8 +15,8 @@ import com.github.datalking.web.context.ConfigurableWebApplicationContext;
 import com.github.datalking.web.context.ContextLoader;
 import com.github.datalking.web.context.WebApplicationContext;
 import com.github.datalking.web.context.request.RequestContextHolder;
-import com.github.datalking.web.http.RequestMethod;
 import com.github.datalking.web.http.RequestAttributes;
+import com.github.datalking.web.http.RequestMethod;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -205,7 +206,7 @@ public abstract class FrameworkServlet extends HttpServletBean {
 
         WebApplicationContext wac = null;
 
-        /// 非空表示这个Servlet类是通过编程式注册到容器中的，context也由编程式传入
+        /// 非空表示这个Servlet类是通过编程式注册到容器中的，context也由编程方式式传入
         if (this.webApplicationContext != null) {
             wac = this.webApplicationContext;
 
@@ -215,6 +216,8 @@ public abstract class FrameworkServlet extends HttpServletBean {
                     if (cwac.getParent() == null) {
                         cwac.setParent(rootContext);
                     }
+
+                    // ==== 调用ApplicationContext的refresh()，实例化bean
                     configureAndRefreshWebApplicationContext(cwac);
                 }
             }
@@ -267,11 +270,7 @@ public abstract class FrameworkServlet extends HttpServletBean {
 
     protected WebApplicationContext createWebApplicationContext(ApplicationContext parent) {
         Class<?> contextClass = getContextClass();
-        if (this.logger.isDebugEnabled()) {
-            this.logger.debug("Servlet with name '" + getServletName() +
-                    "' will try to create custom WebApplicationContext context of class '" +
-                    contextClass.getName() + "'" + ", using parent context [" + parent + "]");
-        }
+
         if (!ConfigurableWebApplicationContext.class.isAssignableFrom(contextClass)) {
             try {
                 throw new Exception("Fatal initialization error in servlet with name '" + getServletName() +
@@ -301,7 +300,12 @@ public abstract class FrameworkServlet extends HttpServletBean {
         return wac;
     }
 
+    /**
+     * 调用ApplicationContext的refresh()，实例化bean
+     */
     protected void configureAndRefreshWebApplicationContext(ConfigurableWebApplicationContext wac) {
+
+        /// ApplicationContext的id设置
         if (ObjectUtils.identityToString(wac).equals(wac.getId())) {
             // The application context id is still set to its original default value
             // -> assign a more useful id based on available information
@@ -332,14 +336,16 @@ public abstract class FrameworkServlet extends HttpServletBean {
         wac.setNamespace(getNamespace());
 //        wac.addApplicationListener(new SourceFilteringListener(wac, new ContextRefreshListener()));
 
-//        ConfigurableEnvironment env = wac.getEnvironment();
-//        if (env instanceof ConfigurableWebEnvironment) {
-//            ((ConfigurableWebEnvironment) env).initPropertySources(getServletContext(), getServletConfig());
-//        }
+        ConfigurableEnvironment env = wac.getEnvironment();
+        if (env instanceof ConfigurableWebEnvironment) {
+            ((ConfigurableWebEnvironment) env).initPropertySources(getServletContext(), getServletConfig());
+        }
 
+        // 空方法
         postProcessWebApplicationContext(wac);
         applyInitializers(wac);
 
+        // ==== 调用ApplicationContext的refresh()，实例化bean
         wac.refresh();
     }
 
@@ -375,11 +381,10 @@ public abstract class FrameworkServlet extends HttpServletBean {
             Class<?> initializerClass = Class.forName(className);
             Class<?> initializerContextClass = GenericTypeResolver.resolveTypeArgument(initializerClass, ApplicationContextInitializer.class);
             if (initializerContextClass != null) {
-                Assert.isAssignable(initializerContextClass, wac.getClass(), String.format(
-                        "Could not add context initializer [%s] since its generic parameter [%s] " +
+                Assert.isAssignable(initializerContextClass, wac.getClass(),
+                        String.format("Could not add context initializer [%s] since its generic parameter [%s] " +
                                 "is not assignable from the type of application context used by this " +
-                                "framework servlet [%s]: ", initializerClass.getName(), initializerContextClass.getName(),
-                        wac.getClass().getName()));
+                                "framework servlet [%s]: ", initializerClass.getName(), initializerContextClass.getName(), wac.getClass().getName()));
             }
 
             Object obj = initializerClass.newInstance();

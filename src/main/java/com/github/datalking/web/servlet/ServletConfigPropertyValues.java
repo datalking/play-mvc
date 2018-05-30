@@ -14,16 +14,19 @@ import java.util.Set;
  */
 public class ServletConfigPropertyValues extends MutablePropertyValues {
 
-
     public ServletConfigPropertyValues(ServletConfig config, Set<String> requiredProperties) throws ServletException {
 
         Set<String> missingProps = (requiredProperties != null && !requiredProperties.isEmpty()) ? new HashSet<>(requiredProperties) : null;
 
         Enumeration en = config.getInitParameterNames();
+
         while (en.hasMoreElements()) {
             String property = (String) en.nextElement();
+
             Object value = config.getInitParameter(property);
+
             addPropertyValue(new PropertyValue(property, value));
+
             if (missingProps != null) {
                 missingProps.remove(property);
             }

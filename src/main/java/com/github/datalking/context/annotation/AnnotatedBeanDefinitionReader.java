@@ -18,6 +18,11 @@ public class AnnotatedBeanDefinitionReader {
 
     public final String CONFIGURATION_ANNOTATION_PROCESSOR_BEAN_NAME = "play.context.annotation.internalConfigurationClassPostProcessor";
 
+    public static final String AUTOWIRED_ANNOTATION_PROCESSOR_BEAN_NAME = "play.context.annotation.internalAutowiredAnnotationBeanPostProcessor";
+
+    public static final String REQUIRED_ANNOTATION_PROCESSOR_BEAN_NAME = "play.context.annotation.internalRequiredAnnotationProcessor";
+
+
     private final BeanDefinitionRegistry registry;
 
     public AnnotatedBeanDefinitionReader(BeanDefinitionRegistry registry) {

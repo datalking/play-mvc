@@ -43,6 +43,9 @@ public class ConfigurationClassParser {
 
     private final ComponentScanAnnotationParser componentScanParser;
 
+    /**
+     * 存放@Import的类
+     */
     private final Map<ConfigurationClass, ConfigurationClass> configurationClasses = new LinkedHashMap<>();
 
     private final Stack<PropertySource<?>> propertySources = new Stack<>();
@@ -63,7 +66,6 @@ public class ConfigurationClassParser {
             if (bd instanceof AnnotatedBeanDefinition) {
                 parse(((AnnotatedBeanDefinition) bd).getMetadata(), holder.getBeanName());
             }
-
         }
 
     }
@@ -113,7 +115,8 @@ public class ConfigurationClassParser {
 
         // ==== 如果configClass标注有@ComponentScan，则获取该注解的所有属性map
         // Set<AnnotationAttributes> componentScans = attributesForRepeatable(configClass.getMetadata(), ComponentScans.class, ComponentScan.class);
-        Set<AnnotationAttributes> componentScans = attributesForRepeatable(configClass.getMetadata(), null, ComponentScan.class);
+        Set<AnnotationAttributes> componentScans = attributesForRepeatable(
+                configClass.getMetadata(), null, ComponentScan.class);
 
         if (!componentScans.isEmpty()) {
             for (AnnotationAttributes componentScan : componentScans) {
@@ -150,6 +153,10 @@ public class ConfigurationClassParser {
         for (MethodMetadata methodMetadata : beanMethods) {
             configClass.addBeanMethod(new BeanMethod(methodMetadata, configClass));
         }
+
+        // 处理接口默认方法
+
+        // 处理父类
 
     }
 

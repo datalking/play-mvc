@@ -8,6 +8,8 @@ import com.github.datalking.beans.factory.support.BeanDefinitionReader;
 import com.github.datalking.beans.factory.support.BeanDefinitionRegistry;
 import com.github.datalking.beans.factory.support.DefaultListableBeanFactory;
 import com.github.datalking.beans.factory.xml.XmlBeanDefinitionReader;
+import com.github.datalking.common.env.ConfigurableEnvironment;
+import com.github.datalking.common.env.StandardEnvironment;
 import com.github.datalking.context.ApplicationContext;
 import com.github.datalking.context.ConfigurableApplicationContext;
 import com.github.datalking.context.MessageSource;
@@ -18,6 +20,7 @@ import com.github.datalking.io.Resource;
 import com.github.datalking.io.ResourcePatternResolver;
 import com.github.datalking.util.Assert;
 import com.github.datalking.util.ObjectUtils;
+import com.github.datalking.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,12 +40,16 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
     private String configLocation;
 
+    private String[] configLocations;
+
     // beanFactoryPostProcessors在加载bean的定义之后、bean实例化之前执行
     private final List<BeanFactoryPostProcessor> beanFactoryPostProcessors = new ArrayList<>();
 
     private String id = ObjectUtils.identityToString(this);
 
     private String displayName = this.getClass().getName() + "@" + this.hashCode();
+
+    private ConfigurableEnvironment environment;
 
     private ResourcePatternResolver resourcePatternResolver;
 
@@ -112,7 +119,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
     @Override
     public void refresh() {
 
-        // 暂时用来记录启动时间
+        // 暂时用来记录启动时间，读取属性配置文件
         prepareRefresh();
 
         // 读取xml配置文件和直接输入的java配置
@@ -129,7 +136,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
             // 执行各种BeanFactoryPostProcessor，如扫描@Configuration、@Bean、@ComponentScan
             invokeBeanFactoryPostProcessors(beanFactory);
 
-            // 注册各种BeanPostProcessor，只注册，真正的调用是在getBean
+            // 注册各种BeanPostProcessor，只注册BeanDefinition，真正的实例化是在getBean
             // 实例化各种内部bean，如AspectJAutoProxyCreator
             registerBeanPostProcessors(beanFactory);
 
@@ -149,6 +156,9 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
         this.startupDate = System.currentTimeMillis();
         this.active = true;
+
+        // 读取属性配置文件，空方法，由子类实现
+        initPropertySources();
     }
 
     protected void obtainFreshBeanFactory() {
@@ -172,10 +182,26 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
     protected void prepareBeanFactory(ConfigurableListableBeanFactory beanFactory) {
 
+//        beanFactory.setBeanClassLoader(getClassLoader());
+//        beanFactory.setBeanExpressionResolver(new StandardBeanExpressionResolver(beanFactory.getBeanClassLoader()));
+//        beanFactory.addPropertyEditorRegistrar(new ResourceEditorRegistrar(this, getEnvironment()));
+
         beanFactory.addBeanPostProcessor(new ApplicationContextAwareProcessor(this));
+//        beanFactory.ignoreDependencyInterface(EnvironmentAware.class);
+//        beanFactory.ignoreDependencyInterface(ApplicationContextAware.class);
+
+
+        if (!beanFactory.containsBean(ENVIRONMENT_BEAN_NAME)) {
+            beanFactory.registerSingleton(ENVIRONMENT_BEAN_NAME, getEnvironment());
+        }
+        if (!beanFactory.containsBean(SYSTEM_PROPERTIES_BEAN_NAME)) {
+            beanFactory.registerSingleton(SYSTEM_PROPERTIES_BEAN_NAME, getEnvironment().getSystemProperties());
+        }
+        if (!beanFactory.containsBean(SYSTEM_ENVIRONMENT_BEAN_NAME)) {
+            beanFactory.registerSingleton(SYSTEM_ENVIRONMENT_BEAN_NAME, getEnvironment().getSystemEnvironment());
+        }
 
     }
-
 
     protected void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
     }
@@ -218,6 +244,10 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
         this.beanFactoryPostProcessors.add(postProcessor);
     }
 
+    // 空方法，由子类实现
+    protected void initPropertySources() {
+    }
+
     public boolean isActive() {
         return this.active;
     }
@@ -255,11 +285,28 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
     }
 
+    @Override
+    public ConfigurableEnvironment getEnvironment() {
+        if (this.environment == null) {
+            this.environment = createEnvironment();
+        }
+        return this.environment;
+    }
+
+    protected ConfigurableEnvironment createEnvironment() {
+        return new StandardEnvironment();
+    }
+
+    public void setEnvironment(ConfigurableEnvironment environment) {
+        this.environment = environment;
+    }
+
 //    protected void destroyBeans() {
 //        getBeanFactory().destroySingletons();
 //    }
 
     // ======== ApplicationContext interface ========
+
     @Override
     public String getId() {
         return this.id;
@@ -374,6 +421,38 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
         close();
     }
 
+    protected String[] getConfigLocations() {
+        return (this.configLocations != null ? this.configLocations : getDefaultConfigLocations());
+    }
+
+    protected String[] getDefaultConfigLocations() {
+        return null;
+    }
+
+    public void setConfigLocation(String location) {
+        setConfigLocations(StringUtils.tokenizeToStringArray(location, CONFIG_LOCATION_DELIMITERS));
+    }
+
+    public void setConfigLocations(String[] locations) {
+        if (locations != null) {
+            Assert.notEmpty(locations, "Config locations must not be null");
+            this.configLocations = new String[locations.length];
+
+            for (int i = 0; i < locations.length; i++) {
+
+                this.configLocations[i] = resolvePath(locations[i]).trim();
+            }
+        } else {
+            this.configLocations = null;
+        }
+    }
+
+    protected String resolvePath(String path) {
+        return getEnvironment().resolveRequiredPlaceholders(path);
+    }
+
+
+    // ======== abstract ========
     protected abstract void loadBeanDefinitions(DefaultListableBeanFactory beanFactory);
 
 }

@@ -1,8 +1,10 @@
 package com.github.datalking.web.context;
 
 import com.github.datalking.beans.factory.config.ConfigurableListableBeanFactory;
+import com.github.datalking.common.env.ConfigurableEnvironment;
+import com.github.datalking.context.ConfigurableWebEnvironment;
 import com.github.datalking.context.support.AbstractApplicationContext;
-import com.github.datalking.util.web.WebApplicationContextUtils;
+import com.github.datalking.context.support.StandardServletEnvironment;
 import com.github.datalking.web.support.ServletContextAwareProcessor;
 
 import javax.servlet.ServletConfig;
@@ -28,14 +30,17 @@ public abstract class AbstractWebApplicationContext extends AbstractApplicationC
         setDisplayName("Root WebApplicationContext");
     }
 
+    @Override
     public void setServletContext(ServletContext servletContext) {
         this.servletContext = servletContext;
     }
 
+    @Override
     public ServletContext getServletContext() {
         return this.servletContext;
     }
 
+    @Override
     public void setServletConfig(ServletConfig servletConfig) {
         this.servletConfig = servletConfig;
         if (servletConfig != null && this.servletContext == null) {
@@ -43,10 +48,12 @@ public abstract class AbstractWebApplicationContext extends AbstractApplicationC
         }
     }
 
+    @Override
     public ServletConfig getServletConfig() {
         return this.servletConfig;
     }
 
+    @Override
     public void setNamespace(String namespace) {
         this.namespace = namespace;
         if (namespace != null) {
@@ -54,10 +61,12 @@ public abstract class AbstractWebApplicationContext extends AbstractApplicationC
         }
     }
 
+    @Override
     public String getNamespace() {
         return this.namespace;
     }
 
+    @Override
     public String getApplicationName() {
         if (this.servletContext == null) {
             return "";
@@ -68,6 +77,11 @@ public abstract class AbstractWebApplicationContext extends AbstractApplicationC
         } else {
             return this.servletContext.getContextPath();
         }
+    }
+
+    @Override
+    protected ConfigurableEnvironment createEnvironment() {
+        return new StandardServletEnvironment();
     }
 
     @Override
@@ -120,6 +134,14 @@ public abstract class AbstractWebApplicationContext extends AbstractApplicationC
                 }
             }
             bf.registerSingleton(WebApplicationContext.CONTEXT_ATTRIBUTES_BEAN_NAME, Collections.unmodifiableMap(attributeMap));
+        }
+    }
+
+    @Override
+    protected void initPropertySources() {
+        ConfigurableEnvironment env = getEnvironment();
+        if (env instanceof ConfigurableWebEnvironment) {
+            ((ConfigurableWebEnvironment) env).initPropertySources(this.servletContext, this.servletConfig);
         }
     }
 

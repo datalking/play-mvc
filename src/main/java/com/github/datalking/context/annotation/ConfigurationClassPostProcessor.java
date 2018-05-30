@@ -11,11 +11,12 @@ import com.github.datalking.beans.factory.support.BeanDefinitionRegistryPostProc
 import com.github.datalking.common.Ordered;
 import com.github.datalking.common.PriorityOrdered;
 
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
- * 扫描@Configuration、@Bean、@ComponentScan执行类
+ * 执行扫描所有BeanDefinition中的@Configuration、@Bean、@ComponentScan
  * 实现了BeanFactoryPostProcessor接口
  *
  * @author yaoo on 4/13/18
@@ -23,7 +24,7 @@ import java.util.Set;
 public class ConfigurationClassPostProcessor
         implements BeanDefinitionRegistryPostProcessor, PriorityOrdered {
 
-    //private ConfigurationClassBeanDefinitionReader reader;
+    private ConfigurationClassBeanDefinitionReader reader;
 
     @Override
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) {
@@ -41,6 +42,10 @@ public class ConfigurationClassPostProcessor
 
     }
 
+    /**
+     * 扫描BeanDefinitionRegistry中所有标注有@Configuration的类
+     * 并解析该类的其他注解信息,如@Import
+     */
     private void processConfigBeanDefinitions(BeanDefinitionRegistry registry) {
 
         String[] candidateNames = registry.getBeanDefinitionNames();
@@ -75,17 +80,31 @@ public class ConfigurationClassPostProcessor
 
         // todo configCandidates按照指定的@Order排序
 
+        // 进一步解析@Configuration标注类的信息的解析器
         ConfigurationClassParser parser = new ConfigurationClassParser(registry);
 
-        // 扫描@Bean、@ComponentScan、@Import
-        parser.parse(configCandidates);
+        // 最初传入的candidates
+        Set<BeanDefinitionHolder> candidates = new LinkedHashSet<>(configCandidates);
+        Set<ConfigurationClass> alreadyParsed = new HashSet<>(configCandidates.size());
+        do {
+            // 扫描@Bean、@ComponentScan、@Import
+            parser.parse(configCandidates);
+            // 获取该@Configuration标注类上import的类
+            Set<ConfigurationClass> configClasses = new LinkedHashSet<>(parser.getConfigurationClasses());
 
-        Set<ConfigurationClass> configClasses = new LinkedHashSet<>(parser.getConfigurationClasses());
+            if (this.reader==null){
+                reader = new ConfigurationClassBeanDefinitionReader(registry);
+            }
 
-        ConfigurationClassBeanDefinitionReader reader = new ConfigurationClassBeanDefinitionReader(registry);
+            // 将标注@Bean注解的bean注册到beanDefinitionMap，包括扫描mvc的BeanDefinition，但不实例化
+            reader.loadBeanDefinitions(configClasses);
+            alreadyParsed.addAll(configClasses);
+            candidates.clear();
 
-        // 将标注@Bean注解的bean注册到beanDefinitionMap，包括扫描mvc的beanDef，但不实例化
-        reader.loadBeanDefinitions(configClasses);
+        } while (!candidates.isEmpty());
+
+
+
 
     }
 

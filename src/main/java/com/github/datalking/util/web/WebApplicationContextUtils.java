@@ -1,8 +1,14 @@
 package com.github.datalking.util.web;
 
+import com.github.datalking.common.env.MutablePropertySources;
+import com.github.datalking.common.env.PropertySource.StubPropertySource;
+import com.github.datalking.common.env.ServletConfigPropertySource;
+import com.github.datalking.common.env.ServletContextPropertySource;
+import com.github.datalking.context.support.StandardServletEnvironment;
 import com.github.datalking.util.Assert;
 import com.github.datalking.web.context.WebApplicationContext;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 
 /**
@@ -16,6 +22,7 @@ public abstract class WebApplicationContextUtils {
 
     public static WebApplicationContext getWebApplicationContext(ServletContext sc, String attrName) {
         Assert.notNull(sc, "ServletContext must not be null");
+
         Object attr = sc.getAttribute(attrName);
         if (attr == null) {
             return null;
@@ -43,6 +50,26 @@ public abstract class WebApplicationContextUtils {
         return wac;
     }
 
+    public static void initServletPropertySources(MutablePropertySources propertySources,
+                                                  ServletContext servletContext,
+                                                  ServletConfig servletConfig) {
 
+        Assert.notNull(propertySources, "propertySources must not be null");
 
+        if (servletContext != null
+                && propertySources.contains(StandardServletEnvironment.SERVLET_CONTEXT_PROPERTY_SOURCE_NAME)
+                && propertySources.get(StandardServletEnvironment.SERVLET_CONTEXT_PROPERTY_SOURCE_NAME) instanceof StubPropertySource) {
+
+            propertySources.replace(StandardServletEnvironment.SERVLET_CONTEXT_PROPERTY_SOURCE_NAME,
+                    new ServletContextPropertySource(StandardServletEnvironment.SERVLET_CONTEXT_PROPERTY_SOURCE_NAME, servletContext));
+        }
+
+        if (servletConfig != null
+                && propertySources.contains(StandardServletEnvironment.SERVLET_CONFIG_PROPERTY_SOURCE_NAME)
+                && propertySources.get(StandardServletEnvironment.SERVLET_CONFIG_PROPERTY_SOURCE_NAME) instanceof StubPropertySource) {
+
+            propertySources.replace(StandardServletEnvironment.SERVLET_CONFIG_PROPERTY_SOURCE_NAME,
+                    new ServletConfigPropertySource(StandardServletEnvironment.SERVLET_CONFIG_PROPERTY_SOURCE_NAME, servletConfig));
+        }
+    }
 }

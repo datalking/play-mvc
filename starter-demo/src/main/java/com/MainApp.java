@@ -1,4 +1,4 @@
-package com.soecode.lyf;
+package com;
 
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.WebResourceRoot;

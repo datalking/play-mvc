@@ -2,7 +2,6 @@ package com.github.datalking.web.servlet;
 
 import com.github.datalking.beans.BeanWrapper;
 import com.github.datalking.beans.BeanWrapperImpl;
-import com.github.datalking.beans.PropertyAccessorFactory;
 import com.github.datalking.beans.PropertyValues;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,22 +30,25 @@ public abstract class HttpServletBean extends HttpServlet {
             logger.debug("Initializing servlet '" + getServletName() + "'");
         }
 
-        try {
-            PropertyValues pvs = new ServletConfigPropertyValues(getServletConfig(), this.requiredProperties);
-//            BeanWrapper bw = PropertyAccessorFactory.forBeanPropertyAccess(this);
-            BeanWrapper bw = new BeanWrapperImpl(this);
-            //ResourceLoader resourceLoader = new ServletContextResourceLoader(getServletContext());
-            //bw.registerCustomEditor(Resource.class, new ResourceEditor(resourceLoader, getEnvironment()));
+        PropertyValues pvs = new ServletConfigPropertyValues(getServletConfig(), this.requiredProperties);
+        if (!pvs.isEmpty()) {
+            try {
 
-            // 空方法，留给子类实现
-            initBeanWrapper(bw);
-            bw.setPropertyValues(pvs);
-        } catch (Exception ex) {
-            logger.error("Failed to set bean properties on servlet '" + getServletName() + "'", ex);
-            ex.printStackTrace();
+                // BeanWrapper bw = PropertyAccessorFactory.forBeanPropertyAccess(this);
+                BeanWrapper bw = new BeanWrapperImpl(this);
+                // ResourceLoader resourceLoader = new ServletContextResourceLoader(getServletContext());
+                // bw.registerCustomEditor(Resource.class, new ResourceEditor(resourceLoader, getEnvironment()));
+
+                // 空方法，留给子类实现
+                initBeanWrapper(bw);
+                bw.setPropertyValues(pvs);
+            } catch (Exception ex) {
+                logger.error("Failed to set bean properties on servlet '" + getServletName() + "'", ex);
+                ex.printStackTrace();
+            }
         }
 
-        // ==== 留给子类实现
+        // ==== 留给子类实现，创建WebApplicationContext
         initServletBean();
 
         if (logger.isDebugEnabled()) {
@@ -58,7 +60,13 @@ public abstract class HttpServletBean extends HttpServlet {
         this.requiredProperties.add(property);
     }
 
-    protected void initBeanWrapper(BeanWrapper bw) throws Exception {
+    protected void initBeanWrapper(BeanWrapper bw) {
+    }
+
+    /**
+     * 创建WebApplicationContext
+     */
+    protected void initServletBean() throws ServletException {
     }
 
     @Override
@@ -69,9 +77,6 @@ public abstract class HttpServletBean extends HttpServlet {
     @Override
     public final ServletContext getServletContext() {
         return (getServletConfig() != null ? getServletConfig().getServletContext() : null);
-    }
-
-    protected void initServletBean() throws ServletException {
     }
 
 

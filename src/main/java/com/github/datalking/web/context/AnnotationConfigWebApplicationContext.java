@@ -16,7 +16,7 @@ import java.util.Set;
  */
 public class AnnotationConfigWebApplicationContext extends AbstractWebApplicationContext {
 
-    private Logger logger = LoggerFactory.getLogger(AnnotationConfigWebApplicationContext.class);
+    private final Logger logger = LoggerFactory.getLogger(AnnotationConfigWebApplicationContext.class);
 
     private final Set<Class<?>> annotatedClasses = new LinkedHashSet<>();
 
@@ -35,8 +35,9 @@ public class AnnotationConfigWebApplicationContext extends AbstractWebApplicatio
 
     @Override
     protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) {
+
         AnnotatedBeanDefinitionReader reader = new AnnotatedBeanDefinitionReader(beanFactory);
-        //reader.setEnvironment(getEnvironment());
+        // reader.setEnvironment(getEnvironment());
 
         ClassPathBeanDefinitionScanner scanner = new ClassPathBeanDefinitionScanner(beanFactory);
         // scanner.setEnvironment(getEnvironment());
@@ -53,21 +54,15 @@ public class AnnotationConfigWebApplicationContext extends AbstractWebApplicatio
 //            scanner.setScopeMetadataResolver(scopeMetadataResolver);
 //        }
 
-        /// 添加显式声明的class beanDef
+        /// 添加显式声明的class BeanDefinition
         if (!this.annotatedClasses.isEmpty()) {
-            if (logger.isInfoEnabled()) {
-//                logger.info("Registering annotated classes: [" +
-//                        StringUtils.collectionToCommaDelimitedString(this.annotatedClasses) + "]");
-            }
+
             reader.register(this.annotatedClasses.toArray(new Class<?>[this.annotatedClasses.size()]));
         }
 
-        // 扫描指定包下的beanDef
+        // 扫描指定包下的Bean
         if (!this.basePackages.isEmpty()) {
-            if (logger.isInfoEnabled()) {
-//                logger.info("Scanning base packages: [" +
-//                        StringUtils.collectionToCommaDelimitedString(this.basePackages) + "]");
-            }
+
             scanner.scan(this.basePackages.toArray(new String[this.basePackages.size()]));
         }
 

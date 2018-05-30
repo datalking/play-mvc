@@ -1,6 +1,7 @@
 package com.github.datalking.context;
 
 import com.github.datalking.beans.factory.config.ConfigurableListableBeanFactory;
+import com.github.datalking.common.env.ConfigurableEnvironment;
 
 /**
  * 可配置的ApplicationContext 接口
@@ -15,6 +16,10 @@ public interface ConfigurableApplicationContext extends ApplicationContext {
 
     String ENVIRONMENT_BEAN_NAME = "environment";
 
+    String SYSTEM_PROPERTIES_BEAN_NAME = "systemProperties";
+
+    String SYSTEM_ENVIRONMENT_BEAN_NAME = "systemEnvironment";
+
     void refresh();
 
     boolean isActive();
@@ -24,5 +29,9 @@ public interface ConfigurableApplicationContext extends ApplicationContext {
     void close();
 
     ConfigurableListableBeanFactory getBeanFactory();
+
+    ConfigurableEnvironment getEnvironment();
+
+    void setEnvironment(ConfigurableEnvironment environment);
 
 }

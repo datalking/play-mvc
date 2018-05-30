@@ -33,11 +33,11 @@
             <artifactId>mybatis</artifactId>
             <version>3.4.4</version>
         </dependency>
-        <dependency>
-            <groupId>com.github.datalking</groupId>
-            <artifactId>mybatis-play-mvc</artifactId>
-            <version>0.0.1</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.github.datalking</groupId>-->
+            <!--<artifactId>mybatis-play-mvc</artifactId>-->
+            <!--<version>0.0.1</version>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
@@ -54,13 +54,13 @@
             <groupId>org.apache.tomcat.embed</groupId>
             <artifactId>tomcat-embed-core</artifactId>
             <version>8.0.47</version>
-            <scope>provided</scope>
+            <!--<scope>provided</scope>-->
         </dependency>
         <dependency>
             <groupId>org.apache.tomcat.embed</groupId>
             <artifactId>tomcat-embed-jasper</artifactId>
             <version>8.0.47</version>
-            <scope>provided</scope>
+            <!--<scope>provided</scope>-->
         </dependency>
         <!-- Servlet -->
         <dependency>

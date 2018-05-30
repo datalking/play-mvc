@@ -22,6 +22,9 @@ public class ConfigurationClass {
 
     private final Set<BeanMethod> beanMethods = new LinkedHashSet<>();
 
+    /**
+     * 存放@Import的类及注解信息
+     */
     private final Map<ImportBeanDefinitionRegistrar, AnnotationMetadata> importBeanDefinitionRegistrars = new LinkedHashMap<>();
 
     private boolean imported = false;
