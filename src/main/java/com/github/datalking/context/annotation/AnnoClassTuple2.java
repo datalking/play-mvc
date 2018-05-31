@@ -1,9 +1,10 @@
 package com.github.datalking.context.annotation;
 
 import java.lang.annotation.Annotation;
-import java.util.Arrays;
 
 /**
+ * 注解和该注解所属的class
+ *
  * @author yaoo on 4/17/18
  */
 public class AnnoClassTuple2 {

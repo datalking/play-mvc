@@ -225,7 +225,7 @@ public class ConfigurationClassParser {
                     e.printStackTrace();
                 }
 
-                // 将@Import的class加入configClass的map，用于直接注册BeanDefinition
+                // 将@Import的class作为map加入configClass的importBeanDefinitionRegistrars，加入的class必须实现ImportBeanDefinitionRegistrar接口
                 configClass.addImportBeanDefinitionRegistrar(obj, c.getMetadata());
             } else {
                 // 将该类作为普通@Configuration标注的类进行处理，添加到configurationClasses map
@@ -240,14 +240,17 @@ public class ConfigurationClassParser {
     }
 
     /**
-     * 获取@Import注解指定的类
+     * 获取confClass上@Import注解指定的类及这些类元注解中@Import的其他类
      */
     private Set<ConfigurationClass> getImports(ConfigurationClass confClass) {
+        // 保存直接或间接@Import的所有类，作为返回值
         Set<ConfigurationClass> imports = new LinkedHashSet<>();
         Set<Class> visited = new LinkedHashSet<>();
 
+        // 获取confClass的所有anno
         Annotation[] annos = confClass.getMetadata().getAnnotations();
 
+        /// 保存anno和该anno所属的class
         Deque<AnnoClassTuple2> stack = new ArrayDeque<>();
         for (Annotation annotation : annos) {
             AnnoClassTuple2 annoClass = new AnnoClassTuple2(annotation, ((StandardAnnotationMetadata) confClass.getMetadata()).getIntrospectedClass());
@@ -258,30 +261,36 @@ public class ConfigurationClassParser {
         while (!stack.isEmpty()) {
             AnnoClassTuple2 ac = stack.pop();
 
+            // 获取该anno的type
             Class annoTypeClass = ac.getAnnotation().annotationType();
 
+            /// 若该anno是@Import，则获取导入的类
             if (annoTypeClass.getName().equals(Import.class.getName())) {
-
+                // 获取@Import导入的所有类
                 Class<?>[] importedClass = ac.getClazz().getAnnotation(Import.class).value();
 
+                /// 遍历@Import的类，标记为imported
                 for (Class c : importedClass) {
                     ConfigurationClass cc = new ConfigurationClass(c, ClassUtils.getCamelCaseNameFromClass(c));
                     cc.setImported(true);
                     imports.add(cc);
                 }
 
-            } else {
+            }
+            /// 若该anno不是@Import，则标记为已访问，再将未访问的元注解入栈
+            else {
                 visited.add(annoTypeClass);
 
                 Annotation[] annos2 = annoTypeClass.getAnnotations();
+                /// 遍历该类的注解，入栈新注解
                 for (Annotation a : annos2) {
                     AnnoClassTuple2 ac2 = new AnnoClassTuple2(a, annoTypeClass);
+
+                    /// 若将未访问过的，且不在栈中
                     if (!visited.contains(a.annotationType()) && !stack.contains(ac2)) {
                         stack.push(ac2);
-
                     }
                 }
-
             }
 
         }

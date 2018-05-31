@@ -26,7 +26,7 @@ public class ConfigurationClass {
     private final Set<BeanMethod> beanMethods = new LinkedHashSet<>();
 
     /**
-     * 该类上@Import导入的类 -> 该类注解元数据
+     * 该类上@Import导入的类 -> 该类注解元数据，且作为key的类实现了ImportBeanDefinitionRegistrar接口
      */
     private final Map<ImportBeanDefinitionRegistrar, AnnotationMetadata> importBeanDefinitionRegistrars = new LinkedHashMap<>();
 

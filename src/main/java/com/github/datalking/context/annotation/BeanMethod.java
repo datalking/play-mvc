@@ -3,6 +3,8 @@ package com.github.datalking.context.annotation;
 import com.github.datalking.annotation.meta.MethodMetadata;
 
 /**
+ * ConfigurationClass中带有@Bean注解的方法
+ *
  * @author yaoo on 4/13/18
  */
 public class BeanMethod {

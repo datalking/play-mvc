@@ -90,6 +90,7 @@ public class ConfigurationClassPostProcessor
         // 记录已解析的类
         Set<ConfigurationClass> alreadyParsed = new HashSet<>(configCandidates.size());
 
+        /// 若candidates非空，则循环执行，一般执行一次后就为空
         do {
             // 解析@Bean、@ComponentScan、@Import
             parser.parse(configCandidates);
@@ -102,7 +103,7 @@ public class ConfigurationClassPostProcessor
                 reader = new ConfigurationClassBeanDefinitionReader(registry);
             }
 
-            // 将标注@Bean注解的bean注册到beanDefinitionMap，包括扫描mvc的BeanDefinition，但不实例化
+            // 将上面扫描到的bean和带有@Bean注解方法指定的bean注册到beanDefinitionMap，包括扫描mvc的BeanDefinition，但不实例化
             reader.loadBeanDefinitions(configClasses);
 
             alreadyParsed.addAll(configClasses);

@@ -24,20 +24,24 @@ public class ConfigurationClassBeanDefinitionReader {
     }
 
     /**
-     * 将ConfigurationClass的类信息注册到beanDefinitionMap
+     * 注册BeanDefinition的入口
      */
     public void loadBeanDefinitions(Set<ConfigurationClass> configurationModel) {
 
+        /// 遍历ConfigurationClass并注册
         for (ConfigurationClass configClass : configurationModel) {
 
             loadBeanDefinitionsForConfigurationClass(configClass);
         }
-
     }
 
 
+    /**
+     * 将ConfigurationClass的自身和其中的beanMethod注册到beanDefinitionMap
+     */
     private void loadBeanDefinitionsForConfigurationClass(ConfigurationClass configClass) {
 
+        /// 只需处理注解或间隔@通过Import指定的类
         if (configClass.isImported()) {
             registerBeanDefinitionForImportedConfigurationClass(configClass);
         }
@@ -48,11 +52,14 @@ public class ConfigurationClassBeanDefinitionReader {
             loadBeanDefinitionsForBeanMethod(beanMethod);
         }
 
-        // 查找@Import注解上的bean定义，并注册BeanDefinition
+        // 获取@Import注解上指定的类的BeanDefinition，该类必须实现ImportBeanDefinitionRegistrar接口
+        // 再调用接口中的方法注册需要的bean，如这里可以注册mybatis的dao
         loadBeanDefinitionsFromRegistrars(configClass.getImportBeanDefinitionRegistrars());
-
     }
 
+    /**
+     * 注册ConfigurationClass自身
+     */
     private void registerBeanDefinitionForImportedConfigurationClass(ConfigurationClass configClass) {
         AnnotationMetadata metadata = configClass.getMetadata();
         AnnotatedGenericBeanDefinition configBeanDef = new AnnotatedGenericBeanDefinition(metadata);
@@ -63,9 +70,11 @@ public class ConfigurationClassBeanDefinitionReader {
         BeanDefinitionHolder definitionHolder = new BeanDefinitionHolder(configBeanDef, configBeanName);
         this.registry.registerBeanDefinition(definitionHolder.getBeanName(), definitionHolder.getBeanDefinition());
 //        configClass.setBeanName(configBeanName);
-
     }
 
+    /**
+     * 注册ConfigurationClass中的BeanMethod
+     */
     private void loadBeanDefinitionsForBeanMethod(BeanMethod beanMethod) {
 
         ConfigurationClass configClass = beanMethod.getConfigurationClass();
@@ -86,13 +95,16 @@ public class ConfigurationClassBeanDefinitionReader {
 
     }
 
-
+    /**
+     * 通过调用实现了ImportBeanDefinitionRegistrar接口的class的方法，注册需要的bean
+     * 如注册mybatis的dao
+     */
     private void loadBeanDefinitionsFromRegistrars(Map<ImportBeanDefinitionRegistrar, AnnotationMetadata> registrars) {
 
         for (Map.Entry<ImportBeanDefinitionRegistrar, AnnotationMetadata> entry : registrars.entrySet()) {
+            // 先获取ImportBeanDefinitionRegistrar对象，再调用该对象的方法注册BeanDefinition，本方法并不直接注册BeanDefinition
             entry.getKey().registerBeanDefinitions(entry.getValue(), this.registry);
         }
-
     }
 
 }
