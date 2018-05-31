@@ -75,12 +75,23 @@ public class PropertyPlaceholderHelper {
         return parseStringValue(value, placeholderResolver, new HashSet<>());
     }
 
+    /**
+     * 名称中占位符解析
+     *
+     * @param strVal              含有占位符的名称
+     * @param placeholderResolver 解析器
+     * @param visitedPlaceholders 已解析的占位符
+     * @return 解析后的名称
+     */
     protected String parseStringValue(
             String strVal, PlaceholderResolver placeholderResolver, Set<String> visitedPlaceholders) {
 
         StringBuilder result = new StringBuilder(strVal);
 
+        // 在名称字符串中查找占位符前缀
         int startIndex = strVal.indexOf(this.placeholderPrefix);
+
+        /// 若名称中包含占位符
         while (startIndex != -1) {
             int endIndex = findPlaceholderEndIndex(result, startIndex);
             if (endIndex != -1) {

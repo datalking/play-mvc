@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * 将ConfigurationClass的类信息注册到beanDefinitionMap
+ *
  * @author yaoo on 4/13/18
  */
 public class ConfigurationClassBeanDefinitionReader {
@@ -21,14 +23,15 @@ public class ConfigurationClassBeanDefinitionReader {
         this.registry = registry;
     }
 
-
+    /**
+     * 将ConfigurationClass的类信息注册到beanDefinitionMap
+     */
     public void loadBeanDefinitions(Set<ConfigurationClass> configurationModel) {
 
         for (ConfigurationClass configClass : configurationModel) {
 
             loadBeanDefinitionsForConfigurationClass(configClass);
         }
-
 
     }
 

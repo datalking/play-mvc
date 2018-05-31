@@ -20,10 +20,13 @@ public class ConfigurationClass {
 
     private final AnnotationMetadata metadata;
 
+    /**
+     * 该类中包含@Bean注解的方法
+     */
     private final Set<BeanMethod> beanMethods = new LinkedHashSet<>();
 
     /**
-     * 存放@Import的类及注解信息
+     * 该类上@Import导入的类 -> 该类注解元数据
      */
     private final Map<ImportBeanDefinitionRegistrar, AnnotationMetadata> importBeanDefinitionRegistrars = new LinkedHashMap<>();
 

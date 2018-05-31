@@ -44,7 +44,7 @@ public class ConfigurationClassParser {
     private final ComponentScanAnnotationParser componentScanParser;
 
     /**
-     * 存放@Import的类
+     * 存放已经解析过的configClass，多是@Import注解指定的类，也可以是mvc、dao相关的bean
      */
     private final Map<ConfigurationClass, ConfigurationClass> configurationClasses = new LinkedHashMap<>();
 
@@ -67,7 +67,6 @@ public class ConfigurationClassParser {
                 parse(((AnnotatedBeanDefinition) bd).getMetadata(), holder.getBeanName());
             }
         }
-
     }
 
     private void parse(AnnotationMetadata metadata, String beanName) {
@@ -85,7 +84,7 @@ public class ConfigurationClassParser {
 //            this.configurationClasses.remove(configClass);
 //        }
 
-        // ==== 真正扫描@Configuration、@Bean、@ComponentScan
+        // ==== 真正扫描@Configuration、@Bean、@ComponentScan todo 处理configClass的父类
         doProcessConfigurationClass(configClass);
 
         // 存储扫描结果
@@ -101,33 +100,34 @@ public class ConfigurationClassParser {
      */
     private void doProcessConfigurationClass(ConfigurationClass configClass) {
 
-        // 如果configClass标注有@PropertySource
+        // 如果configClass标注有@PropertySource，则获取该注解的所有属性map
         Set<AnnotationAttributes> propertySources = attributesForRepeatable(
                 configClass.getMetadata(), null, com.github.datalking.annotation.PropertySource.class);
 
         if (propertySources != null && !propertySources.isEmpty()) {
 
+            /// 遍历注解属性值
             for (AnnotationAttributes propertySource : propertySources) {
-
                 processPropertySource(propertySource);
             }
         }
 
-        // ==== 如果configClass标注有@ComponentScan，则获取该注解的所有属性map
+        // 如果configClass标注有@ComponentScan，则获取该注解的所有属性map
         // Set<AnnotationAttributes> componentScans = attributesForRepeatable(configClass.getMetadata(), ComponentScans.class, ComponentScan.class);
         Set<AnnotationAttributes> componentScans = attributesForRepeatable(
                 configClass.getMetadata(), null, ComponentScan.class);
 
         if (!componentScans.isEmpty()) {
-            for (AnnotationAttributes componentScan : componentScans) {
 
-                // 通过ComponentScanAnnotationParser解析@ComponentScan注解
+            /// 遍历Set<AnnotationAttributes>
+            for (AnnotationAttributes componentScan : componentScans) {
+                // 通过ComponentScanAnnotationParser解析@ComponentScan注解，扫描指定包下的bean，一般是dao或mvc
                 Set<BeanDefinitionHolder> scannedBeanDefinitions = this.componentScanParser.parse(componentScan, configClass.getMetadata().getClassName());
 
+                // 递归处理各个扫描到的bean
                 for (BeanDefinitionHolder holder : scannedBeanDefinitions) {
 
                     AbstractBeanDefinition bd = (AbstractBeanDefinition) holder.getBeanDefinition();
-
                     Class clazz = ((AbstractAutowireCapableBeanFactory) registry).doResolveBeanClass(bd);
 
                     // 将配置的各个包下的Component类扫描出来 full lite  todo递归中止条件
@@ -140,10 +140,10 @@ public class ConfigurationClassParser {
             }
         }
 
-
+        // 获取configClass类上直接@Import导入的类，或元注解中包含@Import的类
         Set<ConfigurationClass> imports = getImports(configClass);
         if (imports != null && imports.size() > 0) {
-            // 循环处理注解中含有@import的类，如@EnableWebMvc，@EnableAspectJAutoProxy
+            // 处理@Import导入的类，如@EnableWebMvc，@EnableAspectJAutoProxy
             processImports(configClass, imports);
         }
 
@@ -163,13 +163,14 @@ public class ConfigurationClassParser {
     private void processPropertySource(AnnotationAttributes propertySource) {
 
         String name = propertySource.getString("name");
+        // 获取@PropertySource中value的值，即配置的属性文件路径
         String[] locations = propertySource.getStringArray("value");
-
         int locationCount = locations.length;
         if (locationCount == 0) {
             throw new IllegalArgumentException("At least one @PropertySource(value) location is required");
         }
 
+        /// 遍历所有文件路径，解析文件名中的占位符
         for (int i = 0; i < locationCount; i++) {
             locations[i] = this.environment.resolveRequiredPlaceholders(locations[i]);
         }
@@ -181,9 +182,13 @@ public class ConfigurationClassParser {
                 this.propertySources.push(new ResourcePropertySource(location, classLoader));
             }
         } else {
+
+            /// 如果仅指定了1个属性文件
             if (locationCount == 1) {
                 this.propertySources.push(new ResourcePropertySource(name, locations[0], classLoader));
-            } else {
+            }
+            /// 如果指定了多个属性文件
+            else {
                 CompositePropertySource ps = new CompositePropertySource(name);
                 for (int i = locations.length - 1; i >= 0; i--) {
                     ps.addPropertySource(new ResourcePropertySource(locations[i], classLoader));
@@ -197,6 +202,9 @@ public class ConfigurationClassParser {
     /**
      * 将@Import的类加入beanDefinitionMap
      * 包括@EnableAspectJAutoProxy
+     *
+     * @param configClass      含有@Configuration注解的类A
+     * @param importCandidates 该类A上@Import注解指定的类
      */
     private void processImports(ConfigurationClass configClass, Collection<ConfigurationClass> importCandidates) {
 
@@ -204,8 +212,11 @@ public class ConfigurationClassParser {
             return;
         }
 
+        /// 遍历@Import的类
         for (ConfigurationClass c : importCandidates) {
             Class curClass = ((StandardAnnotationMetadata) c.getMetadata()).getIntrospectedClass();
+
+            /// 若该类是ImportBeanDefinitionRegistrar接口的实现类
             if (ImportBeanDefinitionRegistrar.class.isAssignableFrom(curClass)) {
                 ImportBeanDefinitionRegistrar obj = null;
                 try {
@@ -213,11 +224,11 @@ public class ConfigurationClassParser {
                 } catch (InstantiationException | IllegalAccessException e) {
                     e.printStackTrace();
                 }
-                // 将@Import的class加入configClass的map
-                configClass.addImportBeanDefinitionRegistrar(obj, c.getMetadata());
 
+                // 将@Import的class加入configClass的map，用于直接注册BeanDefinition
+                configClass.addImportBeanDefinitionRegistrar(obj, c.getMetadata());
             } else {
-                /// 作为 @Configuration class处理，添加到configurationClasses map
+                // 将该类作为普通@Configuration标注的类进行处理，添加到configurationClasses map
                 processConfigurationClass(c);
 
             }

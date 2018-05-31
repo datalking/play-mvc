@@ -43,8 +43,7 @@ public abstract class EnumerablePropertySource<T> extends PropertySource<T> {
     }
 
     /**
-     * Return the names of all properties contained by the
-     * {@linkplain #getSource() source} object (never {@code null}).
+     * Return the names of all properties contained by the {@linkplain #getSource() source} object (never {@code null}).
      */
     public abstract String[] getPropertyNames();
 

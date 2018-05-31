@@ -21,7 +21,8 @@ public interface BeanDefinitionRegistry {
 
     String[] getBeanDefinitionNames();
 
-//    int getBeanDefinitionCount();
+    int getBeanDefinitionCount();
+
 //    boolean isBeanNameInUse(String beanName);
 
 }

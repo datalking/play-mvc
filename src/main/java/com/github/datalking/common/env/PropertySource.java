@@ -29,22 +29,14 @@ public abstract class PropertySource<T> {
      * <p>Often useful in testing scenarios when creating anonymous implementations that
      * never query an actual source but rather return hard-coded values.
      */
-    @SuppressWarnings("unchecked")
     public PropertySource(String name) {
         this(name, (T) new Object());
     }
 
-
-    /**
-     * Return the name of this {@code PropertySource}
-     */
     public String getName() {
         return this.name;
     }
 
-    /**
-     * Return the underlying source object for this {@code PropertySource}.
-     */
     public T getSource() {
         return this.source;
     }
@@ -85,23 +77,11 @@ public abstract class PropertySource<T> {
                 ObjectUtils.nullSafeEquals(this.name, ((PropertySource<?>) obj).name)));
     }
 
-    /**
-     * Return a hash code derived from the {@code name} property
-     * of this {@code PropertySource} object.
-     */
     @Override
     public int hashCode() {
         return ObjectUtils.nullSafeHashCode(this.name);
     }
 
-    /**
-     * Produce concise output (type and name) if the current log level does not include
-     * debug. If debug is enabled, produce verbose output including the hash code of the
-     * PropertySource instance and every name/value property pair.
-     * <p>This variable verbosity is useful as a property source such as system properties
-     * or environment variables may contain an arbitrary number of property pairs,
-     * potentially leading to difficult to read exception and log messages.
-     */
     @Override
     public String toString() {
         if (logger.isDebugEnabled()) {

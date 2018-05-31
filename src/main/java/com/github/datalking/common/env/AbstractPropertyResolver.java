@@ -69,14 +69,11 @@ public abstract class AbstractPropertyResolver implements ConfigurablePropertyRe
     }
 
     /**
-     * Set whether to throw an exception when encountering an unresolvable placeholder
-     * nested within the value of a given property. A {@code false} value indicates strict
-     * resolution, i.e. that an exception will be thrown. A {@code true} value indicates
-     * that unresolvable nested placeholders should be passed through in their unresolved
+     * Set whether to throw an exception when encountering an unresolvable placeholder nested within the value of a given property.
+     * A {@code false} value indicates strict resolution, i.e. that an exception will be thrown.
+     * A {@code true} value indicates that unresolvable nested placeholders should be passed through in their unresolved
      * ${...} form.
      * <p>The default is {@code false}.
-     *
-     * @since 3.2
      */
     public void setIgnoreUnresolvableNestedPlaceholders(boolean ignoreUnresolvableNestedPlaceholders) {
         this.ignoreUnresolvableNestedPlaceholders = ignoreUnresolvableNestedPlaceholders;
@@ -99,7 +96,6 @@ public abstract class AbstractPropertyResolver implements ConfigurablePropertyRe
 //            throw ex;
 //        }
     }
-
 
     public String getProperty(String key, String defaultValue) {
         String value = getProperty(key);
@@ -131,29 +127,21 @@ public abstract class AbstractPropertyResolver implements ConfigurablePropertyRe
         if (this.nonStrictHelper == null) {
             this.nonStrictHelper = createPlaceholderHelper(true);
         }
+
         return doResolvePlaceholders(text, this.nonStrictHelper);
     }
 
     public String resolveRequiredPlaceholders(String text) throws IllegalArgumentException {
+
         if (this.strictHelper == null) {
+            // 创建占位符解析器
             this.strictHelper = createPlaceholderHelper(false);
         }
+
+        // 负责解析路径中或者名称中含有占位符的字串
         return doResolvePlaceholders(text, this.strictHelper);
     }
 
-    /**
-     * Resolve placeholders within the given string, deferring to the value of
-     * {@link #setIgnoreUnresolvableNestedPlaceholders} to determine whether any
-     * unresolvable placeholders should raise an exception or be ignored.
-     * <p>Invoked from {@link #getProperty} and its variants, implicitly resolving
-     * nested placeholders. In contrast, {@link #resolvePlaceholders} and
-     * {@link #resolveRequiredPlaceholders} do <emphasis>not</emphasis> delegate
-     * to this method but rather perform their own handling of unresolvable
-     * placeholders, as specified by each of those methods.
-     *
-     * @see #setIgnoreUnresolvableNestedPlaceholders
-     * @since 3.2
-     */
     protected String resolveNestedPlaceholders(String value) {
         return (this.ignoreUnresolvableNestedPlaceholders ?
                 resolvePlaceholders(value) : resolveRequiredPlaceholders(value));
@@ -168,8 +156,14 @@ public abstract class AbstractPropertyResolver implements ConfigurablePropertyRe
                 ignoreUnresolvablePlaceholders);
     }
 
+    /**
+     * 负责解析路径中或者名字中含有占位符的字串，并负责填充上具体的值
+     */
     private String doResolvePlaceholders(String text, PropertyPlaceholderHelper helper) {
+
         return helper.replacePlaceholders(text, new PropertyPlaceholderHelper.PlaceholderResolver() {
+
+            @Override
             public String resolvePlaceholder(String placeholderName) {
                 return getPropertyAsRawString(placeholderName);
             }
@@ -178,8 +172,7 @@ public abstract class AbstractPropertyResolver implements ConfigurablePropertyRe
 
 
     /**
-     * Retrieve the specified property as a raw String,
-     * i.e. without resolution of nested placeholders.
+     * Retrieve the specified property as a raw String, i.e. without resolution of nested placeholders.
      *
      * @param key the property name to resolve
      * @return the property value or {@code null} if none found

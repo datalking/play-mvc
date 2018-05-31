@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 扫描@MapperScan注解标注的包，并注册Mapper接口
+ * 扫描@MapperScan注解指定的包，并注册Mapper接口
  * <p>
  * A {@link ImportBeanDefinitionRegistrar} to allow annotation configuration of MyBatis mapper scanning.
  * Using an @Enable annotation allows beans to be registered via @Component configuration,

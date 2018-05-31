@@ -11,6 +11,7 @@ import com.github.datalking.beans.factory.support.BeanDefinitionRegistryPostProc
 import com.github.datalking.common.Ordered;
 import com.github.datalking.common.PriorityOrdered;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -48,22 +49,21 @@ public class ConfigurationClassPostProcessor
      */
     private void processConfigBeanDefinitions(BeanDefinitionRegistry registry) {
 
+        // 获取所有已注册的BeanDefinition
         String[] candidateNames = registry.getBeanDefinitionNames();
 
-        // 保存所有带有注解@Configuration的对象
+        // 用来保存所有带有@Configuration注解的对象，最初一般是显式指定的类
         Set<BeanDefinitionHolder> configCandidates = new LinkedHashSet<>();
 
+        /// 遍历所有BeanDefinition，查找其中带有@Configuration的对象
         for (String beanName : candidateNames) {
-
             BeanDefinition beanDef = registry.getBeanDefinition(beanName);
-
             if (beanDef.getBeanClassName() == null) {
                 return;
             }
 
             /// 加载类
-            Class beanClass = null;
-            beanClass = ((AbstractAutowireCapableBeanFactory) registry).doResolveBeanClass((AbstractBeanDefinition) beanDef);
+            Class beanClass = ((AbstractAutowireCapableBeanFactory) registry).doResolveBeanClass((AbstractBeanDefinition) beanDef);
             ((AbstractBeanDefinition) beanDef).setBeanClass(beanClass);
 
             // 获取所有被@Configuration标注的类 对应的BeanDefinition
@@ -78,32 +78,67 @@ public class ConfigurationClassPostProcessor
             return;
         }
 
+//        Collections.sort(configCandidates, new Comparator
+
         // todo configCandidates按照指定的@Order排序
 
         // 进一步解析@Configuration标注类的信息的解析器
         ConfigurationClassParser parser = new ConfigurationClassParser(registry);
 
-        // 最初传入的candidates
+        // 记录带有@Configuration注解的candidates
         Set<BeanDefinitionHolder> candidates = new LinkedHashSet<>(configCandidates);
+        // 记录已解析的类
         Set<ConfigurationClass> alreadyParsed = new HashSet<>(configCandidates.size());
-        do {
-            // 扫描@Bean、@ComponentScan、@Import
-            parser.parse(configCandidates);
-            // 获取该@Configuration标注类上import的类
-            Set<ConfigurationClass> configClasses = new LinkedHashSet<>(parser.getConfigurationClasses());
 
-            if (this.reader==null){
+        do {
+            // 解析@Bean、@ComponentScan、@Import
+            parser.parse(configCandidates);
+
+            // 获取已经解析过的类，一般是该@Configuration标注类上@Import指定的类
+            Set<ConfigurationClass> configClasses = new LinkedHashSet<>(parser.getConfigurationClasses());
+            configClasses.removeAll(alreadyParsed);
+
+            if (this.reader == null) {
                 reader = new ConfigurationClassBeanDefinitionReader(registry);
             }
 
             // 将标注@Bean注解的bean注册到beanDefinitionMap，包括扫描mvc的BeanDefinition，但不实例化
             reader.loadBeanDefinitions(configClasses);
+
             alreadyParsed.addAll(configClasses);
             candidates.clear();
 
+            /// 处理上面扫描期间新增的bean
+            if (registry.getBeanDefinitionCount() > candidateNames.length) {
+
+                String[] newCandidateNames = registry.getBeanDefinitionNames();
+                Set<String> oldCandidateNames = new HashSet<>(Arrays.asList(candidateNames));
+                Set<String> alreadyParsedClasses = new HashSet<>();
+
+                for (ConfigurationClass configurationClass : alreadyParsed) {
+                    alreadyParsedClasses.add(configurationClass.getMetadata().getClassName());
+                }
+
+                for (String candidateName : newCandidateNames) {
+
+                    if (!oldCandidateNames.contains(candidateName)) {
+                        BeanDefinition bd = registry.getBeanDefinition(candidateName);
+                        // if (ConfigurationClassUtils.checkConfigurationClassCandidate(bd, this.metadataReaderFactory)
+                        /// 加载类
+                        Class beanClass = ((AbstractAutowireCapableBeanFactory) registry).doResolveBeanClass((AbstractBeanDefinition) bd);
+                        ((AbstractBeanDefinition) bd).setBeanClass(beanClass);
+
+                        if (beanClass != null && beanClass.isAnnotationPresent(Configuration.class)
+                                && !alreadyParsedClasses.contains(bd.getBeanClassName())) {
+                            candidates.add(new BeanDefinitionHolder(bd, candidateName));
+                        }
+                    }
+                }
+
+                candidateNames = newCandidateNames;
+            }
+
         } while (!candidates.isEmpty());
-
-
 
 
     }

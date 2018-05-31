@@ -2,12 +2,13 @@ package com.github.datalking.context.annotation;
 
 import com.github.datalking.annotation.meta.AnnotationMetadata;
 import com.github.datalking.aop.aspectj.AnnotationAwareAspectJAutoProxyCreator;
-import com.github.datalking.beans.factory.config.BeanDefinition;
 import com.github.datalking.beans.factory.support.BeanDefinitionRegistry;
 import com.github.datalking.beans.factory.support.RootBeanDefinition;
 import com.github.datalking.util.Assert;
 
 /**
+ * 注册AnnotationAwareAspectJAutoProxyCreator的BeanDefinition
+ *
  * @author yaoo on 4/17/18
  */
 public class AspectJAutoProxyRegistrar implements ImportBeanDefinitionRegistrar {
@@ -28,7 +29,7 @@ public class AspectJAutoProxyRegistrar implements ImportBeanDefinitionRegistrar 
         if (registry.containsBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME)) {
 
 //            return registry.getBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME);
-            return ;
+            return;
         }
 
         Class cls = AnnotationAwareAspectJAutoProxyCreator.class;

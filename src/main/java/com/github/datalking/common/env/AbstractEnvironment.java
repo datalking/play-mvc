@@ -37,14 +37,13 @@ public abstract class AbstractEnvironment implements ConfigurableEnvironment {
     private final Set<String> defaultProfiles = new LinkedHashSet<>(getReservedDefaultProfiles());
 
     private final MutablePropertySources propertySources = new MutablePropertySources();
-
+    /**
+     * 默认的属性占位符解析器
+     */
     private final ConfigurablePropertyResolver propertyResolver = new PropertySourcesPropertyResolver(this.propertySources);
 
     public AbstractEnvironment() {
         customizePropertySources(this.propertySources);
-        if (this.logger.isDebugEnabled()) {
-            this.logger.debug(format("Initialized %s with PropertySources %s", getClass().getSimpleName(), this.propertySources));
-        }
     }
 
     protected void customizePropertySources(MutablePropertySources propertySources) {
@@ -276,7 +275,7 @@ public abstract class AbstractEnvironment implements ConfigurableEnvironment {
         this.propertyResolver.setRequiredProperties(requiredProperties);
     }
 
-    public void validateRequiredProperties()  {
+    public void validateRequiredProperties() {
         this.propertyResolver.validateRequiredProperties();
     }
 
@@ -325,7 +324,6 @@ public abstract class AbstractEnvironment implements ConfigurableEnvironment {
     public String resolveRequiredPlaceholders(String text) throws IllegalArgumentException {
         return this.propertyResolver.resolveRequiredPlaceholders(text);
     }
-
 
     @Override
     public String toString() {
