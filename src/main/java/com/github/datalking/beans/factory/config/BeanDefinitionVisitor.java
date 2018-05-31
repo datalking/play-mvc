@@ -27,13 +27,6 @@ public class BeanDefinitionVisitor {
     protected BeanDefinitionVisitor() {
     }
 
-
-    /**
-     * Traverse the given BeanDefinition object and the MutablePropertyValues
-     * and ConstructorArgumentValues contained in them.
-     * @param beanDefinition the BeanDefinition object to traverse
-     * @see #resolveStringValue(String)
-     */
     public void visitBeanDefinition(BeanDefinition beanDefinition) {
         visitParentName(beanDefinition);
         visitBeanClassName(beanDefinition);
@@ -130,45 +123,36 @@ public class BeanDefinitionVisitor {
     protected Object resolveValue(Object value) {
         if (value instanceof BeanDefinition) {
             visitBeanDefinition((BeanDefinition) value);
-        }
-        else if (value instanceof BeanDefinitionHolder) {
+        } else if (value instanceof BeanDefinitionHolder) {
             visitBeanDefinition(((BeanDefinitionHolder) value).getBeanDefinition());
-        }
-        else if (value instanceof RuntimeBeanReference) {
+        } else if (value instanceof RuntimeBeanReference) {
             RuntimeBeanReference ref = (RuntimeBeanReference) value;
             String newBeanName = resolveStringValue(ref.getBeanName());
             if (!newBeanName.equals(ref.getBeanName())) {
                 return new RuntimeBeanReference(newBeanName);
             }
-        }
-        else if (value instanceof RuntimeBeanNameReference) {
+        } else if (value instanceof RuntimeBeanNameReference) {
             RuntimeBeanNameReference ref = (RuntimeBeanNameReference) value;
             String newBeanName = resolveStringValue(ref.getBeanName());
             if (!newBeanName.equals(ref.getBeanName())) {
                 return new RuntimeBeanNameReference(newBeanName);
             }
-        }
-        else if (value instanceof Object[]) {
+        } else if (value instanceof Object[]) {
             visitArray((Object[]) value);
-        }
-        else if (value instanceof List) {
+        } else if (value instanceof List) {
             visitList((List) value);
-        }
-        else if (value instanceof Set) {
+        } else if (value instanceof Set) {
             visitSet((Set) value);
-        }
-        else if (value instanceof Map) {
+        } else if (value instanceof Map) {
             visitMap((Map) value);
-        }
-        else if (value instanceof TypedStringValue) {
+        } else if (value instanceof TypedStringValue) {
             TypedStringValue typedStringValue = (TypedStringValue) value;
             String stringValue = typedStringValue.getValue();
             if (stringValue != null) {
                 String visitedString = resolveStringValue(stringValue);
                 typedStringValue.setValue(visitedString);
             }
-        }
-        else if (value instanceof String) {
+        } else if (value instanceof String) {
             return resolveStringValue((String) value);
         }
         return value;
@@ -234,15 +218,18 @@ public class BeanDefinitionVisitor {
 
     /**
      * Resolve the given String value, for example parsing placeholders.
+     *
      * @param strVal the original String value
      * @return the resolved String value
      */
     protected String resolveStringValue(String strVal) {
+
         if (this.valueResolver == null) {
-            throw new IllegalStateException("No StringValueResolver specified - pass a resolver " +
-                    "object into the constructor or override the 'resolveStringValue' method");
+            throw new IllegalStateException("No StringValueResolver specified - pass a resolver object into the constructor or override the 'resolveStringValue' method");
         }
+
         String resolvedValue = this.valueResolver.resolveStringValue(strVal);
+
         // Return original String if not modified.
         return (strVal.equals(resolvedValue) ? strVal : resolvedValue);
     }

@@ -133,11 +133,11 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
             // 默认为空方法，web环境下会手动注册与ServletContext和ServletConfig实例
             postProcessBeanFactory(beanFactory);
 
-            // 执行各种BeanFactoryPostProcessor，如扫描@Configuration、@Bean、@ComponentScan
+            // 执行各种BeanFactoryPostProcessor，如扫描@Configuration、@Bean、@ComponentScan、mybatis的dao
             invokeBeanFactoryPostProcessors(beanFactory);
 
-            // 注册各种BeanPostProcessor，只注册BeanDefinition，真正的实例化是在getBean
-            // 实例化各种内部bean，如AspectJAutoProxyCreator
+            // 注册各种BeanPostProcessor，只注册BeanDefinition，真正的实例化是在getBean()
+            // 实例化各种内部bean，如AspectJAutoProxyCreator、AutowiredAnnotationBeanPostProcessor
             registerBeanPostProcessors(beanFactory);
 
             // 实例化国际化语言相关bean

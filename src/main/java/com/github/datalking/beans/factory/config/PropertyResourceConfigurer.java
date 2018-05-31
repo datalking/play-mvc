@@ -42,8 +42,8 @@ public abstract class PropertyResourceConfigurer extends PropertiesLoaderSupport
         this.order = order;
     }
 
-
     /**
+     * 处理属性文件的入口
      */
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
@@ -53,7 +53,7 @@ public abstract class PropertyResourceConfigurer extends PropertiesLoaderSupport
             // Convert the merged properties, if necessary.
             convertProperties(mergedProps);
 
-            // Let the subclass process the properties.
+            // 抽象方法，由子类处理属性文件
             processProperties(beanFactory, mergedProps);
         } catch (IOException ex) {
             throw new BeanInitializationException("Could not load properties", ex);

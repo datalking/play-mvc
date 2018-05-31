@@ -34,10 +34,15 @@ public class PropertySourcesPlaceholderConfigurer extends PlaceholderConfigurerS
         this.environment = environment;
     }
 
+    /**
+     * 替换 ${} 属性占位符的入口方法
+     */
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
+
         if (this.propertySources == null) {
             this.propertySources = new MutablePropertySources();
+
             if (this.environment != null) {
                 this.propertySources.addLast(
                         new PropertySource<Environment>(ENVIRONMENT_PROPERTIES_PROPERTY_SOURCE_NAME, this.environment) {
@@ -48,14 +53,17 @@ public class PropertySourcesPlaceholderConfigurer extends PlaceholderConfigurerS
                         }
                 );
             }
+
             try {
                 PropertySource<?> localPropertySource =
                         new PropertiesPropertySource(LOCAL_PROPERTIES_PROPERTY_SOURCE_NAME, mergeProperties());
+
                 if (this.localOverride) {
                     this.propertySources.addFirst(localPropertySource);
                 } else {
                     this.propertySources.addLast(localPropertySource);
                 }
+
             } catch (IOException ex) {
                 throw new BeanInitializationException("Could not load properties", ex);
             }
@@ -72,10 +80,15 @@ public class PropertySourcesPlaceholderConfigurer extends PlaceholderConfigurerS
         propertyResolver.setValueSeparator(this.valueSeparator);
 
         StringValueResolver valueResolver = new StringValueResolver() {
+
+            @Override
             public String resolveStringValue(String strVal) {
+
+                /// 默认执行false
                 String resolved = ignoreUnresolvablePlaceholders ?
                         propertyResolver.resolvePlaceholders(strVal) :
                         propertyResolver.resolveRequiredPlaceholders(strVal);
+
                 return (resolved.equals(nullValue) ? null : resolved);
             }
         };

@@ -103,7 +103,7 @@ public class ConfigurationClassPostProcessor
                 reader = new ConfigurationClassBeanDefinitionReader(registry);
             }
 
-            // 将上面扫描到的bean和带有@Bean注解方法指定的bean注册到beanDefinitionMap，包括扫描mvc的BeanDefinition，但不实例化
+            // 将上面扫描到的bean和带有@Bean注解方法指定的bean注册到beanDefinitionMap，包括扫描mvc的BeanDefinition，但未实例化
             reader.loadBeanDefinitions(configClasses);
 
             alreadyParsed.addAll(configClasses);

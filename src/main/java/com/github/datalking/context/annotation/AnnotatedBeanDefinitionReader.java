@@ -66,6 +66,19 @@ public class AnnotatedBeanDefinitionReader {
             BeanDefinitionReaderUtils.registerBeanDefinition(holder, registry);
         }
 
+        if (!registry.containsBeanDefinition(AUTOWIRED_ANNOTATION_PROCESSOR_BEAN_NAME)) {
+            RootBeanDefinition def = new RootBeanDefinition(AutowiredAnnotationBeanPostProcessor.class);
+            BeanDefinitionHolder holder = new BeanDefinitionHolder(def, AUTOWIRED_ANNOTATION_PROCESSOR_BEAN_NAME);
+//            def.setSource(source);
+            BeanDefinitionReaderUtils.registerBeanDefinition(holder, registry);
+        }
+
+//        if (!registry.containsBeanDefinition(REQUIRED_ANNOTATION_PROCESSOR_BEAN_NAME)) {
+//            RootBeanDefinition def = new RootBeanDefinition(RequiredAnnotationBeanPostProcessor.class);
+//            def.setSource(source);
+//            beanDefs.add(registerPostProcessor(registry, def, REQUIRED_ANNOTATION_PROCESSOR_BEAN_NAME));
+//        }
+
         return beanDefs;
     }
 

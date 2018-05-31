@@ -11,11 +11,12 @@ import com.github.datalking.common.PriorityOrdered;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
- * beanFactoryPostProcessor相关功能执行的代理类
- * <p>
+ * BeanFactoryPostProcessor相关功能执行的代理类
  * 一是触发beanFactoryPostProcessor，二是注册beanFactoryPostProcessor
  *
  * @author yaoo on 4/13/18
@@ -29,14 +30,15 @@ public class PostProcessorRegistrationDelegate {
         for (BeanFactoryPostProcessor postProcessor : postProcessors) {
             postProcessor.postProcessBeanFactory(beanFactory);
         }
-
     }
 
     public static void invokeBeanFactoryPostProcessors(
             ConfigurableListableBeanFactory beanFactory,
             List<BeanFactoryPostProcessor> beanFactoryPostProcessors) {
 
-        /// 如果beanFactory是可注册BeanDefinition的
+        Set<String> processedBeans = new HashSet<>();
+
+        /// 如果beanFactory是可注册BeanDefinition的，则处理实现了BeanDefinitionRegistryPostProcessor接口的bean
         if (beanFactory instanceof BeanDefinitionRegistry) {
 
             BeanDefinitionRegistry registry = (BeanDefinitionRegistry) beanFactory;
@@ -48,20 +50,31 @@ public class PostProcessorRegistrationDelegate {
             List<BeanDefinitionRegistryPostProcessor> priorityOrderedPostProcessors = new ArrayList<>();
             for (String ppName : postProcessorNames) {
                 priorityOrderedPostProcessors.add((BeanDefinitionRegistryPostProcessor) beanFactory.getBean(ppName));
+                processedBeans.add(ppName);
             }
 //            sortPostProcessors(beanFactory, priorityOrderedPostProcessors);
 
-            // 执行扫描所有BeanDefinition中的@Configuration、@Bean、@ComponentScan
+            // 扫描BeanDefinitionMap中带有@Configuration的类，再进一步扫描@Bean、@ComponentScan
             // 注册AnnotationAwareAspectJAutoProxyCreator的BeanDefinition
             invokeBeanDefinitionRegistryPostProcessors(priorityOrderedPostProcessors, registry);
-
         }
-
         /// 如果beanFactory不可注册BeanDefinition
         else {
             invokeBeanFactoryPostProcessors(beanFactoryPostProcessors, beanFactory);
         }
 
+        /// 处理上面过程中新增的BeanFactoryPostProcessor
+        String[] postProcessorNames = beanFactory.getBeanNamesForType(BeanFactoryPostProcessor.class);
+        List<BeanFactoryPostProcessor> postProcessors = new ArrayList<>();
+
+        for (String postProcessorName : postProcessorNames) {
+            /// 若已经处理过，则跳过
+            if (!processedBeans.contains(postProcessorName)) {
+                postProcessors.add((BeanFactoryPostProcessor) beanFactory.getBean(postProcessorName));
+            }
+        }
+
+        invokeBeanFactoryPostProcessors(postProcessors, beanFactory);
     }
 
 
@@ -106,8 +119,8 @@ public class PostProcessorRegistrationDelegate {
             BeanPostProcessor pp = (BeanPostProcessor) beanFactory.getBean(ppName);
             orderedPostProcessors.add(pp);
             // 特殊初始化AnnotationAwareAspectJAutoProxyCreator的bean
-            if (pp instanceof AnnotationAwareAspectJAutoProxyCreator){
-                ((AnnotationAwareAspectJAutoProxyCreator)pp).setBeanFactory(beanFactory);
+            if (pp instanceof AnnotationAwareAspectJAutoProxyCreator) {
+                ((AnnotationAwareAspectJAutoProxyCreator) pp).setBeanFactory(beanFactory);
             }
         }
 
