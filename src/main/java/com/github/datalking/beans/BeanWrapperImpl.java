@@ -169,7 +169,9 @@ public class BeanWrapperImpl extends AbstractPropertyAccessor implements BeanWra
     public void setPropertyValue(PropertyValue pv) {
 
         Field declaredField = null;
+
         try {
+
             declaredField = this.wrappedObject.getClass().getDeclaredField(pv.getName());
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
@@ -224,13 +226,10 @@ public class BeanWrapperImpl extends AbstractPropertyAccessor implements BeanWra
                 ///默认处理引用类型
                 default:
                     declaredField.set(this.wrappedObject, value);
-
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
     }
 
 

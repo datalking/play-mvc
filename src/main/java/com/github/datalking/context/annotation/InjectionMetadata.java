@@ -16,6 +16,8 @@ import java.util.Collection;
 import java.util.Set;
 
 /**
+ * autowire依赖项的元数据
+ *
  * @author yaoo on 5/28/18
  */
 public class InjectionMetadata {
@@ -51,12 +53,14 @@ public class InjectionMetadata {
     public void inject(Object target, String beanName, PropertyValues pvs) throws Throwable {
         Collection<InjectedElement> elementsToIterate =
                 (this.checkedElements != null ? this.checkedElements : this.injectedElements);
+
         if (!elementsToIterate.isEmpty()) {
+
             boolean debug = logger.isDebugEnabled();
             for (InjectedElement element : elementsToIterate) {
-                if (debug) {
-                    logger.debug("Processing injected element of bean '" + beanName + "': " + element);
-                }
+//                if (debug) {
+//                    logger.debug("Processing injected element of bean '" + beanName + "': " + element);
+//                }
                 element.inject(target, beanName, pvs);
             }
         }
@@ -127,6 +131,7 @@ public class InjectionMetadata {
          * Either this or {@link #getResourceToInject} needs to be overridden.
          */
         protected void inject(Object target, String requestingBeanName, PropertyValues pvs) throws Throwable {
+
             if (this.isField) {
                 Field field = (Field) this.member;
                 ReflectionUtils.makeAccessible(field);

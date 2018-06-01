@@ -49,7 +49,6 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
 
     private TypeConverter typeConverter;
 
-
     //    private boolean hasDestructionAwareBeanPostProcessors;
 
     //    private boolean cacheBeanMetadata = true;
@@ -110,8 +109,7 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
         }
 
         ///如果name对应的bean实例不存在，则新建bean
-
-        /// 标记为已经创建
+        // 先标记为已经创建
         markBeanAsCreated(name);
 
         final RootBeanDefinition bd = getMergedLocalBeanDefinition(name);

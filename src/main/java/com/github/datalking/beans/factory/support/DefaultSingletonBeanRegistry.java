@@ -4,6 +4,8 @@ import com.github.datalking.beans.factory.ObjectFactory;
 import com.github.datalking.beans.factory.config.SingletonBeanRegistry;
 import com.github.datalking.util.Assert;
 import com.github.datalking.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -24,11 +26,12 @@ public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
      */
     private static final Object NULL_OBJECT = new Object();
 
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+
     /**
      * 正在创建中的bean名称 集合
      */
     private final Set<String> singletonsCurrentlyInCreation = Collections.newSetFromMap(new ConcurrentHashMap<>(16));
-
     /**
      * 所有的单例bean 一级缓存
      */

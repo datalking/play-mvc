@@ -4,22 +4,38 @@ import com.github.datalking.beans.BeanWrapper;
 import com.github.datalking.beans.BeanWrapperImpl;
 import com.github.datalking.beans.MutablePropertyValues;
 import com.github.datalking.beans.PropertyValue;
+import com.github.datalking.beans.PropertyValues;
+import com.github.datalking.beans.TypeConverter;
 import com.github.datalking.beans.factory.Aware;
 import com.github.datalking.beans.factory.BeanFactoryAware;
 import com.github.datalking.beans.factory.BeanNameAware;
 import com.github.datalking.beans.factory.InitializingBean;
+import com.github.datalking.beans.factory.config.AutowireByTypeDependencyDescriptor;
 import com.github.datalking.beans.factory.config.AutowireCapableBeanFactory;
 import com.github.datalking.beans.factory.config.BeanDefinition;
 import com.github.datalking.beans.factory.config.BeanPostProcessor;
+import com.github.datalking.beans.factory.config.DependencyDescriptor;
 import com.github.datalking.beans.factory.config.InstantiationAwareBeanPostProcessor;
 import com.github.datalking.common.LocalVariableTableParameterNameDiscoverer;
+import com.github.datalking.common.MethodParameter;
 import com.github.datalking.common.ParameterNameDiscoverer;
+import com.github.datalking.common.PriorityOrdered;
+import com.github.datalking.exception.BeansException;
+import com.github.datalking.exception.UnsatisfiedDependencyException;
+import com.github.datalking.util.BeanUtils;
 import com.github.datalking.util.ObjectUtils;
+import com.github.datalking.util.StringUtils;
 
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
+import static com.github.datalking.beans.factory.support.AutowireUtils.isExcludedFromDependencyCheck;
 
 /**
  * BeanFactory抽象类
@@ -79,6 +95,11 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         instanceWrapper = createBeanInstance(beanName, bd, args);
         final Object bean = (instanceWrapper != null ? instanceWrapper.getWrappedInstance() : null);
 
+        if (!bd.postProcessed) {
+            // 添加到externallyManagedConfigMembers
+//            applyMergedBeanDefinitionPostProcessors(mbd, beanType, beanName);
+            bd.postProcessed = true;
+        }
 
         boolean earlySingletonExposure = (bd.isSingleton() && this.allowCircularReferences && isSingletonCurrentlyInCreation(beanName));
         if (earlySingletonExposure) {
@@ -86,8 +107,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             addSingletonFactory(beanName, () -> bean);
         }
 
-
-        //==== 注入属性
+        //==== 注入属性，包括autowire依赖的bean
         populateBean(beanName, bd, instanceWrapper);
 
         Object exposedObject = bean;
@@ -143,12 +163,144 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
     }
 
-    private void populateBean(String beanName, RootBeanDefinition bd, BeanWrapper bw) {
+    /**
+     * 将BeanDefinition的属性注入bean
+     * autowire的入口
+     */
+    private void populateBean(String beanName, RootBeanDefinition mbd, BeanWrapper bw) {
+        PropertyValues pvs = mbd.getPropertyValues();
 
-        applyPropertyValues(beanName, bd, bw);
+        if (bw == null) {
+            return;
+        }
+
+        // 若为0，则未使用依赖注入；若为1，则by name；若为2，则by type
+        // 默认为0，不会执行if中的语句
+        if (mbd.getResolvedAutowireMode() == RootBeanDefinition.AUTOWIRE_BY_NAME ||
+                mbd.getResolvedAutowireMode() == RootBeanDefinition.AUTOWIRE_BY_TYPE) {
+
+            MutablePropertyValues newPvs = new MutablePropertyValues(pvs);
+
+            if (mbd.getResolvedAutowireMode() == RootBeanDefinition.AUTOWIRE_BY_NAME) {
+                autowireByName(beanName, mbd, bw, newPvs);
+            }
+
+            if (mbd.getResolvedAutowireMode() == RootBeanDefinition.AUTOWIRE_BY_TYPE) {
+                autowireByType(beanName, mbd, bw, newPvs);
+            }
+
+            pvs = newPvs;
+        }
+
+        boolean hasInstAwareBpps = hasInstantiationAwareBeanPostProcessors();
+//        boolean needsDepCheck = (mbd.getDependencyCheck() != RootBeanDefinition.DEPENDENCY_CHECK_NONE);
+        boolean needsDepCheck = false;
+
+        if (hasInstAwareBpps || needsDepCheck) {
+            PropertyDescriptor[] filteredPds = filterPropertyDescriptorsForDependencyCheck(bw, mbd.allowCaching);
+            if (hasInstAwareBpps) {
+                for (BeanPostProcessor bp : getBeanPostProcessors()) {
+                    if (bp instanceof InstantiationAwareBeanPostProcessor) {
+                        InstantiationAwareBeanPostProcessor ibp = (InstantiationAwareBeanPostProcessor) bp;
+
+                        /// 这里会通过AutowiredAnnotationBeanPostProcessor的方法自动注入依赖的bean
+                        pvs = ibp.postProcessPropertyValues(pvs, filteredPds, bw.getWrappedInstance(), beanName);
+                        if (pvs == null) {
+                            return;
+                        }
+                    }
+                }
+            }
+            if (needsDepCheck) {
+//                checkDependencies(beanName, mbd, filteredPds, pvs);
+            }
+        }
+
+        applyPropertyValues(beanName, mbd, bw, pvs);
 
     }
 
+    protected void autowireByName(String beanName, AbstractBeanDefinition mbd, BeanWrapper bw, MutablePropertyValues pvs) {
+
+        String[] propertyNames = unsatisfiedNonSimpleProperties(mbd, bw);
+
+        for (String propertyName : propertyNames) {
+            if (containsBean(propertyName)) {
+
+                Object bean = getBean(propertyName);
+                pvs.add(propertyName, bean);
+                registerDependentBean(propertyName, beanName);
+
+            } else {
+                if (logger.isTraceEnabled()) {
+                    logger.trace("Not autowiring property '" + propertyName + "' of bean '" + beanName +
+                            "' by name: no matching bean found");
+                }
+            }
+        }
+    }
+
+    protected void autowireByType(String beanName, AbstractBeanDefinition mbd, BeanWrapper bw, MutablePropertyValues pvs) {
+
+//        TypeConverter converter = getCustomTypeConverter();
+        TypeConverter converter = null;
+        if (converter == null) {
+            converter = bw;
+        }
+
+        Set<String> autowiredBeanNames = new LinkedHashSet<>(4);
+
+        String[] propertyNames = unsatisfiedNonSimpleProperties(mbd, bw);
+
+        for (String propertyName : propertyNames) {
+            try {
+                PropertyDescriptor pd = bw.getPropertyDescriptor(propertyName);
+                // Don't try autowiring by type for type Object: never makes sense, even if it technically is a unsatisfied, non-simple property.
+                if (Object.class != pd.getPropertyType()) {
+                    MethodParameter methodParam = BeanUtils.getWriteMethodParameter(pd);
+                    // Do not allow eager init for type matching in case of a prioritized post-processor.
+                    boolean eager = !PriorityOrdered.class.isAssignableFrom(bw.getWrappedClass());
+
+                    DependencyDescriptor desc = new AutowireByTypeDependencyDescriptor(methodParam, eager);
+
+                    Object autowiredArgument = resolveDependency(desc, beanName, autowiredBeanNames, converter);
+
+                    if (autowiredArgument != null) {
+                        pvs.add(propertyName, autowiredArgument);
+                    }
+
+                    for (String autowiredBeanName : autowiredBeanNames) {
+                        registerDependentBean(autowiredBeanName, beanName);
+                    }
+
+                    autowiredBeanNames.clear();
+                }
+            } catch (BeansException ex) {
+                throw new UnsatisfiedDependencyException(mbd.getBeanClassName(), beanName, propertyName, ex);
+            }
+        }
+    }
+
+
+    /**
+     * 获取bean非基本类型和非字符串类型的属性
+     */
+    protected String[] unsatisfiedNonSimpleProperties(AbstractBeanDefinition mbd, BeanWrapper bw) {
+        Set<String> result = new TreeSet<>();
+        PropertyValues pvs = mbd.getPropertyValues();
+
+        PropertyDescriptor[] pds = bw.getPropertyDescriptors();
+        for (PropertyDescriptor pd : pds) {
+            if (pd.getWriteMethod() != null
+                    && !isExcludedFromDependencyCheck(pd) && !pvs.contains(pd.getName())
+                    && !BeanUtils.isSimpleProperty(pd.getPropertyType())) {
+
+                result.add(pd.getName());
+            }
+        }
+
+        return StringUtils.toStringArray(result);
+    }
 
     /**
      * 使用工厂方法创建bean实例
@@ -223,7 +375,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
      * @param bd       要添加的属性定义
      * @param bw       beanWrapper实例
      */
-    protected void applyPropertyValues(String beanName, BeanDefinition bd, BeanWrapper bw) {
+    protected void applyPropertyValues(String beanName, BeanDefinition bd, BeanWrapper bw, PropertyValues pvs) {
 
         List<PropertyValue> pvList = bd.getPropertyValues().getPropertyValueList();
         List<PropertyValue> deepCopy = new ArrayList<>(pvList.size());
@@ -245,7 +397,6 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             }
 
             deepCopy.add(new PropertyValue(pvName, resolvedValue));
-
         }
 
         // ==== 批量设置值

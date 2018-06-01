@@ -16,6 +16,7 @@ import java.lang.reflect.Type;
 /**
  * 依赖项的描述对象
  * 如A依赖B，则表示B的描述信息
+ * 封装构造函数参数、方法参数或字段
  *
  * @author yaoo on 5/28/18
  */

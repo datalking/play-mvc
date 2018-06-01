@@ -32,8 +32,10 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
     public static final int AUTOWIRE_CONSTRUCTOR = AutowireCapableBeanFactory.AUTOWIRE_CONSTRUCTOR;
     public static final int AUTOWIRE_AUTODETECT = AutowireCapableBeanFactory.AUTOWIRE_AUTODETECT;
 
+    // 默认就是候选bean
     private boolean autowireCandidate = true;
 
+    // 默认不是主bean
     private boolean primary = false;
 
     private final Map<String, AutowireCandidateQualifier> qualifiers = new LinkedHashMap<>(0);
@@ -60,6 +62,7 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 
     private String factoryMethodName;
 
+    // 默认为0，即对应的bean不需要注入
     private int autowireMode;
 
     private int role = BeanDefinition.ROLE_APPLICATION;
@@ -93,6 +96,9 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
         }
     }
 
+    /**
+     * 获取autowire的方式
+     */
     public int getResolvedAutowireMode() {
 
         if (this.autowireMode == AUTOWIRE_AUTODETECT) {
@@ -279,7 +285,6 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
     public MethodOverrides getMethodOverrides() {
         return this.methodOverrides;
     }
-
 
 
     @Override

@@ -27,7 +27,11 @@ public class RootBeanDefinition extends AbstractBeanDefinition {
 
     Object[] preparedConstructorArguments;
 
-    boolean isFactoryMethodUnique = false;
+    public boolean isFactoryMethodUnique = false;
+
+    public boolean allowCaching = true;
+
+    boolean postProcessed = false;
 
     // volatile ResolvableType factoryMethodReturnType;
 
