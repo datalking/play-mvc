@@ -8,7 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 一般在候选Bean数目不为1时应该加@Qualifier注释
+ * 在候选Bean数目不为1时，可以使用@Qualifier注解直接指定bean名称
  *
  * @author yaoo on 5/29/18
  */

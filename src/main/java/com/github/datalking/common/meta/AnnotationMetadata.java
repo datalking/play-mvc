@@ -1,11 +1,11 @@
-package com.github.datalking.annotation.meta;
+package com.github.datalking.common.meta;
 
 import java.lang.annotation.Annotation;
 import java.util.Map;
 import java.util.Set;
 
 /**
- * 注解元数据
+ * 注解元数据 接口
  *
  * @author yaoo on 4/9/18
  */

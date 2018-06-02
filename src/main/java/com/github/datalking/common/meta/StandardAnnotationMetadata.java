@@ -1,4 +1,4 @@
-package com.github.datalking.annotation.meta;
+package com.github.datalking.common.meta;
 
 import com.github.datalking.annotation.ComponentScan;
 import com.github.datalking.util.AnnotationUtils;
@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 注解元数据 默认实现类
+ * 类的元数据及该类注解元数据
  *
  * @author yaoo on 4/9/18
  */
@@ -50,17 +50,21 @@ public class StandardAnnotationMetadata extends StandardClassMetadata implements
     }
 
     public boolean isAnnotated(String annotationType) {
+
         Annotation[] anns = getIntrospectedClass().getAnnotations();
         for (Annotation ann : anns) {
+
             if (ann.annotationType().getName().equals(annotationType)) {
                 return true;
             }
+
             for (Annotation metaAnn : ann.annotationType().getAnnotations()) {
                 if (metaAnn.annotationType().getName().equals(annotationType)) {
                     return true;
                 }
             }
         }
+
         return false;
     }
 
@@ -82,8 +86,7 @@ public class StandardAnnotationMetadata extends StandardClassMetadata implements
         for (Method method : methods) {
 
             /// 若是非桥接方法，且方法上存在注解，且方法上有注解annotationName
-            if (!method.isBridge() && method.getAnnotations().length > 0 &&
-                    method.isAnnotationPresent(clazz)) {
+            if (!method.isBridge() && method.getAnnotations().length > 0 && method.isAnnotationPresent(clazz)) {
 
                 annotatedMethods.add(new StandardMethodMetadata(method));
             }
@@ -197,18 +200,6 @@ public class StandardAnnotationMetadata extends StandardClassMetadata implements
         }
         return null;
     }
-
-
-//    public boolean isAnnotated(String annotationName) {
-//        return (this.annotations.length > 0 &&
-//                AnnotatedElementUtils.isAnnotated(getIntrospectedClass(), annotationName));
-//    }
-
-
-//    @Override
-//    public boolean hasAnnotatedMethods(String annotationName) {
-//        return false;
-//    }
 
 
 }

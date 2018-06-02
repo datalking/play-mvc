@@ -1,4 +1,4 @@
-package com.github.datalking.annotation.meta;
+package com.github.datalking.common.meta;
 
 import com.github.datalking.util.Assert;
 
@@ -9,6 +9,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
+ * 保存注解的属性键值对，LinkedHashMap的子类
+ *
  * @author yaoo on 4/13/18
  */
 public class AnnotationAttributes extends LinkedHashMap<String, Object> {

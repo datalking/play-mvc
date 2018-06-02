@@ -7,7 +7,8 @@ import com.github.datalking.io.ResourcePatternResolver;
 /**
  * 应用运行环境ApplicationContext 根接口
  */
-public interface ApplicationContext extends ListableBeanFactory, MessageSource, ResourcePatternResolver {
+public interface ApplicationContext
+        extends ListableBeanFactory, MessageSource, ResourcePatternResolver, ApplicationEventPublisher {
 
     String getId();
 

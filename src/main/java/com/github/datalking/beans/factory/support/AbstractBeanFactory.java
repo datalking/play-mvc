@@ -16,6 +16,7 @@ import com.github.datalking.common.StringValueResolver;
 import com.github.datalking.common.convert.ConversionService;
 import com.github.datalking.common.convert.SimpleTypeConverter;
 import com.github.datalking.exception.BeanCurrentlyInCreationException;
+import com.github.datalking.exception.BeansException;
 import com.github.datalking.exception.NoSuchBeanDefinitionException;
 import com.github.datalking.util.Assert;
 import com.github.datalking.util.ClassUtils;
@@ -113,6 +114,7 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
         /// 如果name对应的bean实例已缓存，则直接返回bean
         if (sharedInstance != null && args == null) {
 
+            // 获取bean实例，处理FactoryBean的入口
             targetBean = getObjectForBeanInstance(sharedInstance, name, name, null);
         }
         /// 如果name对应的bean实例不存在，则新建bean
@@ -122,13 +124,9 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
             markBeanAsCreated(name);
 
             final RootBeanDefinition bd = getMergedLocalBeanDefinition(name);
-//        RootBeanDefinition bd = (RootBeanDefinition) getBeanDefinition(name);
-
             if (bd == null) {
                 throw new NoSuchBeanDefinitionException(name + " 对应的BeanDefinition不存在");
             }
-            //合并beanDefinition
-            // bd = getMergedLocalBeanDefinition(beanName);
 
             ///判断scope为单例，创建单例bean
             targetBean = getSingleton(name, (ObjectFactory) () -> createBean(name, bd, args));
@@ -138,9 +136,17 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
         return (T) targetBean;
     }
 
+    /**
+     * 获取bean实例，处理FactoryBean的入口
+     */
     protected Object getObjectForBeanInstance(Object beanInstance, String name, String beanName, RootBeanDefinition mbd) {
 
-        // 若不是FactoryBean类型 或者name以&开头，则直接返回bean实例
+        /// 若name以&开头，却不是FactoryBean，则抛出异常
+        if (BeanFactoryUtils.isFactoryDereference(name) && !(beanInstance instanceof FactoryBean)) {
+            throw new BeansException(name + "/" + beanInstance.getClass() + " is NOT a factory ");
+        }
+
+        // 若bean不是FactoryBean类型 或 name以&开头，则直接返回bean实例
         if (!(beanInstance instanceof FactoryBean) || BeanFactoryUtils.isFactoryDereference(name)) {
 
             return beanInstance;
@@ -153,11 +159,16 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
         if (object == null) {
 
             FactoryBean<?> factory = (FactoryBean<?>) beanInstance;
+            /// 根据beanName获得RootBeanDefinition
             if (mbd == null && containsBeanDefinition(beanName)) {
                 mbd = getMergedLocalBeanDefinition(beanName);
             }
+
+            // bean是否为合成的，合成bean在获得FactoryBean创建好的bean对象实例后，不需要后置处理
 //            boolean synthetic = (mbd != null && mbd.isSynthetic());
             boolean synthetic = (mbd != null);
+
+            // 使用FactoryBean创建bean实例对象
 //            object = getObjectFromFactoryBean(factory, beanName, !synthetic);
             object = doGetObjectFromFactoryBean(factory, beanName);
         }
@@ -169,7 +180,7 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
 
         Object object;
 
-        //调用FactoryBean中的getObject()方法获取bean
+        // 调用FactoryBean中的getObject()方法创建bean实例
         object = factory.getObject();
 
         if (object == null && isSingletonCurrentlyInCreation(beanName)) {

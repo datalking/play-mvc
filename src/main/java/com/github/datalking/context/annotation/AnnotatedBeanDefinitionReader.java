@@ -22,7 +22,6 @@ public class AnnotatedBeanDefinitionReader {
 
     public static final String REQUIRED_ANNOTATION_PROCESSOR_BEAN_NAME = "play.context.annotation.internalRequiredAnnotationProcessor";
 
-
     private final BeanDefinitionRegistry registry;
 
     public AnnotatedBeanDefinitionReader(BeanDefinitionRegistry registry) {
@@ -31,7 +30,6 @@ public class AnnotatedBeanDefinitionReader {
         //==== 注册常用的工具bean
         registerAnnotationConfigProcessors(this.registry);
     }
-
 
     public void register(Class<?>... annotatedClasses) {
         for (Class<?> annotatedClass : annotatedClasses) {

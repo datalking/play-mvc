@@ -11,9 +11,12 @@ import com.github.datalking.beans.factory.xml.XmlBeanDefinitionReader;
 import com.github.datalking.common.env.ConfigurableEnvironment;
 import com.github.datalking.common.env.StandardEnvironment;
 import com.github.datalking.context.ApplicationContext;
+import com.github.datalking.context.ApplicationEvent;
+import com.github.datalking.context.ApplicationListener;
 import com.github.datalking.context.ConfigurableApplicationContext;
 import com.github.datalking.context.MessageSource;
 import com.github.datalking.context.MessageSourceResolvable;
+import com.github.datalking.context.event.ApplicationEventMulticaster;
 import com.github.datalking.context.message.DelegatingMessageSource;
 import com.github.datalking.io.DefaultResourceLoader;
 import com.github.datalking.io.Resource;
@@ -23,12 +26,16 @@ import com.github.datalking.util.ObjectUtils;
 import com.github.datalking.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * ApplicationContext 抽象类
+ * 相当于spring的 AbstractRefreshableConfigApplicationContext
  */
 public abstract class AbstractApplicationContext extends DefaultResourceLoader
         implements ConfigurableApplicationContext, DisposableBean {
@@ -61,6 +68,10 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
     private long startupDate;
 
     private MessageSource messageSource;
+
+    private ApplicationEventMulticaster applicationEventMulticaster;
+
+    private Set<ApplicationListener<?>> applicationListeners = new LinkedHashSet<>();
 
     public AbstractApplicationContext() {
         // 当使用注解而不使用xml时，configLocation默认为空字符串
@@ -343,17 +354,6 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
         return this.startupDate;
     }
 
-//    public void publishEvent(ApplicationEvent event) {
-//        Assert.notNull(event, "Event must not be null");
-//        if (logger.isTraceEnabled()) {
-//            logger.trace("Publishing event in " + getDisplayName() + ": " + event);
-//        }
-//        getApplicationEventMulticaster().multicastEvent(event);
-//        if (this.parent != null) {
-//            this.parent.publishEvent(event);
-//        }
-//    }
-
     public Resource[] getResources(String locationPattern) {
         return this.resourcePatternResolver.getResources(locationPattern);
     }
@@ -451,8 +451,50 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
         return getEnvironment().resolveRequiredPlaceholders(path);
     }
 
+    public void publishEvent(ApplicationEvent event) {
+        Assert.notNull(event, "Event must not be null");
+        getApplicationEventMulticaster().multicastEvent(event);
+//        if (this.parent != null) {
+//            this.parent.publishEvent(event);
+//        }
+    }
+
+    private ApplicationEventMulticaster getApplicationEventMulticaster() {
+        if (this.applicationEventMulticaster == null) {
+            throw new IllegalStateException("ApplicationEventMulticaster not initialized - call 'refresh' before multicasting events via the context: " + this);
+        }
+        return this.applicationEventMulticaster;
+    }
+
+    public void addApplicationListener(ApplicationListener<?> listener) {
+        Assert.notNull(listener, "ApplicationListener must not be null");
+        if (this.applicationEventMulticaster != null) {
+            this.applicationEventMulticaster.addApplicationListener(listener);
+        } else {
+            this.applicationListeners.add(listener);
+        }
+    }
+
+    public Collection<ApplicationListener<?>> getApplicationListeners() {
+        return this.applicationListeners;
+    }
+
+    protected void registerListeners() {
+
+        for (ApplicationListener<?> listener : getApplicationListeners()) {
+            getApplicationEventMulticaster().addApplicationListener(listener);
+        }
+
+        // Do not initialize FactoryBeans here: We need to leave all regular beans uninitialized to let post-processors apply to them!
+//        String[] listenerBeanNames = getBeanNamesForType(ApplicationListener.class, true, false);
+        String[] listenerBeanNames = getBeanNamesForType(ApplicationListener.class);
+        for (String listenerBeanName : listenerBeanNames) {
+            getApplicationEventMulticaster().addApplicationListenerBean(listenerBeanName);
+        }
+    }
 
     // ======== abstract ========
+
     protected abstract void loadBeanDefinitions(DefaultListableBeanFactory beanFactory);
 
 }

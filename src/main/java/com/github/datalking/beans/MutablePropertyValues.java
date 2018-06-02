@@ -97,6 +97,7 @@ public class MutablePropertyValues implements PropertyValues, Serializable {
         //若存在同名，则覆盖
         for (int i = 0, len = this.propertyValueList.size(); i < len; i++) {
             PropertyValue cur = this.propertyValueList.get(i);
+
             if (cur.getName().equals(kv.getName())) {
                 this.propertyValueList.set(i, kv);
                 return this;
@@ -146,7 +147,6 @@ public class MutablePropertyValues implements PropertyValues, Serializable {
     public String toString() {
         PropertyValue[] pvs = getPropertyValues();
         StringBuilder sb = new StringBuilder("PropertyValues: length=").append(pvs.length);
-
         return String.valueOf(sb);
     }
 }

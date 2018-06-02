@@ -1,4 +1,4 @@
-package com.github.datalking.annotation.meta;
+package com.github.datalking.common.meta;
 
 import com.github.datalking.util.AnnotationUtils;
 
@@ -7,6 +7,8 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 /**
+ * 方法元数据 默认实现类
+ *
  * @author yaoo on 4/13/18
  */
 public class StandardMethodMetadata implements MethodMetadata {

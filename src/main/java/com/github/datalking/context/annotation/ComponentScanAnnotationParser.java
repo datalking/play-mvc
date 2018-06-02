@@ -1,9 +1,8 @@
 package com.github.datalking.context.annotation;
 
-import com.github.datalking.annotation.meta.AnnotationAttributes;
+import com.github.datalking.common.meta.AnnotationAttributes;
 import com.github.datalking.beans.factory.config.BeanDefinitionHolder;
 import com.github.datalking.beans.factory.support.BeanDefinitionRegistry;
-import com.github.datalking.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;

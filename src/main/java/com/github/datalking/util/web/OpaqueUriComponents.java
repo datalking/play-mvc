@@ -11,7 +11,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Extension of {@link UriComponents} for opaque URIs.
+ * Extension UriComponents for opaque URIs.
  */
 public class OpaqueUriComponents extends UriComponents {
 
@@ -24,7 +24,6 @@ public class OpaqueUriComponents extends UriComponents {
         super(scheme, fragment);
         this.ssp = schemeSpecificPart;
     }
-
 
     @Override
     public String getSchemeSpecificPart() {

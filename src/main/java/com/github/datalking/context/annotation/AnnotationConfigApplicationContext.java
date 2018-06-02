@@ -68,7 +68,6 @@ public class AnnotationConfigApplicationContext extends AbstractApplicationConte
 
     @Override
     protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) {
-
     }
 
 }

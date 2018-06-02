@@ -21,11 +21,6 @@ import java.util.Map;
 
 /**
  * Extension of {@link UriComponents} for hierarchical URIs.
- *
- * @author Arjen Poutsma
- * @author Phillip Webb
- * @see <a href="http://tools.ietf.org/html/rfc3986#section-1.2.3">Hierarchical URIs</a>
- * @since 3.1.3
  */
 public class HierarchicalUriComponents extends UriComponents {
 

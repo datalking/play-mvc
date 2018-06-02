@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Generic base class for DAOs, defining template methods for DAO initialization.
  *
- * <p>Extended by Spring's specific DAO support classes, such as: JdbcDaoSupport, JdoDaoSupport, etc.
+ * Extended by Spring's specific DAO support classes, such as: JdbcDaoSupport, JdoDaoSupport, etc.
  */
 public abstract class DaoSupport implements InitializingBean {
 

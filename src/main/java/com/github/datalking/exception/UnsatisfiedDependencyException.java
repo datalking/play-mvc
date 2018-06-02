@@ -8,14 +8,11 @@ import com.github.datalking.util.ClassUtils;
 public class UnsatisfiedDependencyException extends BeanCreationException {
 
     public UnsatisfiedDependencyException(String resourceDescription, String beanName, String propertyName, String msg) {
-
-        super(resourceDescription, beanName,
-                "Unsatisfied dependency expressed through bean property '" + propertyName + "'" +
-                        (msg != null ? ": " + msg : ""));
+        super(resourceDescription, beanName, "Unsatisfied dependency expressed through bean property '" + propertyName + "'" +
+                (msg != null ? ": " + msg : ""));
     }
 
     public UnsatisfiedDependencyException(String resourceDescription, String beanName, String propertyName, BeansException ex) {
-
         this(resourceDescription, beanName, propertyName, (ex != null ? ": " + ex.getMessage() : ""));
         initCause(ex);
     }

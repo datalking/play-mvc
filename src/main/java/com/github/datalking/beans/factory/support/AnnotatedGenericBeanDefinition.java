@@ -1,7 +1,7 @@
 package com.github.datalking.beans.factory.support;
 
-import com.github.datalking.annotation.meta.AnnotationMetadata;
-import com.github.datalking.annotation.meta.StandardAnnotationMetadata;
+import com.github.datalking.common.meta.AnnotationMetadata;
+import com.github.datalking.common.meta.StandardAnnotationMetadata;
 import com.github.datalking.beans.factory.config.AnnotatedBeanDefinition;
 import com.github.datalking.util.Assert;
 

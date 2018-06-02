@@ -1,6 +1,6 @@
 package com.github.datalking.context.annotation;
 
-import com.github.datalking.annotation.meta.MethodMetadata;
+import com.github.datalking.common.meta.MethodMetadata;
 
 /**
  * ConfigurationClass中带有@Bean注解的方法

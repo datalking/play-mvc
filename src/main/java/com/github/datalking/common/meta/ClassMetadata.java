@@ -1,4 +1,4 @@
-package com.github.datalking.annotation.meta;
+package com.github.datalking.common.meta;
 
 /**
  * @author yaoo on 4/13/18

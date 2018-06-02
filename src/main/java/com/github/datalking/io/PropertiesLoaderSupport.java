@@ -28,12 +28,6 @@ public abstract class PropertiesLoaderSupport {
 
     private PropertiesPersister propertiesPersister = new DefaultPropertiesPersister();
 
-
-    /**
-     * Set local properties, e.g. via the "props" tag in XML bean definitions.
-     * These can be considered defaults, to be overridden by properties
-     * loaded from files.
-     */
     public void setProperties(Properties properties) {
         this.localProperties = new Properties[]{properties};
     }

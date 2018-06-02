@@ -3,6 +3,8 @@ package com.github.datalking.exception;
 import com.github.datalking.util.ObjectUtils;
 
 /**
+ * bean相关普通异常
+ *
  * @author yaoo on 5/28/18
  */
 public class BeansException extends RuntimeException {

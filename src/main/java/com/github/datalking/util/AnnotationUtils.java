@@ -1,7 +1,7 @@
 
 package com.github.datalking.util;
 
-import com.github.datalking.annotation.meta.AnnotationAttributes;
+import com.github.datalking.common.meta.AnnotationAttributes;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
@@ -12,30 +12,23 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-
 public abstract class AnnotationUtils {
 
     public static final String VALUE = "value";
 
     private static final String REPEATABLE_CLASS_NAME = "java.lang.annotation.Repeatable";
 
-    private static final Map<AnnotationCacheKey, Annotation> findAnnotationCache =
-            new ConcurrentHashMap<AnnotationCacheKey, Annotation>(256);
+    private static final Map<AnnotationCacheKey, Annotation> findAnnotationCache = new ConcurrentHashMap<>(256);
 
-    private static final Map<AnnotationCacheKey, Boolean> metaPresentCache =
-            new ConcurrentHashMap<AnnotationCacheKey, Boolean>(256);
+    private static final Map<AnnotationCacheKey, Boolean> metaPresentCache = new ConcurrentHashMap<>(256);
 
-    private static final Map<Class<?>, Boolean> annotatedInterfaceCache =
-            new ConcurrentHashMap<Class<?>, Boolean>(256);
+    private static final Map<Class<?>, Boolean> annotatedInterfaceCache = new ConcurrentHashMap<>(256);
 
-    private static final Map<Class<? extends Annotation>, Boolean> synthesizableCache =
-            new ConcurrentHashMap<Class<? extends Annotation>, Boolean>(256);
+    private static final Map<Class<? extends Annotation>, Boolean> synthesizableCache = new ConcurrentHashMap<>(256);
 
-    private static final Map<Class<? extends Annotation>, Map<String, List<String>>> attributeAliasesCache =
-            new ConcurrentHashMap<Class<? extends Annotation>, Map<String, List<String>>>(256);
+    private static final Map<Class<? extends Annotation>, Map<String, List<String>>> attributeAliasesCache = new ConcurrentHashMap<>(256);
 
-    private static final Map<Class<? extends Annotation>, List<Method>> attributeMethodsCache =
-            new ConcurrentHashMap<Class<? extends Annotation>, List<Method>>(256);
+    private static final Map<Class<? extends Annotation>, List<Method>> attributeMethodsCache = new ConcurrentHashMap<>(256);
 
 
     public static <A extends Annotation> A findAnnotation(Method method, Class<A> annotationType) {

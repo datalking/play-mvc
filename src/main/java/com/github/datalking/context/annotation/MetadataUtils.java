@@ -1,8 +1,8 @@
 package com.github.datalking.context.annotation;
 
-import com.github.datalking.annotation.meta.AnnotationAttributes;
-import com.github.datalking.annotation.meta.AnnotationMetadata;
-import com.github.datalking.annotation.meta.MethodMetadata;
+import com.github.datalking.common.meta.AnnotationAttributes;
+import com.github.datalking.common.meta.AnnotationMetadata;
+import com.github.datalking.common.meta.MethodMetadata;
 
 /**
  * @author yaoo on 5/29/18

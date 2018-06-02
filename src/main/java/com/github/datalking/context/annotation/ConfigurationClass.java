@@ -1,7 +1,7 @@
 package com.github.datalking.context.annotation;
 
-import com.github.datalking.annotation.meta.AnnotationMetadata;
-import com.github.datalking.annotation.meta.StandardAnnotationMetadata;
+import com.github.datalking.common.meta.AnnotationMetadata;
+import com.github.datalking.common.meta.StandardAnnotationMetadata;
 import com.github.datalking.util.Assert;
 
 import java.util.LinkedHashMap;

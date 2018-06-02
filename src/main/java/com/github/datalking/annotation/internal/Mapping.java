@@ -6,6 +6,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * 用于@RequestMapping注解
+ *
  * @author yaoo on 4/28/18
  */
 @Target({ElementType.ANNOTATION_TYPE})

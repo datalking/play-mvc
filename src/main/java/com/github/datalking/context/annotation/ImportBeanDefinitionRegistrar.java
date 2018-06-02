@@ -1,6 +1,6 @@
 package com.github.datalking.context.annotation;
 
-import com.github.datalking.annotation.meta.AnnotationMetadata;
+import com.github.datalking.common.meta.AnnotationMetadata;
 import com.github.datalking.beans.factory.support.BeanDefinitionRegistry;
 
 /**

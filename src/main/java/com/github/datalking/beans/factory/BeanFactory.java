@@ -5,6 +5,7 @@ package com.github.datalking.beans.factory;
  */
 public interface BeanFactory {
 
+    // FactoryBean自身实例的名称前缀
     String FACTORY_BEAN_PREFIX = "&";
 
     // 可以用别名查找

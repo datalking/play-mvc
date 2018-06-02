@@ -1,4 +1,4 @@
-package com.github.datalking.annotation.meta;
+package com.github.datalking.common.meta;
 
 import java.util.Map;
 
@@ -15,10 +15,10 @@ public interface MethodMetadata {
 
     String getReturnTypeName();
 
+    Map<String, Object> getAnnotationAttributes(String annotationType);
+
 //    boolean isFinal();
 //    boolean isStatic();
 //    boolean isAbstract();
-
-    Map<String, Object> getAnnotationAttributes(String annotationType);
 
 }

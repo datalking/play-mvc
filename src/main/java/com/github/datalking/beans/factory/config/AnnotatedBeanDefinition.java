@@ -1,7 +1,7 @@
 package com.github.datalking.beans.factory.config;
 
 
-import com.github.datalking.annotation.meta.AnnotationMetadata;
+import com.github.datalking.common.meta.AnnotationMetadata;
 
 /**
  * 代表来源于注解的BeanDefiniiton 接口

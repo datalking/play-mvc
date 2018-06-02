@@ -6,7 +6,6 @@ import com.github.datalking.aop.Pointcut;
 import com.github.datalking.aop.PointcutAdvisor;
 import com.github.datalking.aop.framework.Advised;
 import com.github.datalking.aop.framework.AdvisedSupport;
-import com.github.datalking.common.BridgeMethodResolver;
 import com.github.datalking.util.Assert;
 import com.github.datalking.util.ClassUtils;
 
@@ -158,5 +157,17 @@ public interface AopUtils {
         return resolvedMethod;
     }
 
+    static Class<?> getTargetClass(Object candidate) {
+        Assert.notNull(candidate, "Candidate object must not be null");
+        Class<?> result = null;
+//        if (candidate instanceof TargetClassAware) {
+//            result = ((TargetClassAware) candidate).getTargetClass();
+//        }
+//        if (result == null) {
+//            result = (isCglibProxy(candidate) ? candidate.getClass().getSuperclass() : candidate.getClass());
+//        }
+        result = candidate.getClass();
+        return result;
+    }
 
 }

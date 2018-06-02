@@ -1,8 +1,8 @@
 package com.github.datalking.beans.factory.support;
 
 import com.github.datalking.annotation.Bean;
-import com.github.datalking.annotation.meta.AnnotationMetadata;
-import com.github.datalking.annotation.meta.MethodMetadata;
+import com.github.datalking.common.meta.AnnotationMetadata;
+import com.github.datalking.common.meta.MethodMetadata;
 import com.github.datalking.beans.factory.config.AnnotatedBeanDefinition;
 import com.github.datalking.context.annotation.ConfigurationClass;
 
