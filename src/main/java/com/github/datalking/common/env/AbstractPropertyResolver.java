@@ -33,7 +33,6 @@ public abstract class AbstractPropertyResolver implements ConfigurablePropertyRe
 
     private final Set<String> requiredProperties = new LinkedHashSet<>();
 
-
     public ConfigurableConversionService getConversionService() {
         return this.conversionService;
     }

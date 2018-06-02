@@ -3,7 +3,10 @@ package com.github.datalking.beans.factory.support;
 import com.github.datalking.beans.factory.config.BeanDefinition;
 import com.github.datalking.beans.factory.config.BeanDefinitionHolder;
 
+import java.lang.reflect.Member;
 import java.lang.reflect.Method;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * BeanDefinition高级实现类
@@ -32,6 +35,8 @@ public class RootBeanDefinition extends AbstractBeanDefinition {
     public boolean allowCaching = true;
 
     boolean postProcessed = false;
+
+    private Set<Member> externallyManagedConfigMembers;
 
     // volatile ResolvableType factoryMethodReturnType;
 
@@ -89,6 +94,21 @@ public class RootBeanDefinition extends AbstractBeanDefinition {
 //        }
     }
 
+    public void registerExternallyManagedConfigMember(Member configMember) {
+//        synchronized (this.postProcessingLock) {
+            if (this.externallyManagedConfigMembers == null) {
+                this.externallyManagedConfigMembers = new HashSet<Member>(1);
+            }
+            this.externallyManagedConfigMembers.add(configMember);
+//        }
+    }
+
+    public boolean isExternallyManagedConfigMember(Member configMember) {
+//        synchronized (this.postProcessingLock) {
+            return (this.externallyManagedConfigMembers != null &&
+                    this.externallyManagedConfigMembers.contains(configMember));
+//        }
+    }
     @Override
     public RootBeanDefinition cloneBeanDefinition() {
         return new RootBeanDefinition(this);

@@ -55,7 +55,9 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
         implements MergedBeanDefinitionPostProcessor, PriorityOrdered, BeanFactoryAware {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
-
+    /**
+     * 支持自动注入的注解类型
+     */
     private final Set<Class<? extends Annotation>> autowiredAnnotationTypes = new LinkedHashSet<>();
 
     private String requiredParameterName = "required";
@@ -70,10 +72,11 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 
     private final Map<String, InjectionMetadata> injectionMetadataCache = new ConcurrentHashMap<>(64);
 
-    @SuppressWarnings("unchecked")
     public AutowiredAnnotationBeanPostProcessor() {
+
         this.autowiredAnnotationTypes.add(Autowired.class);
         this.autowiredAnnotationTypes.add(Value.class);
+
         try {
 
             this.autowiredAnnotationTypes.add((Class<? extends Annotation>)
@@ -116,16 +119,21 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 
     public void setBeanFactory(BeanFactory beanFactory) {
         if (!(beanFactory instanceof ConfigurableListableBeanFactory)) {
-            throw new IllegalArgumentException(
-                    "AutowiredAnnotationBeanPostProcessor requires a ConfigurableListableBeanFactory");
+            throw new IllegalArgumentException("AutowiredAnnotationBeanPostProcessor requires a ConfigurableListableBeanFactory");
         }
         this.beanFactory = (ConfigurableListableBeanFactory) beanFactory;
     }
 
 
+    /**
+     * 构建autowire的元数据，加入缓存
+     */
+    @Override
     public void postProcessMergedBeanDefinition(RootBeanDefinition beanDefinition, Class<?> beanType, String beanName) {
         if (beanType != null) {
+            // 查找bean的依赖项
             InjectionMetadata metadata = findAutowiringMetadata(beanName, beanType, null);
+            // 添加进RootBeanDefinition
             metadata.checkConfigMembers(beanDefinition);
         }
     }
@@ -236,7 +244,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
         // 从缓存中查找bean的依赖信息
         InjectionMetadata metadata = this.injectionMetadataCache.get(cacheKey);
 
-        /// 默认不需要refresh
+        /// 若metadata为空，即缓存中没有，则需刷新缓存
         if (InjectionMetadata.needsRefresh(metadata, clazz)) {
             synchronized (this.injectionMetadataCache) {
                 metadata = this.injectionMetadataCache.get(cacheKey);
@@ -244,6 +252,8 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
                     if (metadata != null) {
                         metadata.clear(pvs);
                     }
+
+                    // 构建clazz需要autowire的元数据，一般是提取@Autowired或@Value标注的字段
                     metadata = buildAutowiringMetadata(clazz);
                     this.injectionMetadataCache.put(cacheKey, metadata);
                 }
@@ -253,14 +263,21 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
         return metadata;
     }
 
+    /**
+     * 构建clazz需要autowire的元数据，一般是提取@Autowired或@Value标注的字段
+     */
     private InjectionMetadata buildAutowiringMetadata(Class<?> clazz) {
         LinkedList<InjectionMetadata.InjectedElement> elements = new LinkedList<>();
         Class<?> targetClass = clazz;
 
         do {
             LinkedList<InjectionMetadata.InjectedElement> currElements = new LinkedList<>();
+
             for (Field field : targetClass.getDeclaredFields()) {
+
+                // 提取字段的@Autowired或@Value注解
                 Annotation ann = findAutowiredAnnotation(field);
+
                 if (ann != null) {
                     if (Modifier.isStatic(field.getModifiers())) {
                         if (logger.isWarnEnabled()) {
@@ -268,6 +285,8 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
                         }
                         continue;
                     }
+
+                    // 检查该字段是否必须
                     boolean required = determineRequiredStatus(ann);
                     currElements.add(new AutowiredFieldElement(field, required));
                 }
@@ -303,6 +322,9 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
         return new InjectionMetadata(clazz, elements);
     }
 
+    /**
+     * 提取字段的@Autowired或@Value注解
+     */
     private Annotation findAutowiredAnnotation(AccessibleObject ao) {
         for (Class<? extends Annotation> type : this.autowiredAnnotationTypes) {
             Annotation ann = AnnotationUtils.getAnnotation(ao, type);
@@ -315,24 +337,26 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 
     protected <T> Map<String, T> findAutowireCandidates(Class<T> type) {
         if (this.beanFactory == null) {
-            throw new IllegalStateException("No BeanFactory configured - " +
-                    "override the getBeanOfType method or specify the 'beanFactory' property");
+            throw new IllegalStateException("No BeanFactory configured - override the getBeanOfType method or specify the 'beanFactory' property");
         }
         return BeanFactoryUtils.beansOfTypeIncludingAncestors(this.beanFactory, type);
     }
 
+    /**
+     * 检查要注入的字段或方法是否是必须的
+     */
     protected boolean determineRequiredStatus(Annotation ann) {
         try {
+
             Method method = ReflectionUtils.findMethod(ann.annotationType(), this.requiredParameterName);
             if (method == null) {
-                // Annotations like @Inject and @Value don't have a method (attribute) named "required"
-                // -> default to required status
+                // Annotations like @Inject and @Value don't have a method (attribute) named "required" -> default to required status
                 return true;
             }
+
             return (this.requiredParameterValue == (Boolean) ReflectionUtils.invokeMethod(method, ann));
         } catch (Exception ex) {
-            // An exception was thrown during reflective invocation of the required attribute
-            // -> default to required status
+            // An exception was thrown during reflective invocation of the required attribute -> default to required status
             return true;
         }
     }
@@ -380,6 +404,9 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
             this.required = required;
         }
 
+        /**
+         * 注入依赖的字段
+         */
         @Override
         protected void inject(Object bean, String beanName, PropertyValues pvs) throws Throwable {
 
@@ -397,7 +424,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
                     Set<String> autowiredBeanNames = new LinkedHashSet<>(1);
                     TypeConverter typeConverter = beanFactory.getTypeConverter();
 
-                    // ==== 获取依赖字段的对象，实现autowire字段的入口
+                    // ==== 获取依赖字段的对象，实现autowire字段的入口，也可以注入字符串类型的字段，是解析@Value中占位符的入口
                     value = beanFactory.resolveDependency(desc, beanName, autowiredBeanNames, typeConverter);
 
                     /// 加入缓存
@@ -405,11 +432,15 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
                         if (!this.cached) {
                             if (value != null || this.required) {
                                 this.cachedFieldValue = desc;
+
                                 registerDependentBeans(beanName, autowiredBeanNames);
+
                                 if (autowiredBeanNames.size() == 1) {
                                     String autowiredBeanName = autowiredBeanNames.iterator().next();
                                     if (beanFactory.containsBean(autowiredBeanName)) {
+
                                         if (beanFactory.isTypeMatch(autowiredBeanName, field.getType())) {
+
                                             this.cachedFieldValue = new RuntimeBeanReference(autowiredBeanName);
                                         }
                                     }

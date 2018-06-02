@@ -68,7 +68,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
     protected Object createBean(String beanName, RootBeanDefinition bd, Object[] args) {
 
         Class beanClass = doResolveBeanClass(bd);
-        // ConfigurationClassBD的beanClass是null
+        // ConfigurationClassBD的beanClass是null，FactoryBean的beanClass也可能是null
         if (beanClass != null) {
             bd.setBeanClass(beanClass);
         }
@@ -91,13 +91,20 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
         BeanWrapper instanceWrapper = null;
 
-        //==== 默认调用无参构造函数新建bean实例，也可以调用工厂方法，尚未注入属性
-        instanceWrapper = createBeanInstance(beanName, bd, args);
+        if (bd.isSingleton()) {
+//            instanceWrapper = this.factoryBeanInstanceCache.remove(beanName);
+        }
+
+        if (instanceWrapper == null) {
+            //==== 默认调用无参构造函数新建bean实例，也可以调用工厂方法，尚未注入属性
+            instanceWrapper = createBeanInstance(beanName, bd, args);
+        }
+
         final Object bean = (instanceWrapper != null ? instanceWrapper.getWrappedInstance() : null);
 
         if (!bd.postProcessed) {
-            // 添加到externallyManagedConfigMembers
-//            applyMergedBeanDefinitionPostProcessors(mbd, beanType, beanName);
+            // 构建需要autowire的元数据添加到缓存，再添加到externallyManagedConfigMembers
+            applyMergedBeanDefinitionPostProcessors(bd, bean.getClass(), beanName);
             bd.postProcessed = true;
         }
 
@@ -126,7 +133,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
     protected BeanWrapper createBeanInstance(String beanName, RootBeanDefinition bd, Object[] args) {
 
-//        Class beanClass = doResolveBeanClass(bd);
+        Class beanClass = doResolveBeanClass(bd);
 //        bd.setBeanClass(beanClass);
 
 
@@ -185,6 +192,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
                 autowireByName(beanName, mbd, bw, newPvs);
             }
 
+            // by type，mybatis的MapperFactoryBean默认进这里
             if (mbd.getResolvedAutowireMode() == RootBeanDefinition.AUTOWIRE_BY_TYPE) {
                 autowireByType(beanName, mbd, bw, newPvs);
             }
@@ -197,13 +205,15 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         boolean needsDepCheck = false;
 
         if (hasInstAwareBpps || needsDepCheck) {
-            PropertyDescriptor[] filteredPds = filterPropertyDescriptorsForDependencyCheck(bw, mbd.allowCaching);
+//            PropertyDescriptor[] filteredPds = filterPropertyDescriptorsForDependencyCheck(bw, mbd.allowCaching);
+            PropertyDescriptor[] filteredPds = null;
             if (hasInstAwareBpps) {
                 for (BeanPostProcessor bp : getBeanPostProcessors()) {
                     if (bp instanceof InstantiationAwareBeanPostProcessor) {
                         InstantiationAwareBeanPostProcessor ibp = (InstantiationAwareBeanPostProcessor) bp;
 
-                        /// 这里会通过AutowiredAnnotationBeanPostProcessor的方法自动注入依赖的bean
+                        // 这里会通过AutowiredAnnotationBeanPostProcessor的方法自动注入依赖的bean，直接从缓存中取autowire的字段
+                        // 解析@Value中属性占位符的入口
                         pvs = ibp.postProcessPropertyValues(pvs, filteredPds, bw.getWrappedInstance(), beanName);
                         if (pvs == null) {
                             return;
@@ -218,6 +228,19 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
         applyPropertyValues(beanName, mbd, bw, pvs);
 
+    }
+
+    /**
+     * 构建autowire的元数据添加到缓存
+     */
+    protected void applyMergedBeanDefinitionPostProcessors(RootBeanDefinition mbd, Class<?> beanType, String beanName) {
+        for (BeanPostProcessor bp : getBeanPostProcessors()) {
+            if (bp instanceof MergedBeanDefinitionPostProcessor) {
+                MergedBeanDefinitionPostProcessor bdp = (MergedBeanDefinitionPostProcessor) bp;
+
+                bdp.postProcessMergedBeanDefinition(mbd, beanType, beanName);
+            }
+        }
     }
 
     protected void autowireByName(String beanName, AbstractBeanDefinition mbd, BeanWrapper bw, MutablePropertyValues pvs) {
@@ -250,6 +273,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
         Set<String> autowiredBeanNames = new LinkedHashSet<>(4);
 
+        // 获取bean非基本类型和非字符串类型的属性，就是ref类型的
         String[] propertyNames = unsatisfiedNonSimpleProperties(mbd, bw);
 
         for (String propertyName : propertyNames) {
@@ -315,12 +339,13 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         BeanWrapperImpl bw = new BeanWrapperImpl();
 
         Object factoryBean = null;
+        String factoryBeanName = bd.getFactoryBeanName();
         Class<?> factoryClass;
         //boolean isStatic;
 
         try {
 
-            factoryBean = getBean(bd.getFactoryBeanName());
+            factoryBean = getBean(factoryBeanName);
             if (factoryBean == null) {
                 throw new Exception(beanName + "找不到FactoryBeanName");
             }
@@ -410,6 +435,12 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
     }
 
 
+    /**
+     * bean实例化且注入属性后执行的方法
+     * 执行 Aware的setXxx() -> postProcessBeforeInitialization() -> afterPropertiesSet() -> postProcessAfterInitialization()
+     * <p>
+     * 具体任务有注入DefaultSqlSessionFactory、TransactionFactory
+     */
     protected Object initializeBean(final String beanName, final Object bean, RootBeanDefinition mbd) {
 
         // 执行aware相关方法

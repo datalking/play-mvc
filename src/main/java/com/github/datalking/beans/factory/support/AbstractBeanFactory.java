@@ -3,6 +3,7 @@ package com.github.datalking.beans.factory.support;
 import com.github.datalking.beans.BeanWrapper;
 import com.github.datalking.beans.TypeConverter;
 import com.github.datalking.beans.factory.BeanFactory;
+import com.github.datalking.beans.factory.BeanFactoryUtils;
 import com.github.datalking.beans.factory.FactoryBean;
 import com.github.datalking.beans.factory.ObjectFactory;
 import com.github.datalking.beans.factory.config.BeanDefinition;
@@ -14,6 +15,7 @@ import com.github.datalking.beans.factory.config.InstantiationAwareBeanPostProce
 import com.github.datalking.common.StringValueResolver;
 import com.github.datalking.common.convert.ConversionService;
 import com.github.datalking.common.convert.SimpleTypeConverter;
+import com.github.datalking.exception.BeanCurrentlyInCreationException;
 import com.github.datalking.exception.NoSuchBeanDefinitionException;
 import com.github.datalking.util.Assert;
 import com.github.datalking.util.ClassUtils;
@@ -102,30 +104,79 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
         //将别名解析为bean唯一名称
         //final String name = transformedBeanName(name);
 
-        /// 从3级缓存中找bean，如果name对应的bean实例已缓存，则直接返回bean
+        // 最终返回的bean
+        Object targetBean;
+
+        /// 从3级缓存中找bean
         Object sharedInstance = getSingleton(name);
+
+        /// 如果name对应的bean实例已缓存，则直接返回bean
         if (sharedInstance != null && args == null) {
-            return (T) sharedInstance;
+
+            targetBean = getObjectForBeanInstance(sharedInstance, name, name, null);
         }
+        /// 如果name对应的bean实例不存在，则新建bean
+        else {
 
-        ///如果name对应的bean实例不存在，则新建bean
-        // 先标记为已经创建
-        markBeanAsCreated(name);
+            // 先标记为已经创建
+            markBeanAsCreated(name);
 
-        final RootBeanDefinition bd = getMergedLocalBeanDefinition(name);
+            final RootBeanDefinition bd = getMergedLocalBeanDefinition(name);
 //        RootBeanDefinition bd = (RootBeanDefinition) getBeanDefinition(name);
 
-        if (bd == null) {
-            throw new NoSuchBeanDefinitionException(name + " 对应的BeanDefinition不存在");
-        }
-        //合并beanDefinition
-        // bd = getMergedLocalBeanDefinition(beanName);
+            if (bd == null) {
+                throw new NoSuchBeanDefinitionException(name + " 对应的BeanDefinition不存在");
+            }
+            //合并beanDefinition
+            // bd = getMergedLocalBeanDefinition(beanName);
 
-        ///判断scope为单例，创建单例bean
-        Object targetBean;
-        targetBean = getSingleton(name, (ObjectFactory) () -> createBean(name, bd, args));
+            ///判断scope为单例，创建单例bean
+            targetBean = getSingleton(name, (ObjectFactory) () -> createBean(name, bd, args));
+
+        }
 
         return (T) targetBean;
+    }
+
+    protected Object getObjectForBeanInstance(Object beanInstance, String name, String beanName, RootBeanDefinition mbd) {
+
+        // 若不是FactoryBean类型 或者name以&开头，则直接返回bean实例
+        if (!(beanInstance instanceof FactoryBean) || BeanFactoryUtils.isFactoryDereference(name)) {
+
+            return beanInstance;
+        }
+
+        Object object = null;
+//        if (mbd == null) {
+//            object = getCachedObjectForFactoryBean(beanName);
+//        }
+        if (object == null) {
+
+            FactoryBean<?> factory = (FactoryBean<?>) beanInstance;
+            if (mbd == null && containsBeanDefinition(beanName)) {
+                mbd = getMergedLocalBeanDefinition(beanName);
+            }
+//            boolean synthetic = (mbd != null && mbd.isSynthetic());
+            boolean synthetic = (mbd != null);
+//            object = getObjectFromFactoryBean(factory, beanName, !synthetic);
+            object = doGetObjectFromFactoryBean(factory, beanName);
+        }
+
+        return object;
+    }
+
+    private Object doGetObjectFromFactoryBean(final FactoryBean<?> factory, final String beanName) {
+
+        Object object;
+
+        //调用FactoryBean中的getObject()方法获取bean
+        object = factory.getObject();
+
+        if (object == null && isSingletonCurrentlyInCreation(beanName)) {
+            throw new BeanCurrentlyInCreationException(beanName, "FactoryBean which is currently in creation returned null from getObject");
+        }
+
+        return object;
     }
 
     protected void markBeanAsCreated(String beanName) {
@@ -439,19 +490,12 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
 
     protected Object evaluateBeanDefinitionString(String value, BeanDefinition beanDefinition) {
 //        if (this.beanExpressionResolver == null) {
-            return value;
+        return value;
 //        }
 //        Scope scope = (beanDefinition != null ? getRegisteredScope(beanDefinition.getScope()) : null);
 //        return this.beanExpressionResolver.evaluate(value, new BeanExpressionContext(this, scope));
     }
 
-
-
-//    protected boolean isFactoryBean(String beanName, RootBeanDefinition mbd) {
-//        Class<?> beanType = predictBeanType(beanName, mbd, FactoryBean.class);
-//        // class1.isAssignableFrom(class2) 判断class1是否是class2的超类或父接口
-//        return (beanType != null && FactoryBean.class.isAssignableFrom(beanType));
-//    }
 
 //    public void destroyBean(String beanName, Object beanInstance) {
 //    protected void initBeanWrapper(BeanWrapper bw) {

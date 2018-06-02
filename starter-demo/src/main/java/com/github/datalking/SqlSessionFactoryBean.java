@@ -283,9 +283,6 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
             xmlConfigBuilder = new XMLConfigBuilder(inputStream, null, this.configurationProperties);
             configuration = xmlConfigBuilder.getConfiguration();
         } else {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Property 'configuration' or 'configLocation' not specified, using default MyBatis Configuration");
-            }
             // 直接创建 Configuration 对象并进行配置
             configuration = new Configuration();
             if (this.configurationProperties != null) {
@@ -378,9 +375,6 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
                 // ==== 解析mybatis-config.xml
                 xmlConfigBuilder.parse();
 
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Parsed configuration file: '" + this.configLocation + "'");
-                }
             } catch (Exception ex) {
 //                throw new NestedIOException("Failed to parse config resource: " + this.configLocation, ex);
                 ex.printStackTrace();

@@ -330,15 +330,18 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
                                          Set<String> autowiredBeanNames,
                                          TypeConverter typeConverter) {
 
-        // 获取@Value注解的值
+        // 获取@Value注解的值，可能含有占位符
         Object value = getAutowireCandidateResolver().getSuggestedValue(descriptor);
 
         if (value != null) {
             if (value instanceof String) {
+
+                // 使用 PropertySourcesPlaceholderConfigurer 解析占位符
                 String strVal = resolveEmbeddedValue((String) value);
                 BeanDefinition bd = (beanName != null && containsBean(beanName) ? getMergedBeanDefinition(beanName) : null);
                 value = evaluateBeanDefinitionString(strVal, bd);
             }
+
             TypeConverter converter = (typeConverter != null ? typeConverter : getTypeConverter());
             return (descriptor.getField() != null ?
                     converter.convertIfNecessary(value, type, descriptor.getField()) :
@@ -415,7 +418,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
         /// 若type是普通Object
         else {
 
-            // ==== 寻找依赖bean的候选项
+            // ==== 寻找依赖bean的候选项，保存到matchingBeans
             Map<String, Object> matchingBeans = findAutowireCandidates(beanName, type, descriptor);
 
             if (matchingBeans.isEmpty()) {
@@ -425,31 +428,44 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
                 return null;
             }
 
+            // 保存要返回的对象bean名
+            String autowiredBeanName;
+            // 保存要返回的对象
+            Object instanceCandidate;
+
             /// 若存在多个候选bean，则挑选最主要的bean
             if (matchingBeans.size() > 1) {
 
                 // 挑选最主要的bean
-                String primaryBeanName = determinePrimaryCandidate(matchingBeans, descriptor);
+                autowiredBeanName = determinePrimaryCandidate(matchingBeans, descriptor);
 
-                if (primaryBeanName == null) {
+                if (autowiredBeanName == null) {
                     throw new NoUniqueBeanDefinitionException(type, matchingBeans.keySet());
                 }
-                if (autowiredBeanNames != null) {
-                    autowiredBeanNames.add(primaryBeanName);
-                }
 
-                return matchingBeans.get(primaryBeanName);
+                instanceCandidate = matchingBeans.get(autowiredBeanName);
+            }else{
+                /// 若只存在1个候选bean，则直接作为主要bean
+                Map.Entry<String, Object> entry = matchingBeans.entrySet().iterator().next();
+                autowiredBeanName = entry.getKey();
+                instanceCandidate = entry.getValue();
             }
 
-            // 若只存在1个候选bean，则直接返回
-            Map.Entry<String, Object> entry = matchingBeans.entrySet().iterator().next();
             if (autowiredBeanNames != null) {
-                autowiredBeanNames.add(entry.getKey());
+                autowiredBeanNames.add(autowiredBeanName);
             }
-            return entry.getValue();
+
+            // ==== 若是class，则直接调用getBean()返回实例化的对象
+            Object obj = (instanceCandidate instanceof Class ?
+                    descriptor.resolveCandidate(autowiredBeanName, type, this) : instanceCandidate);
+
+            return obj;
         }
     }
 
+    /**
+     * 从多个候选bean中挑选主要bean
+     */
     protected String determinePrimaryCandidate(Map<String, Object> candidateBeans, DependencyDescriptor descriptor) {
 
         String primaryBeanName = null;
@@ -570,6 +586,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
         for (Class<?> autowiringType : this.resolvableDependencies.keySet()) {
             if (autowiringType.isAssignableFrom(requiredType)) {
                 Object autowiringValue = this.resolvableDependencies.get(autowiringType);
+
                 autowiringValue = AutowireUtils.resolveAutowiringValue(autowiringValue, requiredType);
                 if (requiredType.isInstance(autowiringValue)) {
                     result.put(ObjectUtils.identityToString(autowiringValue), autowiringValue);

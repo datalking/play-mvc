@@ -23,6 +23,12 @@ java笔记
 
 ## summary
 
+- instanceof 在 java 的编译状态和运行状态是有区别的：
+  - 在编译状态中 class 可以是 object 对象的父类、自身类、子类，在这三种情况下 java 编译时不会报错，
+  - 在运行转态中 class 可以是 object 对象的父类、自身类，但不能是子类，当为父类、自身类的情况下 result 结果为 true，为子类的情况下为 false。
+  
+- Class.isInstance(obj) 表明这个对象能不能被转化为这个类，如果 obj 是调用这个方法的 Class 或接口的实例则返回true，这个方法是 instanceof 运算符的动态等价，如果 obj 为 null 则返回 false。
+  
 - java class name
     - 1、getCanonicalName顾名思义的正规的名字，与之对应的是getName
     - 2、大部分情况下，getName和getCanonicalName没有什么不同的， 但是对于array和内部类就不一样了

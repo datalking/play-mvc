@@ -17,20 +17,10 @@ public abstract class PlaceholderConfigurerSupport extends PropertyResourceConfi
 
     private static final String DEFAULT_VALUE_SEPARATOR = ":";
 
-
-    /**
-     * Defaults to {@value #DEFAULT_PLACEHOLDER_PREFIX}
-     */
     protected String placeholderPrefix = DEFAULT_PLACEHOLDER_PREFIX;
 
-    /**
-     * Defaults to {@value #DEFAULT_PLACEHOLDER_SUFFIX}
-     */
     protected String placeholderSuffix = DEFAULT_PLACEHOLDER_SUFFIX;
 
-    /**
-     * Defaults to {@value #DEFAULT_VALUE_SEPARATOR}
-     */
     protected String valueSeparator = DEFAULT_VALUE_SEPARATOR;
 
     protected boolean ignoreUnresolvablePlaceholders = false;

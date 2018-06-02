@@ -23,12 +23,6 @@ public abstract class PropertySource<T> {
         this.source = source;
     }
 
-    /**
-     * Create a new {@code PropertySource} with the given name and with a new {@code Object}
-     * instance as the underlying source.
-     * <p>Often useful in testing scenarios when creating anonymous implementations that
-     * never query an actual source but rather return hard-coded values.
-     */
     public PropertySource(String name) {
         this(name, (T) new Object());
     }
@@ -41,24 +35,14 @@ public abstract class PropertySource<T> {
         return this.source;
     }
 
-    /**
-     * Return whether this {@code PropertySource} contains the given name.
-     * <p>This implementation simply checks for a {@code null} return value
-     * from {@link #getProperty(String)}. Subclasses may wish to implement
-     * a more efficient algorithm if possible.
-     *
-     * @param name the property name to find
-     */
     public boolean containsProperty(String name) {
         return (getProperty(name) != null);
     }
 
     /**
-     * Return the value associated with the given name,
-     * or {@code null} if not found.
+     * Return the value associated with the given name,  or {@code null} if not found.
      *
      * @param name the property to find
-     * @see PropertyResolver#getRequiredProperty(String)
      */
     public abstract Object getProperty(String name);
 

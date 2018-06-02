@@ -1,8 +1,15 @@
 # note-spring
 spring笔记
 
-## summary
+## spring ummary
 
+
+## faq
+
+- SqlSessionTemplate何时实例化的
+- @Bean标注的方法如何注入参数
+- properties属性文件何时读取的
+- sqlSessionFactory如何autowire到sqlSessionFactoryBean
 
 #### spring 常用注解
 
@@ -12,6 +19,9 @@ spring笔记
 
 #### spring mvc
 
+- ssm实例化时的连续依赖： bookServiceImpl -> bookDao -> sqlSessionFactoryBean -> DaoConfig
+- SqlSessionFactory注入的过程中，使用了SqlSessionFactoryBean
+- 在实例化bookServiceImpl的过程中，实例化了daoConfig
 
 - `<mvc:default-servlet-handler />` 对应的实现类为DefaultServletHttpRequestHandler，它会像对进入DispatcherServlet的URL进行筛查，
   如果发现是静态资源的请求，就将该请求转发给Web应用服务器默认的Servlet处理，如果不是静态资源的请求，才由DispatcherServlet继续处理

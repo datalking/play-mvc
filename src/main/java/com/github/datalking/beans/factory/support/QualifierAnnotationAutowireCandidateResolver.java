@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 匹配@Qualifier注解
+ * 获取@Qualifier、@Value注解的值
  *
  * @author yaoo on 5/29/18
  */
@@ -71,14 +71,17 @@ public class QualifierAnnotationAutowireCandidateResolver implements AutowireCan
     }
 
     public boolean isAutowireCandidate(BeanDefinitionHolder bdHolder, DependencyDescriptor descriptor) {
+
         if (!bdHolder.getBeanDefinition().isAutowireCandidate()) {
             // if explicitly false, do not proceed with qualifier check
             return false;
         }
+
         if (descriptor == null) {
             // no qualification necessary
             return true;
         }
+
         boolean match = checkQualifiers(bdHolder, descriptor.getAnnotations());
         if (match) {
             MethodParameter methodParam = descriptor.getMethodParameter();
@@ -242,18 +245,22 @@ public class QualifierAnnotationAutowireCandidateResolver implements AutowireCan
 
 
     /**
+     * 检查依赖项的注解是否使用@Value指定了值
+     * 返回@Vaule注解的值，可能含有占位符
      * Determine whether the given dependency carries a value annotation.
-     *
-     * @see Value
      */
     public Object getSuggestedValue(DependencyDescriptor descriptor) {
+
         Object value = findValue(descriptor.getAnnotations());
+
         if (value == null) {
             MethodParameter methodParam = descriptor.getMethodParameter();
             if (methodParam != null) {
+
                 value = findValue(methodParam.getMethodAnnotations());
             }
         }
+
         return value;
     }
 
@@ -261,25 +268,34 @@ public class QualifierAnnotationAutowireCandidateResolver implements AutowireCan
      * Determine a suggested value from any of the given candidate annotations.
      */
     protected Object findValue(Annotation[] annotationsToSearch) {
+
         for (Annotation annotation : annotationsToSearch) {
+
+            /// 如果是@Value注解
             if (this.valueAnnotationType.isInstance(annotation)) {
+
+                // ==== 提取@Value注解的值
                 return extractValue(annotation);
             }
         }
+
         for (Annotation annotation : annotationsToSearch) {
+            /// 如果是包含@Value注解的注解
             Annotation metaAnn = annotation.annotationType().getAnnotation(this.valueAnnotationType);
             if (metaAnn != null) {
+
+                // ==== 提取@Value注解的值
                 return extractValue(metaAnn);
             }
         }
+
         return null;
     }
 
-    /**
-     * Extract the value attribute from the given annotation.
-     */
     protected Object extractValue(Annotation valueAnnotation) {
+
         Object value = AnnotationUtils.getValue(valueAnnotation);
+
         if (value == null) {
             throw new IllegalStateException("Value annotation must have a value attribute");
         }

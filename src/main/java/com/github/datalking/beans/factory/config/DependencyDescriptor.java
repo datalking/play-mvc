@@ -1,5 +1,6 @@
 package com.github.datalking.beans.factory.config;
 
+import com.github.datalking.beans.factory.BeanFactory;
 import com.github.datalking.common.GenericCollectionTypeResolver;
 import com.github.datalking.common.MethodParameter;
 import com.github.datalking.common.ParameterNameDiscoverer;
@@ -24,8 +25,13 @@ public class DependencyDescriptor implements Serializable {
 
     private transient MethodParameter methodParameter;
 
+    // 字段对象，一般是B的对象
     private transient Field field;
 
+    // 字段名，一般是B的名称
+    private String fieldName;
+
+    // 外层类class对象，一般是A
     private Class<?> declaringClass;
 
     private String methodName;
@@ -33,8 +39,6 @@ public class DependencyDescriptor implements Serializable {
     private Class[] parameterTypes;
 
     private int parameterIndex;
-
-    private String fieldName;
 
     private final boolean required;
 
@@ -67,14 +71,6 @@ public class DependencyDescriptor implements Serializable {
         this(field, required, true);
     }
 
-    /**
-     * Create a new descriptor for a field.
-     *
-     * @param field    the field to wrap
-     * @param required whether the dependency is required
-     * @param eager    whether this dependency is 'eager' in the sense of
-     *                 eagerly resolving potential target beans for type matching
-     */
     public DependencyDescriptor(Field field, boolean required, boolean eager) {
         Assert.notNull(field, "Field must not be null");
         this.field = field;
@@ -83,12 +79,6 @@ public class DependencyDescriptor implements Serializable {
         this.required = required;
         this.eager = eager;
     }
-
-    /**
-     * Copy constructor.
-     *
-     * @param original the original descriptor to create a copy from
-     */
     public DependencyDescriptor(DependencyDescriptor original) {
         this.methodParameter = (original.methodParameter != null ? new MethodParameter(original.methodParameter) : null);
         this.field = original.field;
@@ -278,5 +268,11 @@ public class DependencyDescriptor implements Serializable {
             throw new IllegalStateException("Could not find original class structure", ex);
         }
     }
+
+    public Object resolveCandidate(String beanName, Class<?> requiredType, BeanFactory beanFactory) {
+
+        return beanFactory.getBean(beanName);
+    }
+
 
 }

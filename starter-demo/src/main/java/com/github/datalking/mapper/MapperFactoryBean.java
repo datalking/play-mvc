@@ -59,7 +59,7 @@ public class MapperFactoryBean<T> extends SqlSessionDaoSupport implements Factor
         if (this.addToConfig && !configuration.hasMapper(this.mapperInterface)) {
             try {
 
-                // 注册Mapper接口
+                // ==== 注册Mapper接口
                 configuration.addMapper(this.mapperInterface);
             } catch (Exception e) {
                 logger.error("Error while adding the mapper '" + this.mapperInterface + "' to configuration.", e);

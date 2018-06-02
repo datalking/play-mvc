@@ -78,7 +78,7 @@ public class PropertyPlaceholderHelper {
     /**
      * 名称中占位符解析
      *
-     * @param strVal              含有占位符的名称
+     * @param strVal              含有占位符的名称，待解析
      * @param placeholderResolver 解析器
      * @param visitedPlaceholders 已解析的占位符
      * @return 解析后的名称
@@ -95,15 +95,22 @@ public class PropertyPlaceholderHelper {
         while (startIndex != -1) {
             int endIndex = findPlaceholderEndIndex(result, startIndex);
             if (endIndex != -1) {
+
+                // 获取去掉前后缀之后的名称
                 String placeholder = result.substring(startIndex + this.placeholderPrefix.length(), endIndex);
                 String originalPlaceholder = placeholder;
                 if (!visitedPlaceholders.add(originalPlaceholder)) {
                     throw new IllegalArgumentException("Circular placeholder reference '" + originalPlaceholder + "' in property definitions");
                 }
+
+
                 // Recursive invocation, parsing placeholders contained in the placeholder key.
+                // 递归去掉前后缀
                 placeholder = parseStringValue(placeholder, placeholderResolver, visitedPlaceholders);
-                // Now obtain the value for the fully resolved key...
+
+                // 获取key即解析后的值，如jdbc.driver
                 String propVal = placeholderResolver.resolvePlaceholder(placeholder);
+
                 if (propVal == null && this.valueSeparator != null) {
                     int separatorIndex = placeholder.indexOf(this.valueSeparator);
                     if (separatorIndex != -1) {
@@ -115,9 +122,9 @@ public class PropertyPlaceholderHelper {
                         }
                     }
                 }
+
                 if (propVal != null) {
-                    // Recursive invocation, parsing placeholders contained in the
-                    // previously resolved placeholder value.
+                    // Recursive invocation, parsing placeholders contained in the previously resolved placeholder value.
                     propVal = parseStringValue(propVal, placeholderResolver, visitedPlaceholders);
                     result.replace(startIndex, endIndex + this.placeholderSuffix.length(), propVal);
                     if (logger.isTraceEnabled()) {

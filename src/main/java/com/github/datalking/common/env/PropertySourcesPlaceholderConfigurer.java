@@ -84,7 +84,7 @@ public class PropertySourcesPlaceholderConfigurer extends PlaceholderConfigurerS
             @Override
             public String resolveStringValue(String strVal) {
 
-                /// 默认执行false
+                /// 第一次执行false，后面执行true，解析@Value注解中的占位符
                 String resolved = ignoreUnresolvablePlaceholders ?
                         propertyResolver.resolvePlaceholders(strVal) :
                         propertyResolver.resolveRequiredPlaceholders(strVal);
