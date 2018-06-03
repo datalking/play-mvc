@@ -17,7 +17,8 @@ import java.beans.PropertyVetoException;
 import java.util.Properties;
 
 @Configuration
-@PropertySource("classpath:jdbc.properties")
+//@PropertySource("classpath:jdbc.properties")
+@PropertySource(value = "classpath:jdbc.properties")
 @MapperScan("com.soecode.lyf.dao")
 public class DaoConfig {
 

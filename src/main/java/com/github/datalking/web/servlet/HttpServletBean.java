@@ -48,7 +48,7 @@ public abstract class HttpServletBean extends HttpServlet {
             }
         }
 
-        // ==== 留给子类实现，创建WebApplicationContext
+        // ==== 留给子类实现，这里执行spring的refresh()
         initServletBean();
 
         if (logger.isDebugEnabled()) {

@@ -3,44 +3,45 @@ package com.github.datalking.io;
 import com.github.datalking.common.env.PropertiesPropertySource;
 import com.github.datalking.util.StringUtils;
 
-import java.io.IOException;
-
 /**
+ * 读取指定位置的属性文件，创建ResourcePropertySource
+ *
  * @author yaoo on 5/28/18
  */
 public class ResourcePropertySource extends PropertiesPropertySource {
 
-    public ResourcePropertySource(String name, EncodedResource resource)  {
+    public ResourcePropertySource(String name, EncodedResource resource) {
+        // 先加载资源，再创建ResourcePropertySource
         super(name, PropertiesLoaderUtils.loadProperties(resource));
     }
 
-    public ResourcePropertySource(EncodedResource resource)  {
+    public ResourcePropertySource(EncodedResource resource) {
+        // 先加载资源，再创建ResourcePropertySource，默认名为resource class名@hashcode
         this(getNameForResource(resource.getResource()), resource);
     }
 
-    public ResourcePropertySource(String name, Resource resource)  {
+    public ResourcePropertySource(String name, Resource resource) {
         super(name, PropertiesLoaderUtils.loadProperties(new EncodedResource(resource)));
     }
 
-    public ResourcePropertySource(Resource resource)  {
+    public ResourcePropertySource(Resource resource) {
         this(getNameForResource(resource), resource);
     }
 
-    public ResourcePropertySource(String name, String location, ClassLoader classLoader)  {
-//        this(name, new DefaultResourceLoader(classLoader).getResource(location));
+    public ResourcePropertySource(String name, String location, ClassLoader classLoader) {
+        this(name, new DefaultResourceLoader(classLoader).getResource(location));
+    }
+
+    public ResourcePropertySource(String location, ClassLoader classLoader) {
+        // 先加载资源，再创建ResourcePropertySource，默认名为resource class名@hashcode
+        this(new DefaultResourceLoader(classLoader).getResource(location));
+    }
+
+    public ResourcePropertySource(String name, String location) {
         this(name, new DefaultResourceLoader().getResource(location));
     }
 
-    public ResourcePropertySource(String location, ClassLoader classLoader)  {
-//        this(new DefaultResourceLoader(classLoader).getResource(location));
-        this(new DefaultResourceLoader().getResource(location));
-    }
-
-    public ResourcePropertySource(String name, String location)  {
-        this(name, new DefaultResourceLoader().getResource(location));
-    }
-
-    public ResourcePropertySource(String location)  {
+    public ResourcePropertySource(String location) {
         this(new DefaultResourceLoader().getResource(location));
     }
 

@@ -6,14 +6,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * PropertySource抽象类
+ *
  * @author yaoo on 5/28/18
  */
 public abstract class PropertySource<T> {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
+    // 资源名，可以是本地properties文件名
     protected final String name;
 
+    // 读取properties文件的键值对，作为map存储到这里
     protected final T source;
 
     public PropertySource(String name, T source) {
@@ -39,26 +43,13 @@ public abstract class PropertySource<T> {
         return (getProperty(name) != null);
     }
 
-    /**
-     * Return the value associated with the given name,  or {@code null} if not found.
-     *
-     * @param name the property to find
-     */
     public abstract Object getProperty(String name);
 
-
-    /**
-     * This {@code PropertySource} object is equal to the given object if:
-     * <ul>
-     * <li>they are the same instance
-     * <li>the {@code name} properties for both objects are equal
-     * </ul>
-     * <p>No properties other than {@code name} are evaluated.
-     */
     @Override
     public boolean equals(Object obj) {
-        return (this == obj || (obj instanceof PropertySource &&
-                ObjectUtils.nullSafeEquals(this.name, ((PropertySource<?>) obj).name)));
+        return (this == obj
+                || (obj instanceof PropertySource
+                && ObjectUtils.nullSafeEquals(this.name, ((PropertySource<?>) obj).name)));
     }
 
     @Override
@@ -69,8 +60,7 @@ public abstract class PropertySource<T> {
     @Override
     public String toString() {
         if (logger.isDebugEnabled()) {
-            return String.format("%s@%s [name='%s', properties=%s]",
-                    getClass().getSimpleName(), System.identityHashCode(this), this.name, this.source);
+            return String.format("%s@%s [name='%s', properties=%s]", getClass().getSimpleName(), System.identityHashCode(this), this.name, this.source);
         } else {
             return String.format("%s [name='%s']", getClass().getSimpleName(), this.name);
         }
@@ -101,14 +91,13 @@ public abstract class PropertySource<T> {
 
 
     /**
-     * StubPropertySource占位符
-     * {@code PropertySource} to be used as a placeholder in cases where an actual
-     * property source cannot be eagerly initialized at application context
-     * creation time.  For example, a {@code ServletContext}-based property source
-     * must wait until the {@code ServletContext} object is available to its enclosing
-     * {@code ApplicationContext}.  In such cases, a stub should be used to hold the
-     * intended default position/order of the property source, then be replaced
-     * during context refresh.
+     * StubPropertySource用作占位符
+     * <p>
+     * PropertySource to be used as a placeholder in cases where an actual creation time.
+     * For example, a {@code ServletContext}-based property source must wait until
+     * the {@code ServletContext} object is available to its enclosing ApplicationContext.
+     * In such cases, a stub should be used to hold the intended default position/order of the property source,
+     * then be replaced during context refresh.
      */
     public static class StubPropertySource extends PropertySource<Object> {
 

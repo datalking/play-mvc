@@ -3,10 +3,6 @@ package com.github.datalking.context.annotation;
 import com.github.datalking.annotation.Bean;
 import com.github.datalking.annotation.ComponentScan;
 import com.github.datalking.annotation.Import;
-import com.github.datalking.common.meta.AnnotationAttributes;
-import com.github.datalking.common.meta.AnnotationMetadata;
-import com.github.datalking.common.meta.MethodMetadata;
-import com.github.datalking.common.meta.StandardAnnotationMetadata;
 import com.github.datalking.beans.factory.config.AnnotatedBeanDefinition;
 import com.github.datalking.beans.factory.config.BeanDefinition;
 import com.github.datalking.beans.factory.config.BeanDefinitionHolder;
@@ -14,9 +10,13 @@ import com.github.datalking.beans.factory.support.AbstractAutowireCapableBeanFac
 import com.github.datalking.beans.factory.support.AbstractBeanDefinition;
 import com.github.datalking.beans.factory.support.BeanDefinitionRegistry;
 import com.github.datalking.common.env.CompositePropertySource;
+import com.github.datalking.common.env.ConfigurableEnvironment;
 import com.github.datalking.common.env.Environment;
 import com.github.datalking.common.env.PropertySource;
-import com.github.datalking.common.env.StandardEnvironment;
+import com.github.datalking.common.meta.AnnotationAttributes;
+import com.github.datalking.common.meta.AnnotationMetadata;
+import com.github.datalking.common.meta.MethodMetadata;
+import com.github.datalking.common.meta.StandardAnnotationMetadata;
 import com.github.datalking.io.ResourcePropertySource;
 import com.github.datalking.util.AnnoScanUtils;
 import com.github.datalking.util.ClassUtils;
@@ -50,11 +50,12 @@ public class ConfigurationClassParser {
 
     private final Stack<PropertySource<?>> propertySources = new Stack<>();
 
-    private Environment environment = new StandardEnvironment();
+    private Environment environment;
 
-    public ConfigurationClassParser(BeanDefinitionRegistry registry) {
+    public ConfigurationClassParser(BeanDefinitionRegistry registry, Environment environment) {
         this.registry = registry;
         this.componentScanParser = new ComponentScanAnnotationParser(registry);
+        this.environment = environment;
 
     }
 
@@ -79,12 +80,25 @@ public class ConfigurationClassParser {
 
     private void processConfigurationClass(ConfigurationClass configClass) {
 
-//        ConfigurationClass existingClass = this.configurationClasses.get(configClass);
-//        if (existingClass != null) {
-//            this.configurationClasses.remove(configClass);
-//        }
+        ConfigurationClass existingClass = this.configurationClasses.get(configClass);
+        if (existingClass != null) {
+            if (configClass.isImported()) {
+                if (existingClass.isImported()) {
+//                    existingClass.mergeImportedBy(configClass);
+                }
+                return;
+            } else {
+                this.configurationClasses.remove(configClass);
+//                for (Iterator<ConfigurationClass> it = this.knownSuperclasses.values().iterator(); it.hasNext();) {
+//                    if (configClass.equals(it.next())) {
+//                        it.remove();
+//                    }
+//                }
+            }
+        }
 
-        // ==== 真正扫描@Configuration、@Bean、@ComponentScan todo 处理configClass的父类
+        // ==== 真正扫描@Configuration、@Bean、@ComponentScan
+        // todo 处理configClass的父类
         doProcessConfigurationClass(configClass);
 
         // 存储扫描结果
@@ -101,23 +115,27 @@ public class ConfigurationClassParser {
     private void doProcessConfigurationClass(ConfigurationClass configClass) {
 
         // 如果configClass标注有@PropertySource，则获取该注解的所有属性map
-        Set<AnnotationAttributes> propertySources = attributesForRepeatable(
+        Set<AnnotationAttributes> propertySources = AnnotationConfigUtils.attributesForRepeatable(
                 configClass.getMetadata(), null, com.github.datalking.annotation.PropertySource.class);
 
         if (propertySources != null && !propertySources.isEmpty()) {
 
             /// 遍历注解属性值
             for (AnnotationAttributes propertySource : propertySources) {
-                processPropertySource(propertySource);
+                if (this.environment instanceof ConfigurableEnvironment) {
+
+                    //
+                    processPropertySource(propertySource);
+                }
             }
         }
 
         // 如果configClass标注有@ComponentScan，则获取该注解的所有属性map
         // Set<AnnotationAttributes> componentScans = attributesForRepeatable(configClass.getMetadata(), ComponentScans.class, ComponentScan.class);
-        Set<AnnotationAttributes> componentScans = attributesForRepeatable(
+        Set<AnnotationAttributes> componentScans = AnnotationConfigUtils.attributesForRepeatable(
                 configClass.getMetadata(), null, ComponentScan.class);
 
-        if (!componentScans.isEmpty()) {
+        if (componentScans != null && !componentScans.isEmpty()) {
 
             /// 遍历Set<AnnotationAttributes>
             for (AnnotationAttributes componentScan : componentScans) {
@@ -160,6 +178,7 @@ public class ConfigurationClassParser {
 
     }
 
+    // 读取@PropertySource配置的属性文件，
     private void processPropertySource(AnnotationAttributes propertySource) {
 
         String name = propertySource.getString("name");
@@ -335,7 +354,7 @@ public class ConfigurationClassParser {
                                                               Class<?> containerClass,
                                                               Class<?> annotationClass) {
 
-        //String containerClassName = containerClass.getName();
+        // String containerClassName = containerClass.getName();
         // String annotationClassName = annotationClass.getName();
 
         Set<AnnotationAttributes> result = new LinkedHashSet<>();

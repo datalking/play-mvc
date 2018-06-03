@@ -140,7 +140,7 @@ public class MutablePropertyValues implements PropertyValues, Serializable {
 
     @Override
     public boolean isEmpty() {
-        return this.propertyValueList.size() > 0;
+        return this.propertyValueList.isEmpty();
     }
 
     @Override

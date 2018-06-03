@@ -10,7 +10,8 @@ import javax.sql.DataSource;
 //import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
-@ComponentScan("com.soecode.lyf.service")
+@ComponentScan(basePackages = {"com.soecode.lyf.service"})
+//@ComponentScan("com.soecode.lyf.service")
 //@EnableTransactionManagement
 public class ServiceConfig {
 

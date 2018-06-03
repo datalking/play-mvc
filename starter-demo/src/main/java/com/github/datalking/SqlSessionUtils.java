@@ -30,10 +30,6 @@ public abstract class SqlSessionUtils {
     private static final String NO_SQL_SESSION_FACTORY_SPECIFIED = "No SqlSessionFactory specified";
     private static final String NO_SQL_SESSION_SPECIFIED = "No SqlSession specified";
 
-    private SqlSessionUtils() {
-        // do nothing
-    }
-
     public static SqlSession getSqlSession(SqlSessionFactory sessionFactory) {
 
         ExecutorType executorType = sessionFactory.getConfiguration().getDefaultExecutorType();
@@ -102,9 +98,6 @@ public abstract class SqlSessionUtils {
             Environment environment = sessionFactory.getConfiguration().getEnvironment();
 
             if (environment.getTransactionFactory() instanceof SpringManagedTransactionFactory) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Registering transaction synchronization for SqlSession [" + session + "]");
-                }
 
                 holder = new SqlSessionHolder(session, executorType, exceptionTranslator);
                 TransactionSynchronizationManager.bindResource(sessionFactory, holder);

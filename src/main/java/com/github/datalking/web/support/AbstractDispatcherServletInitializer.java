@@ -38,7 +38,7 @@ public abstract class AbstractDispatcherServletInitializer extends AbstractConte
         return null;
     }
 
-    // 获取默认servlet名
+    // 获取默认servlet名，默认为dispatcher
     protected String getServletName() {
         return DEFAULT_SERVLET_NAME;
     }
@@ -52,7 +52,7 @@ public abstract class AbstractDispatcherServletInitializer extends AbstractConte
         // 初始化RootApplicationContext
         super.onStartup(servletContext);
 
-        // 初始化ServletApplicationContext和默认的DispatcherServlet
+        // 初始化ServletApplicationContext，再创建并注册DispatcherServlet
         registerDispatcherServlet(servletContext);
     }
 

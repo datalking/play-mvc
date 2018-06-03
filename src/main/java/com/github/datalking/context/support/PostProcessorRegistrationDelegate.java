@@ -43,7 +43,7 @@ public class PostProcessorRegistrationDelegate {
 
             BeanDefinitionRegistry registry = (BeanDefinitionRegistry) beanFactory;
 
-            // 获取BeanDefinitionRegistryPostProcessor类型的bean名称
+            // 遍历BeanDefinitionMap和singletonObjects，获取BeanDefinitionRegistryPostProcessor类型的bean名称
             String[] postProcessorNames = beanFactory.getBeanNamesForType(BeanDefinitionRegistryPostProcessor.class);
 
             // 实例化默认的后置处理器，包括ConfigurationClassPostProcessor

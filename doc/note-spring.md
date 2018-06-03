@@ -3,6 +3,7 @@ spring笔记
 
 ## spring ummary
 
+- AnnotationConfigUtils.attributesForRepeatable() 获取注解的所有属性
 
 ## faq
 

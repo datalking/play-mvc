@@ -15,6 +15,9 @@ import com.github.datalking.context.MessageSourceAware;
 import com.github.datalking.context.ResourceLoaderAware;
 
 /**
+ * 调用所有 XxxAware 接口的方法
+ * 会注入EnvironmentAware、ApplicationContextAware
+ *
  * @author yaoo on 5/6/18
  */
 public class ApplicationContextAwareProcessor implements BeanPostProcessor {
@@ -29,7 +32,7 @@ public class ApplicationContextAwareProcessor implements BeanPostProcessor {
     }
 
     @Override
-    public Object postProcessBeforeInitialization(final Object bean, String beanName)  {
+    public Object postProcessBeforeInitialization(final Object bean, String beanName) {
 
         invokeAwareInterfaces(bean);
 
@@ -38,6 +41,7 @@ public class ApplicationContextAwareProcessor implements BeanPostProcessor {
 
     private void invokeAwareInterfaces(Object bean) {
         if (bean instanceof Aware) {
+
             if (bean instanceof EnvironmentAware) {
                 ((EnvironmentAware) bean).setEnvironment(this.applicationContext.getEnvironment());
             }
@@ -53,6 +57,7 @@ public class ApplicationContextAwareProcessor implements BeanPostProcessor {
             if (bean instanceof MessageSourceAware) {
                 ((MessageSourceAware) bean).setMessageSource((MessageSource) this.applicationContext);
             }
+
             if (bean instanceof ApplicationContextAware) {
                 ((ApplicationContextAware) bean).setApplicationContext(this.applicationContext);
             }

@@ -29,4 +29,12 @@ public interface RequestAttributes {
 
     String getSessionId();
 
+    /**
+     * Expose the best available mutex for the underlying session:
+     * that is, an object to synchronize on for the underlying session.
+     *
+     * @return the session mutex to use (never {@code null})
+     */
+    Object getSessionMutex();
+
 }

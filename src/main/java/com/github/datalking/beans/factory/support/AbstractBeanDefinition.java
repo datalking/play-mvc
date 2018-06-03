@@ -54,6 +54,9 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 
     private boolean nonPublicAccessAllowed = true;
 
+    // 默认false
+    private boolean synthetic = false;
+
     // 确定构造函数是是否使用宽松构造的方式
     // 默认值true，即默认为宽松模式，即使多个构造函数的参数数量相同、类型存在父子类、接口实现类关系，也能正常创建bean
     private boolean lenientConstructorResolution = true;
@@ -173,6 +176,14 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
         this.lazyInit = lazyInit;
     }
 
+    public void setSynthetic(boolean synthetic) {
+        this.synthetic = synthetic;
+    }
+
+    public boolean isSynthetic() {
+        return this.synthetic;
+    }
+
 //    @Override
 //    public void setDependsOn(String... dependsOn) {
 //        this.dependsOn = dependsOn;
@@ -285,7 +296,6 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
     public MethodOverrides getMethodOverrides() {
         return this.methodOverrides;
     }
-
 
     @Override
     public Object clone() {

@@ -12,7 +12,8 @@ import com.github.datalking.web.servlet.ViewResolver;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan("com.soecode.lyf.web")
+@ComponentScan(basePackages = {"com.soecode.lyf.web"})
+//@ComponentScan("com.soecode.lyf.web")
 public class WebConfig extends WebMvcConfigurerAdapter {
 
     @Override

@@ -5,6 +5,8 @@ import com.github.datalking.util.StringUtils;
 import java.util.Map;
 
 /**
+ * 使用map存储键值对
+ *
  * @author yaoo on 5/28/18
  */
 public class MapPropertySource extends EnumerablePropertySource<Map<String, Object>> {

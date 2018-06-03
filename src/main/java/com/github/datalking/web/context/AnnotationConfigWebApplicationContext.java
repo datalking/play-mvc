@@ -54,7 +54,7 @@ public class AnnotationConfigWebApplicationContext extends AbstractWebApplicatio
 //            scanner.setScopeMetadataResolver(scopeMetadataResolver);
 //        }
 
-        /// 添加显式声明的class BeanDefinition
+        /// 注册显式声明的class的BeanDefinition
         if (!this.annotatedClasses.isEmpty()) {
 
             reader.register(this.annotatedClasses.toArray(new Class<?>[this.annotatedClasses.size()]));

@@ -8,6 +8,8 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 
 /**
+ * 注入servletContext、servletConfig
+ *
  * @author yaoo on 4/26/18
  */
 public class ServletContextAwareProcessor implements BeanPostProcessor {
@@ -32,17 +34,23 @@ public class ServletContextAwareProcessor implements BeanPostProcessor {
         }
     }
 
-    public Object postProcessBeforeInitialization(Object bean, String beanName)  {
+    @Override
+    public Object postProcessBeforeInitialization(Object bean, String beanName) {
+
         if (this.servletContext != null && bean instanceof ServletContextAware) {
             ((ServletContextAware) bean).setServletContext(this.servletContext);
         }
+
         if (this.servletConfig != null && bean instanceof ServletConfigAware) {
             ((ServletConfigAware) bean).setServletConfig(this.servletConfig);
         }
+
         return bean;
     }
 
+    @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) {
+
         return bean;
     }
 

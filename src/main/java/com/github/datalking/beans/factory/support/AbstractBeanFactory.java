@@ -12,6 +12,7 @@ import com.github.datalking.beans.factory.config.BeanExpressionResolver;
 import com.github.datalking.beans.factory.config.BeanPostProcessor;
 import com.github.datalking.beans.factory.config.ConfigurableBeanFactory;
 import com.github.datalking.beans.factory.config.InstantiationAwareBeanPostProcessor;
+import com.github.datalking.beans.factory.config.Scope;
 import com.github.datalking.common.StringValueResolver;
 import com.github.datalking.common.convert.ConversionService;
 import com.github.datalking.common.convert.SimpleTypeConverter;
@@ -23,6 +24,7 @@ import com.github.datalking.util.ClassUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +53,8 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
     private ConversionService conversionService;
 
     private TypeConverter typeConverter;
+
+    private final Map<String, Scope> scopes = new LinkedHashMap<>(8);
 
     //    private boolean hasDestructionAwareBeanPostProcessors;
 
@@ -146,7 +150,7 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
             throw new BeansException(name + "/" + beanInstance.getClass() + " is NOT a factory ");
         }
 
-        // 若bean不是FactoryBean类型 或 name以&开头，则直接返回bean实例
+        // 若bean不是FactoryBean类型 或 name以&开头，则直接返回bean实例，一般普通bean执行到这里会直接返回
         if (!(beanInstance instanceof FactoryBean) || BeanFactoryUtils.isFactoryDereference(name)) {
 
             return beanInstance;
@@ -165,18 +169,27 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
             }
 
             // bean是否为合成的，合成bean在获得FactoryBean创建好的bean对象实例后，不需要后置处理
-//            boolean synthetic = (mbd != null && mbd.isSynthetic());
-            boolean synthetic = (mbd != null);
+            boolean synthetic = (mbd != null && mbd.isSynthetic());
 
             // 使用FactoryBean创建bean实例对象
-//            object = getObjectFromFactoryBean(factory, beanName, !synthetic);
-            object = doGetObjectFromFactoryBean(factory, beanName);
+            object = getObjectFromFactoryBean(factory, beanName, !synthetic);
         }
 
         return object;
     }
 
-    private Object doGetObjectFromFactoryBean(final FactoryBean<?> factory, final String beanName) {
+    protected Object getObjectFromFactoryBean(FactoryBean<?> factory, String beanName, boolean shouldPostProcess) {
+
+        /// todo 支持缓存
+        Object object = doGetObjectFromFactoryBean(factory, beanName);
+        if (object != null && shouldPostProcess) {
+//            object = postProcessObjectFromFactoryBean(object, beanName);
+        }
+
+        return object;
+    }
+
+    private Object doGetObjectFromFactoryBean(FactoryBean<?> factory, String beanName) {
 
         Object object;
 
@@ -234,7 +247,7 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
 
     }
 
-    //    @Override
+    @Override
     public boolean containsBean(String name) {
         //String beanName = transformedBeanName(name);
         String beanName = name;
@@ -247,8 +260,10 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
     @Override
     public void addBeanPostProcessor(BeanPostProcessor beanPostProcessor) {
         Assert.notNull(beanPostProcessor, "BeanPostProcessor must not be null");
+
         this.beanPostProcessors.remove(beanPostProcessor);
         this.beanPostProcessors.add(beanPostProcessor);
+
         if (beanPostProcessor instanceof InstantiationAwareBeanPostProcessor) {
             this.hasInstantiationAwareBeanPostProcessors = true;
         }
@@ -283,16 +298,20 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
 
         /// 如果bean不为空
         if (beanInstance != null) {
-            /// 如果 beanInstance是FactoryBean
+            /// 如果beanInstance是FactoryBean
             if (beanInstance instanceof FactoryBean) {
+
                 if (!isFactoryDereference(name)) {
+
                     Class<?> type = getTypeForFactoryBean((FactoryBean<?>) beanInstance);
+
                     return (type != null && ClassUtils.isAssignable(typeToMatch, type));
                 } else {
+
                     return ClassUtils.isAssignableValue(typeToMatch, beanInstance);
                 }
             }
-            /// 如果 beanInstance不是FactoryBean，直接比较class
+            /// 如果beanInstance不是FactoryBean，直接比较class
             else {
                 return !isFactoryDereference(name) && ClassUtils.isAssignableValue(typeToMatch, beanInstance);
             }
@@ -378,6 +397,7 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
         if (typesToMatch != null && typesToMatch.length > 0) {
 
             Class clazz = null;
+
             for (Class c : typesToMatch) {
                 try {
                     clazz = Class.forName(c.getName());
@@ -393,12 +413,14 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
         return null;
     }
 
-    // 根据name名称判断是否是FactoryBean
+    // 根据name名称前缀是否是&判断是否是FactoryBean
     public boolean isFactoryDereference(String name) {
+
         return (name != null && name.startsWith(BeanFactory.FACTORY_BEAN_PREFIX));
     }
 
     protected Class<?> getTypeForFactoryBean(final FactoryBean<?> factoryBean) {
+
         return factoryBean.getObjectType();
     }
 
@@ -417,20 +439,26 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
 
     }
 
-    // todo 现在的判断规则过于简单
     public boolean isFactoryBean(String name) {
 
         //String beanName = transformedBeanName(name);
         String beanName = name;
         Object beanInstance = getSingleton(beanName, false);
+
         if (beanInstance != null) {
             return (beanInstance instanceof FactoryBean);
         } else if (containsSingleton(beanName)) {
             return false;
         }
 
-        return false;
+        return isFactoryBean(beanName, getMergedLocalBeanDefinition(beanName));
+    }
 
+    protected boolean isFactoryBean(String beanName, RootBeanDefinition mbd) {
+
+        Class<?> beanType = predictBeanType(beanName, mbd, FactoryBean.class);
+
+        return (beanType != null && FactoryBean.class.isAssignableFrom(beanType));
     }
 
     public String resolveEmbeddedValue(String value) {
@@ -505,6 +533,17 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
 //        }
 //        Scope scope = (beanDefinition != null ? getRegisteredScope(beanDefinition.getScope()) : null);
 //        return this.beanExpressionResolver.evaluate(value, new BeanExpressionContext(this, scope));
+    }
+
+    @Override
+    public void registerScope(String scopeName, Scope scope) {
+        Assert.notNull(scopeName, "Scope identifier must not be null");
+        Assert.notNull(scope, "Scope must not be null");
+        if (SCOPE_SINGLETON.equals(scopeName) || SCOPE_PROTOTYPE.equals(scopeName)) {
+            throw new IllegalArgumentException("Cannot replace existing scopes 'singleton' and 'prototype'");
+        }
+        this.scopes.put(scopeName, scope);
+
     }
 
 

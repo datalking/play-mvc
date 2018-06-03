@@ -101,6 +101,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
         if (hasBeanCreationStarted()) {
             synchronized (this.beanDefinitionMap) {
                 if (!this.beanDefinitionMap.containsKey(beanName)) {
+
                     Set<String> updatedSingletons = new LinkedHashSet<>(this.manualSingletonNames.size() + 1);
                     updatedSingletons.addAll(this.manualSingletonNames);
                     updatedSingletons.add(beanName);
@@ -109,6 +110,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
             }
         } else {
             if (!this.beanDefinitionMap.containsKey(beanName)) {
+
                 this.manualSingletonNames.add(beanName);
             }
         }
@@ -243,18 +245,21 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
      */
     @Override
     public String[] getBeanNamesForType(Class<?> type) {
-
         List<String> result = new ArrayList<>();
+
         for (String beanName : this.beanDefinitionNames) {
 
             // 各种BeanDefinition添加进 mergedBeanDefinitions
             RootBeanDefinition bd = getMergedLocalBeanDefinition(beanName);
 
+            /// 若是普通bean
             if (bd.hasBeanClass()) {
                 if (type.isAssignableFrom(bd.getBeanClass())) {
                     result.add(beanName);
                 }
-            } else {
+            }
+            /// 若是FactoryBean
+            else {
 
                 if (bd.getFactoryMethodName() != null) {
                     if (bd instanceof ConfigurationClassBeanDefinition) {
@@ -273,6 +278,21 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 
             }
 
+        }
+
+        for (String beanName : this.manualSingletonNames) {
+            if (isFactoryBean(beanName)) {
+                if (isTypeMatch(beanName, type)) {
+                    result.add(beanName);
+                    continue;
+                }
+                // In case of FactoryBean, try to match FactoryBean itself next.
+                beanName = FACTORY_BEAN_PREFIX + beanName;
+            }
+            // Match raw bean instance (might be raw FactoryBean).
+            if (isTypeMatch(beanName, type)) {
+                result.add(beanName);
+            }
         }
 
         if (result.size() == 0) {
@@ -444,7 +464,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
                 }
 
                 instanceCandidate = matchingBeans.get(autowiredBeanName);
-            }else{
+            } else {
                 /// 若只存在1个候选bean，则直接作为主要bean
                 Map.Entry<String, Object> entry = matchingBeans.entrySet().iterator().next();
                 autowiredBeanName = entry.getKey();

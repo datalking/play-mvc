@@ -5,6 +5,7 @@ import com.github.datalking.common.env.ConfigurableEnvironment;
 import com.github.datalking.context.ConfigurableWebEnvironment;
 import com.github.datalking.context.support.AbstractApplicationContext;
 import com.github.datalking.context.support.StandardServletEnvironment;
+import com.github.datalking.util.web.WebApplicationContextUtils;
 import com.github.datalking.web.support.ServletContextAwareProcessor;
 
 import javax.servlet.ServletConfig;
@@ -86,15 +87,22 @@ public abstract class AbstractWebApplicationContext extends AbstractApplicationC
 
     @Override
     protected void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
+
         beanFactory.addBeanPostProcessor(new ServletContextAwareProcessor(this.servletContext, this.servletConfig));
 //        beanFactory.ignoreDependencyInterface(ServletContextAware.class);
 //        beanFactory.ignoreDependencyInterface(ServletConfigAware.class);
 
-        //WebApplicationContextUtils.registerWebApplicationScopes(beanFactory, this.servletContext);
+        // 创建web请求的4个scope来初始化wac的scopes字段
+        WebApplicationContextUtils.registerWebApplicationScopes(beanFactory, this.servletContext);
+
         // 将servletContext和servletConfig注册到singletonObjects
         registerEnvironmentBeans(beanFactory, this.servletContext, this.servletConfig);
     }
 
+    /**
+     * 注册4个环境相关的bean
+     * 加入到singletonObjects、registeredObjects、manualSingletonNames
+     */
     private void registerEnvironmentBeans(ConfigurableListableBeanFactory bf, ServletContext servletContext, ServletConfig servletConfig) {
 
         if (servletContext != null && !bf.containsBean(WebApplicationContext.SERVLET_CONTEXT_BEAN_NAME)) {

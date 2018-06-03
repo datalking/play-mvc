@@ -1,11 +1,12 @@
 package com.github.datalking.context.annotation;
 
-import com.github.datalking.common.meta.AnnotationMetadata;
-import com.github.datalking.common.meta.MethodMetadata;
 import com.github.datalking.beans.factory.config.BeanDefinitionHolder;
 import com.github.datalking.beans.factory.support.AnnotatedGenericBeanDefinition;
 import com.github.datalking.beans.factory.support.BeanDefinitionRegistry;
 import com.github.datalking.beans.factory.support.ConfigurationClassBeanDefinition;
+import com.github.datalking.common.env.Environment;
+import com.github.datalking.common.meta.AnnotationMetadata;
+import com.github.datalking.common.meta.MethodMetadata;
 
 import java.util.Map;
 import java.util.Set;
@@ -19,8 +20,11 @@ public class ConfigurationClassBeanDefinitionReader {
 
     private final BeanDefinitionRegistry registry;
 
-    public ConfigurationClassBeanDefinitionReader(BeanDefinitionRegistry registry) {
+    private final Environment environment;
+
+    public ConfigurationClassBeanDefinitionReader(BeanDefinitionRegistry registry, Environment environment) {
         this.registry = registry;
+        this.environment = environment;
     }
 
     /**

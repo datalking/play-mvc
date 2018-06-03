@@ -1,5 +1,6 @@
 package com.github.datalking.util.web;
 
+import com.github.datalking.beans.factory.config.ConfigurableListableBeanFactory;
 import com.github.datalking.common.env.MutablePropertySources;
 import com.github.datalking.common.env.PropertySource.StubPropertySource;
 import com.github.datalking.common.env.ServletConfigPropertySource;
@@ -7,6 +8,9 @@ import com.github.datalking.common.env.ServletContextPropertySource;
 import com.github.datalking.context.support.StandardServletEnvironment;
 import com.github.datalking.util.Assert;
 import com.github.datalking.web.context.WebApplicationContext;
+import com.github.datalking.web.context.request.RequestScope;
+import com.github.datalking.web.context.request.SessionScope;
+import com.github.datalking.web.support.ServletContextScope;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -50,6 +54,7 @@ public abstract class WebApplicationContextUtils {
         return wac;
     }
 
+    // 将propertySources中的servletContextInitParams和servletConfigInitParams替换为ServletCon***PropertySource
     public static void initServletPropertySources(MutablePropertySources propertySources,
                                                   ServletContext servletContext,
                                                   ServletConfig servletConfig) {
@@ -71,5 +76,22 @@ public abstract class WebApplicationContextUtils {
             propertySources.replace(StandardServletEnvironment.SERVLET_CONFIG_PROPERTY_SOURCE_NAME,
                     new ServletConfigPropertySource(StandardServletEnvironment.SERVLET_CONFIG_PROPERTY_SOURCE_NAME, servletConfig));
         }
+    }
+
+    public static void registerWebApplicationScopes(ConfigurableListableBeanFactory beanFactory, ServletContext sc) {
+        beanFactory.registerScope(WebApplicationContext.SCOPE_REQUEST, new RequestScope());
+        beanFactory.registerScope(WebApplicationContext.SCOPE_SESSION, new SessionScope(false));
+        beanFactory.registerScope(WebApplicationContext.SCOPE_GLOBAL_SESSION, new SessionScope(true));
+        if (sc != null) {
+            ServletContextScope appScope = new ServletContextScope(sc);
+            beanFactory.registerScope(WebApplicationContext.SCOPE_APPLICATION, appScope);
+            // Register as ServletContext attribute, for ContextCleanupListener to detect it.
+            sc.setAttribute(ServletContextScope.class.getName(), appScope);
+        }
+
+//        beanFactory.registerResolvableDependency(ServletRequest.class, new RequestObjectFactory());
+//        beanFactory.registerResolvableDependency(ServletResponse.class, new ResponseObjectFactory());
+//        beanFactory.registerResolvableDependency(HttpSession.class, new SessionObjectFactory());
+//        beanFactory.registerResolvableDependency(WebRequest.class, new WebRequestObjectFactory());
     }
 }

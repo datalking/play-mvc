@@ -9,6 +9,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 /**
+ * 保存多个PropertySource，核心是List
+ *
  * @author yaoo on 5/28/18
  */
 public class MutablePropertySources implements PropertySources {
@@ -17,7 +19,6 @@ public class MutablePropertySources implements PropertySources {
     static final String ILLEGAL_RELATIVE_ADDITION_MESSAGE = "PropertySource named [%s] cannot be added relative to itself";
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    ;
 
     private final LinkedList<PropertySource<?>> propertySourceList = new LinkedList<>();
 

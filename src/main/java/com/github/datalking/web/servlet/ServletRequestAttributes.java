@@ -2,6 +2,7 @@ package com.github.datalking.web.servlet;
 
 import com.github.datalking.util.Assert;
 import com.github.datalking.util.StringUtils;
+import com.github.datalking.util.web.WebUtils;
 import com.github.datalking.web.http.AbstractRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
@@ -174,10 +175,14 @@ public class ServletRequestAttributes extends AbstractRequestAttributes {
     }
 
 
+    public Object getSessionMutex() {
+        return WebUtils.getSessionMutex(getSession(true));
+    }
+
+
     @Override
     public String toString() {
         return this.request.toString();
     }
-
 
 }

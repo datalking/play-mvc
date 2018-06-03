@@ -20,7 +20,7 @@ public class StandardServletEnvironment extends StandardEnvironment implements C
     public static final String SERVLET_CONFIG_PROPERTY_SOURCE_NAME = "servletConfigInitParams";
 
     public static final String JNDI_PROPERTY_SOURCE_NAME = "jndiProperties";
-
+    /// 构造方法默认调用
     @Override
     protected void customizePropertySources(MutablePropertySources propertySources) {
         propertySources.addLast(new StubPropertySource(SERVLET_CONFIG_PROPERTY_SOURCE_NAME));
@@ -32,6 +32,7 @@ public class StandardServletEnvironment extends StandardEnvironment implements C
     }
 
     /**
+     * 将propertySources中的servletContextInitParams和servletConfigInitParams替换为ServletCon***PropertySource
      */
     public void initPropertySources(ServletContext servletContext, ServletConfig servletConfig) {
 

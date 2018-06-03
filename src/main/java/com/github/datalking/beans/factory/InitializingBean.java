@@ -7,6 +7,7 @@ package com.github.datalking.beans.factory;
  */
 public interface InitializingBean {
 
+    // populateBean()注入属性后执行
     void afterPropertiesSet();
 
 }

@@ -133,7 +133,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
         // 暂时用来记录启动时间，读取属性配置文件
         prepareRefresh();
 
-        // 读取xml配置文件和直接输入的java配置
+        // 读取xml配置文件和直接输入的java配置，会调用loadBeanDefinitions()
         obtainFreshBeanFactory();
 
         // beanFactory准备工作，如注册环境变量相关bean和默认beanPostProcessor
@@ -218,9 +218,9 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
     }
 
     protected void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory) {
-
+        List<BeanFactoryPostProcessor> bfpps = getBeanFactoryPostProcessors();
         // beanFactoryPostProcessors默认为空
-        PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(beanFactory, getBeanFactoryPostProcessors());
+        PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(beanFactory, bfpps);
 
     }
 

@@ -7,6 +7,15 @@ java笔记
 
 ## java web
 
+- servlet被加载的时机
+    - load-on-startup元素用于配置web应用启动时servlet被加载的顺序，它的值必须是一个整数。
+      如果它的值是一个负整数或是这个元素不存在，那么容器会在该servlet被调用的时候，加载这个servlet。
+      如果值是正整数或零，容器在配置的时候就加载并初始化这个servlet，容器必须保证值小的先被加载。
+      如果值相等，容器可以自动选择先加载谁。
+    - init()方法是在Servlet实例化之后执行的，并且只执行一次
+    - init(ServletConfig)中参数ServletConfig，代表的是配置信息，即在web.xml中配置的信息
+    - init()方法是为了防止程序员在写Servlet类重写 init(ServletConfig config)时忘记写super.init(ServletConfig config)
+
 - request.getAttribute() 和 request.getParameter() 区别
     - attribute 值来源于 【Web 服务器端】，而parameter 值来源于【浏览器端】
         - request.getAttribute() 的值来源于【 request.setAttribute() 】方法设置的值。

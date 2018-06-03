@@ -1,8 +1,8 @@
 package com.github.datalking.beans;
 
 /**
- * 多个属性值键值对接口
- * 用于包装一个对象所有的PropertyValue
+ * 多个属性值键值对操作 接口
+ * 用于包装一个对象的多个PropertyValue
  *
  * @author yaoo on 4/3/18
  */

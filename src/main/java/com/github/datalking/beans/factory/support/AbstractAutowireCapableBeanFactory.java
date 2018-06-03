@@ -443,19 +443,24 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
      */
     protected Object initializeBean(final String beanName, final Object bean, RootBeanDefinition mbd) {
 
-        // 执行aware相关方法
+        // 执行最基本的aware方法，包括设置beanName、BeanFactory
         invokeAwareMethods(beanName, bean);
 
         Object wrappedBean = bean;
 
         // 执行 初始化前 处理器
-        wrappedBean = applyBeanPostProcessorsBeforeInitialization(wrappedBean, beanName);
-
+        // 执行用户定义的Aware的方法，包括注入environment、ApplicationContext、servletContext
+        if (mbd == null || !mbd.isSynthetic()) {
+            wrappedBean = applyBeanPostProcessorsBeforeInitialization(wrappedBean, beanName);
+        }
         // 执行 afterPropertiesSet()
         invokeInitMethods(beanName, wrappedBean, mbd);
 
-        // 依次调用所有 初始化后 处理器，生成代理对象
-        wrappedBean = applyBeanPostProcessorsAfterInitialization(wrappedBean, beanName);
+        // 依次调用所有 初始化后 处理器
+        // 包括生成代理对象
+        if (mbd == null || !mbd.isSynthetic()) {
+            wrappedBean = applyBeanPostProcessorsAfterInitialization(wrappedBean, beanName);
+        }
 
         // 如果启用了AOP此处应该返回了代理对象，原来初始化的bean被替换了
         return wrappedBean;

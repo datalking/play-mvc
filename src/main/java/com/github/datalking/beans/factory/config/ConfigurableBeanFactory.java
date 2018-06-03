@@ -11,6 +11,10 @@ import com.github.datalking.beans.factory.BeanFactory;
  */
 public interface ConfigurableBeanFactory extends BeanFactory {
 
+    String SCOPE_SINGLETON = "singleton";
+
+    String SCOPE_PROTOTYPE = "prototype";
+
     boolean isCurrentlyInCreation(String beanName);
 
     void addBeanPostProcessor(BeanPostProcessor beanPostProcessor);
@@ -33,6 +37,7 @@ public interface ConfigurableBeanFactory extends BeanFactory {
 
     BeanDefinition getMergedBeanDefinition(String beanName);
 
+    void registerScope(String scopeName, Scope scope);
 
 //void destroyBean(String beanName, Object beanInstance);
 //void registerAlias(String beanName, String alias) ;

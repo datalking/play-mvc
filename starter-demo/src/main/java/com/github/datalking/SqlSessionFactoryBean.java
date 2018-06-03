@@ -224,9 +224,8 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
     }
 
     /**
-     * <b>NOTE:</b> This class <em>overrides</em> any {@code Environment} you have set in the MyBatis
-     * config file. This is used only as a placeholder name. The default value is
-     * {@code SqlSessionFactoryBean.class.getSimpleName()}.
+     * <b>NOTE:</b> This class <em>overrides</em> any {@code Environment} you have set in the MyBatis config file.
+     * This is used only as a placeholder name. The default value is  SqlSessionFactoryBean.class.getSimpleName().
      *
      * @param environment the environment name
      */
@@ -249,12 +248,7 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
 
     /**
      * 创建SqlSessionFactory对象的方法
-     * <p>
-     * The default implementation uses the standard MyBatis {@code XMLConfigBuilder} API to build a
-     * {@code SqlSessionFactory} instance based on an Reader.
-     * It can be specified a {@link Configuration} instance directly(without config file).
-     *
-     * @return SqlSessionFactory
+     * 基于XMLConfigBuilder
      */
     protected SqlSessionFactory buildSqlSessionFactory() {
 
@@ -424,7 +418,7 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
             }
         }
 
-        /// 最终调用SqlSessionFactoryBuilder.build()，创建 sqlSessionFactory 对象并返回
+        /// 最后调用 SqlSessionFactoryBuilder.build()，创建 sqlSessionFactory 对象并返回
         return this.sqlSessionFactoryBuilder.build(configuration);
     }
 

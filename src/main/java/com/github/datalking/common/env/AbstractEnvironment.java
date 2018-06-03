@@ -43,6 +43,7 @@ public abstract class AbstractEnvironment implements ConfigurableEnvironment {
     private final ConfigurablePropertyResolver propertyResolver = new PropertySourcesPropertyResolver(this.propertySources);
 
     public AbstractEnvironment() {
+        // 默认添加4个PropertySource，由子类实现
         customizePropertySources(this.propertySources);
     }
 

@@ -18,7 +18,6 @@ import com.github.datalking.web.context.request.RequestContextHolder;
 import com.github.datalking.web.http.RequestAttributes;
 import com.github.datalking.web.http.RequestMethod;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -209,9 +208,9 @@ public abstract class FrameworkServlet extends HttpServletBean {
         /// 非空表示这个Servlet类是通过编程式注册到容器中的，context也由编程方式式传入
         if (this.webApplicationContext != null) {
             wac = this.webApplicationContext;
-
             if (wac instanceof ConfigurableWebApplicationContext) {
                 ConfigurableWebApplicationContext cwac = (ConfigurableWebApplicationContext) wac;
+                // 若为调用过refresh()，调用过refresh()方法后才会active
                 if (!cwac.isActive()) {
                     if (cwac.getParent() == null) {
                         cwac.setParent(rootContext);
@@ -307,27 +306,11 @@ public abstract class FrameworkServlet extends HttpServletBean {
 
         /// ApplicationContext的id设置
         if (ObjectUtils.identityToString(wac).equals(wac.getId())) {
-            // The application context id is still set to its original default value
-            // -> assign a more useful id based on available information
             if (this.contextId != null) {
                 wac.setId(this.contextId);
             } else {
-                // Generate default id...
-                ServletContext sc = getServletContext();
-                if (sc.getMajorVersion() == 2 && sc.getMinorVersion() < 5) {
-                    // Servlet <= 2.4: resort to name specified in web.xml, if any.
-                    String servletContextName = sc.getServletContextName();
-                    if (servletContextName != null) {
-                        wac.setId(ConfigurableWebApplicationContext.APPLICATION_CONTEXT_ID_PREFIX + servletContextName +
-                                "." + getServletName());
-                    } else {
-                        wac.setId(ConfigurableWebApplicationContext.APPLICATION_CONTEXT_ID_PREFIX + getServletName());
-                    }
-                } else {
-                    // Servlet 2.5's getContextPath available!
-                    wac.setId(ConfigurableWebApplicationContext.APPLICATION_CONTEXT_ID_PREFIX +
-                            ObjectUtils.getDisplayString(sc.getContextPath()) + "/" + getServletName());
-                }
+                wac.setId(ConfigurableWebApplicationContext.APPLICATION_CONTEXT_ID_PREFIX +
+                        ObjectUtils.getDisplayString(getServletContext().getContextPath()) + '/' + getServletName());
             }
         }
 
@@ -338,12 +321,13 @@ public abstract class FrameworkServlet extends HttpServletBean {
 
         ConfigurableEnvironment env = wac.getEnvironment();
         if (env instanceof ConfigurableWebEnvironment) {
+            // 属性
             ((ConfigurableWebEnvironment) env).initPropertySources(getServletContext(), getServletConfig());
         }
 
         // 空方法
         postProcessWebApplicationContext(wac);
-        applyInitializers(wac);
+        applyInitializers(wac); // 处理ApplicationContextInitializer
 
         // ==== 调用ApplicationContext的refresh()，实例化bean
         wac.refresh();

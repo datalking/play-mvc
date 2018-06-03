@@ -10,6 +10,9 @@ import com.github.datalking.beans.factory.support.BeanDefinitionRegistry;
 import com.github.datalking.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import com.github.datalking.common.Ordered;
 import com.github.datalking.common.PriorityOrdered;
+import com.github.datalking.common.env.Environment;
+import com.github.datalking.context.EnvironmentAware;
+import com.github.datalking.util.Assert;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -23,10 +26,13 @@ import java.util.Set;
  * @author yaoo on 4/13/18
  */
 public class ConfigurationClassPostProcessor
-        implements BeanDefinitionRegistryPostProcessor, PriorityOrdered {
+        implements BeanDefinitionRegistryPostProcessor, PriorityOrdered, EnvironmentAware {
 
     private ConfigurationClassBeanDefinitionReader reader;
 
+    private Environment environment;
+
+    // 处理registry中所有带有@Configuration的类的入口方法
     @Override
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) {
 
@@ -83,7 +89,7 @@ public class ConfigurationClassPostProcessor
         // todo configCandidates按照指定的@Order排序
 
         // 进一步解析@Configuration标注类的信息的解析器
-        ConfigurationClassParser parser = new ConfigurationClassParser(registry);
+        ConfigurationClassParser parser = new ConfigurationClassParser(registry, environment);
 
         // 记录带有@Configuration注解的candidates
         Set<BeanDefinitionHolder> candidates = new LinkedHashSet<>(configCandidates);
@@ -100,7 +106,7 @@ public class ConfigurationClassPostProcessor
             configClasses.removeAll(alreadyParsed);
 
             if (this.reader == null) {
-                reader = new ConfigurationClassBeanDefinitionReader(registry);
+                reader = new ConfigurationClassBeanDefinitionReader(registry,this.environment);
             }
 
             // 将上面扫描到的bean和带有@Bean注解方法指定的bean注册到beanDefinitionMap，包括扫描mvc的BeanDefinition，但未实例化
@@ -150,5 +156,10 @@ public class ConfigurationClassPostProcessor
         return Ordered.LOWEST_PRECEDENCE;
     }
 
+    @Override
+    public void setEnvironment(Environment environment) {
+        Assert.notNull(environment, "Environment must not be null");
+        this.environment = environment;
+    }
 
 }

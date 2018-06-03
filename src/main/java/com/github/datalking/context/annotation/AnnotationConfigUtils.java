@@ -5,9 +5,13 @@ import com.github.datalking.beans.factory.config.BeanDefinition;
 import com.github.datalking.beans.factory.config.BeanDefinitionHolder;
 import com.github.datalking.beans.factory.support.BeanDefinitionRegistry;
 import com.github.datalking.beans.factory.support.RootBeanDefinition;
+import com.github.datalking.common.meta.AnnotationAttributes;
+import com.github.datalking.common.meta.AnnotationMetadata;
 import com.github.datalking.util.ClassUtils;
 
+import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -162,5 +166,46 @@ public class AnnotationConfigUtils {
 //        boolean proxyTargetClass = scopedProxyMode.equals(ScopedProxyMode.TARGET_CLASS);
 //        return ScopedProxyCreator.createScopedProxy(definition, registry, proxyTargetClass);
 //    }
+
+    static Set<AnnotationAttributes> attributesForRepeatable(AnnotationMetadata metadata,
+                                                             Class<?> containerClass,
+                                                             Class<?> annotationClass) {
+
+        if (containerClass == null) {
+            return attributesForRepeatable(metadata, null, annotationClass.getName());
+
+        } else {
+
+            return attributesForRepeatable(metadata, containerClass.getName(), annotationClass.getName());
+        }
+    }
+
+    static Set<AnnotationAttributes> attributesForRepeatable(AnnotationMetadata metadata,
+                                                             String containerClassName,
+                                                             String annotationClassName) {
+
+        Set<AnnotationAttributes> result = new LinkedHashSet<>();
+
+        addAttributesIfNotNull(result, metadata.getAnnotationAttributes(annotationClassName, false));
+
+        if (containerClassName != null) {
+            Map<String, Object> container = metadata.getAnnotationAttributes(containerClassName, false);
+
+            if (container != null && container.containsKey("value")) {
+                for (Map<String, Object> containedAttributes : (Map<String, Object>[]) container.get("value")) {
+
+                    addAttributesIfNotNull(result, containedAttributes);
+                }
+            }
+        }
+
+        return Collections.unmodifiableSet(result);
+    }
+
+    private static void addAttributesIfNotNull(Set<AnnotationAttributes> result, Map<String, Object> attributes) {
+        if (attributes != null) {
+            result.add(AnnotationAttributes.fromMap(attributes));
+        }
+    }
 
 }
