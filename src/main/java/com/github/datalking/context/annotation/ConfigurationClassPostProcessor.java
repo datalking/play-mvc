@@ -98,7 +98,7 @@ public class ConfigurationClassPostProcessor
 
         /// 若candidates非空，则循环执行，一般执行一次后就为空
         do {
-            // 解析@Bean、@ComponentScan、@Import
+            // 解析@Bean、@ComponentScan、@Import，将所有解析的信息保存到各自的configClasses
             parser.parse(configCandidates);
 
             // 获取已经解析过的类，一般是该@Configuration标注类上@Import指定的类

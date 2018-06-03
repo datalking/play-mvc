@@ -218,8 +218,10 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
     }
 
     protected void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory) {
-        List<BeanFactoryPostProcessor> bfpps = getBeanFactoryPostProcessors();
+
         // beanFactoryPostProcessors默认为空
+        List<BeanFactoryPostProcessor> bfpps = getBeanFactoryPostProcessors();
+
         PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(beanFactory, bfpps);
 
     }

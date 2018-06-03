@@ -21,8 +21,17 @@ public class DefaultResourceLoader implements ResourceLoader {
      */
     @Override
     public Resource getResource(String location) {
-        URL resource = this.getClass().getClassLoader().getResource(location);
-        return new UrlResource(resource);
+
+        if (location.startsWith("classpath:")) {
+            location = location.substring(10);
+        }
+
+        if (location.trim() != "") {
+            URL resource = this.getClass().getClassLoader().getResource(location);
+            return new UrlResource(resource);
+        }
+
+        return null;
     }
 
 

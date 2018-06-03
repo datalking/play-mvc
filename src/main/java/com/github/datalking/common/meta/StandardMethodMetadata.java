@@ -60,4 +60,11 @@ public class StandardMethodMetadata implements MethodMetadata {
         return null;
     }
 
+    @Override
+    public String toString() {
+        return "MethodMeta{" +
+                "name=" + introspectedMethod.getName() +
+                ", return type=" + introspectedMethod.getReturnType().getSimpleName() +
+                '}';
+    }
 }

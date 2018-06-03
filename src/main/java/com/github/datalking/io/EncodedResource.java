@@ -16,6 +16,7 @@ public class EncodedResource {
 
     private final Resource resource;
 
+    // 资源编码
     private final String encoding;
 
     private final Charset charset;
@@ -93,5 +94,4 @@ public class EncodedResource {
     public String toString() {
         return this.resource.toString();
     }
-
 }

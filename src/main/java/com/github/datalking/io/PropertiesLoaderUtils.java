@@ -14,17 +14,14 @@ import java.util.Enumeration;
 import java.util.Properties;
 
 /**
+ * properties文件操作工具类
+ *
  * @author yaoo on 5/28/18
  */
 public abstract class PropertiesLoaderUtils {
 
     private static final String XML_FILE_EXTENSION = ".xml";
 
-
-    /**
-     * Load properties from the given EncodedResource,
-     * potentially defining a specific encoding for the properties file.
-     */
     public static Properties loadProperties(EncodedResource resource) {
         Properties props = new Properties();
 
@@ -33,46 +30,35 @@ public abstract class PropertiesLoaderUtils {
         return props;
     }
 
-    /**
-     * Fill the given properties from the given EncodedResource,
-     * potentially defining a specific encoding for the properties file.
-     *
-     * @param props    the Properties instance to load into
-     * @param resource the resource to load from
-     * @throws IOException in case of I/O errors
-     */
     public static void fillProperties(Properties props, EncodedResource resource) {
 
         fillProperties(props, resource, new DefaultPropertiesPersister());
     }
 
-    /**
-     * Actually load properties from the given EncodedResource into the given Properties instance.
-     *
-     * @param props     the Properties instance to load into
-     * @param resource  the resource to load from
-     * @param persister the PropertiesPersister to use
-     * @throws IOException in case of I/O errors
-     */
     static void fillProperties(Properties props, EncodedResource resource, PropertiesPersister persister) {
 
         InputStream stream = null;
         Reader reader = null;
         try {
             String filename = resource.getResource().getFilename();
+
             if (filename != null && filename.endsWith(XML_FILE_EXTENSION)) {
                 stream = resource.getInputStream();
+
+                // 加载xml文件
                 persister.loadFromXml(props, stream);
             } else if (resource.requiresReader()) {
                 reader = resource.getReader();
+
                 persister.load(props, reader);
             } else {
                 stream = resource.getInputStream();
+
                 persister.load(props, stream);
             }
-        } catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
 
             if (stream != null) {
                 try {
@@ -92,15 +78,11 @@ public abstract class PropertiesLoaderUtils {
     }
 
     /**
-     * Load properties from the given resource (in ISO-8859-1 encoding).
-     *
-     * @param resource the resource to load from
-     * @return the populated Properties instance
-     * @throws IOException if loading failed
-     * @see #fillProperties(java.util.Properties, Resource)
+     * 加载properties文件
      */
     public static Properties loadProperties(Resource resource) throws IOException {
         Properties props = new Properties();
+
         fillProperties(props, resource);
         return props;
     }
@@ -110,15 +92,16 @@ public abstract class PropertiesLoaderUtils {
      *
      * @param props    the Properties instance to fill
      * @param resource the resource to load from
-     * @throws IOException if loading failed
      */
     public static void fillProperties(Properties props, Resource resource) throws IOException {
         InputStream is = resource.getInputStream();
         try {
             String filename = resource.getFilename();
             if (filename != null && filename.endsWith(XML_FILE_EXTENSION)) {
+
                 props.loadFromXML(is);
             } else {
+
                 props.load(is);
             }
         } finally {
@@ -127,31 +110,16 @@ public abstract class PropertiesLoaderUtils {
     }
 
     /**
-     * Load all properties from the specified class path resource
-     * (in ISO-8859-1 encoding), using the default class loader.
-     * <p>Merges properties if more than one resource of the same name
-     * found in the class path.
+     * Load all properties from specified class path resource (in ISO-8859-1 encoding), using default class loader.
+     * Merges properties if more than one resource of the same name found in the class path.
      *
      * @param resourceName the name of the class path resource
      * @return the populated Properties instance
-     * @throws IOException if loading failed
      */
     public static Properties loadAllProperties(String resourceName) throws IOException {
         return loadAllProperties(resourceName, null);
     }
 
-    /**
-     * Load all properties from the specified class path resource
-     * (in ISO-8859-1 encoding), using the given class loader.
-     * <p>Merges properties if more than one resource of the same name
-     * found in the class path.
-     *
-     * @param resourceName the name of the class path resource
-     * @param classLoader  the ClassLoader to use for loading
-     *                     (or {@code null} to use the default class loader)
-     * @return the populated Properties instance
-     * @throws IOException if loading failed
-     */
     public static Properties loadAllProperties(String resourceName, ClassLoader classLoader) throws IOException {
         Assert.notNull(resourceName, "Resource name must not be null");
         ClassLoader classLoaderToUse = classLoader;
@@ -161,6 +129,7 @@ public abstract class PropertiesLoaderUtils {
         Enumeration<URL> urls = (classLoaderToUse != null ? classLoaderToUse.getResources(resourceName) :
                 ClassLoader.getSystemResources(resourceName));
         Properties props = new Properties();
+
         while (urls.hasMoreElements()) {
             URL url = urls.nextElement();
             URLConnection con = url.openConnection();
@@ -168,8 +137,10 @@ public abstract class PropertiesLoaderUtils {
             InputStream is = con.getInputStream();
             try {
                 if (resourceName != null && resourceName.endsWith(XML_FILE_EXTENSION)) {
+
                     props.loadFromXML(is);
                 } else {
+
                     props.load(is);
                 }
             } finally {

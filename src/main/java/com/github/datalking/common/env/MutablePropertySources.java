@@ -130,7 +130,6 @@ public class MutablePropertySources implements PropertySources {
      * @param name           the name of the property source to find and replace
      * @param propertySource the replacement property source
      * @throws IllegalArgumentException if no property source with the given name is present
-     * @see #contains
      */
     public void replace(String name, PropertySource<?> propertySource) {
         if (logger.isDebugEnabled()) {

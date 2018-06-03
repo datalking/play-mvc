@@ -35,7 +35,9 @@ public abstract class AbstractEnvironment implements ConfigurableEnvironment {
     private final Set<String> activeProfiles = new LinkedHashSet<>();
 
     private final Set<String> defaultProfiles = new LinkedHashSet<>(getReservedDefaultProfiles());
-
+    /**
+     * 保存properties属性文件的键值对
+     */
     private final MutablePropertySources propertySources = new MutablePropertySources();
     /**
      * 默认的属性占位符解析器
@@ -50,6 +52,7 @@ public abstract class AbstractEnvironment implements ConfigurableEnvironment {
     protected void customizePropertySources(MutablePropertySources propertySources) {
     }
 
+
     protected Set<String> getReservedDefaultProfiles() {
         return Collections.singleton(RESERVED_DEFAULT_PROFILE_NAME);
     }
@@ -58,6 +61,11 @@ public abstract class AbstractEnvironment implements ConfigurableEnvironment {
     //---------------------------------------------------------------------
     // Implementation of ConfigurableEnvironment interface
     //---------------------------------------------------------------------
+
+    @Override
+    public MutablePropertySources getPropertySources() {
+        return this.propertySources;
+    }
 
     public String[] getActiveProfiles() {
         return StringUtils.toStringArray(doGetActiveProfiles());
@@ -96,7 +104,6 @@ public abstract class AbstractEnvironment implements ConfigurableEnvironment {
             this.activeProfiles.add(profile);
         }
     }
-
 
     public String[] getDefaultProfiles() {
         return StringUtils.toStringArray(doGetDefaultProfiles());
@@ -153,10 +160,6 @@ public abstract class AbstractEnvironment implements ConfigurableEnvironment {
         if (profile.charAt(0) == '!') {
             throw new IllegalArgumentException("Invalid profile [" + profile + "]: must not begin with ! operator");
         }
-    }
-
-    public MutablePropertySources getPropertySources() {
-        return this.propertySources;
     }
 
     @SuppressWarnings("unchecked")

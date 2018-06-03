@@ -12,6 +12,7 @@ import com.github.datalking.beans.factory.support.BeanDefinitionRegistry;
 import com.github.datalking.common.env.CompositePropertySource;
 import com.github.datalking.common.env.ConfigurableEnvironment;
 import com.github.datalking.common.env.Environment;
+import com.github.datalking.common.env.MutablePropertySources;
 import com.github.datalking.common.env.PropertySource;
 import com.github.datalking.common.meta.AnnotationAttributes;
 import com.github.datalking.common.meta.AnnotationMetadata;
@@ -24,13 +25,14 @@ import com.github.datalking.util.StringUtils;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
 
 /**
  * 解析带有@Configuration注解的类下的其他注解，如@Import, @EnableXxx
@@ -42,13 +44,14 @@ public class ConfigurationClassParser {
     private final BeanDefinitionRegistry registry;
 
     private final ComponentScanAnnotationParser componentScanParser;
-
     /**
-     * 存放已经解析过的configClass，多是@Import注解指定的类，也可以是mvc、dao相关的bean
+     * 保存已经解析过的configClass，可以是@Import注解指定的类，也可以是mvc、dao相关的bean
      */
     private final Map<ConfigurationClass, ConfigurationClass> configurationClasses = new LinkedHashMap<>();
-
-    private final Stack<PropertySource<?>> propertySources = new Stack<>();
+    /**
+     * 保存已经读取的properties文件中的键名
+     */
+    private final List<String> propertySourceNames = new ArrayList<>();
 
     private Environment environment;
 
@@ -124,7 +127,7 @@ public class ConfigurationClassParser {
             for (AnnotationAttributes propertySource : propertySources) {
                 if (this.environment instanceof ConfigurableEnvironment) {
 
-                    //
+                    // 读取@PropertySource配置的属性文件，保存键值对
                     processPropertySource(propertySource);
                 }
             }
@@ -148,7 +151,7 @@ public class ConfigurationClassParser {
                     AbstractBeanDefinition bd = (AbstractBeanDefinition) holder.getBeanDefinition();
                     Class clazz = ((AbstractAutowireCapableBeanFactory) registry).doResolveBeanClass(bd);
 
-                    // 将配置的各个包下的Component类扫描出来 full lite  todo递归中止条件
+                    // 将配置的各个包下的Component类扫描出来，包括full和lite todo 此处未处理@Configuration
                     if (AnnoScanUtils.isCandidateComponent(clazz)) {
 
                         parse(clazz, holder.getBeanName());
@@ -178,10 +181,13 @@ public class ConfigurationClassParser {
 
     }
 
-    // 读取@PropertySource配置的属性文件，
+    /**
+     * 读取@PropertySource配置的属性文件，保存键值对
+     */
     private void processPropertySource(AnnotationAttributes propertySource) {
 
         String name = propertySource.getString("name");
+
         // 获取@PropertySource中value的值，即配置的属性文件路径
         String[] locations = propertySource.getStringArray("value");
         int locationCount = locations.length;
@@ -189,22 +195,56 @@ public class ConfigurationClassParser {
             throw new IllegalArgumentException("At least one @PropertySource(value) location is required");
         }
 
-        /// 遍历所有文件路径，解析文件名中的占位符
+        /// 遍历所有文件路径，解析propperties文件名本身中的占位符
         for (int i = 0; i < locationCount; i++) {
             locations[i] = this.environment.resolveRequiredPlaceholders(locations[i]);
         }
 
 //        ClassLoader classLoader = this.resourceLoader.getClassLoader();
         ClassLoader classLoader = this.getClass().getClassLoader();
+
+        MutablePropertySources mps = ((ConfigurableEnvironment) this.environment).getPropertySources();
+
+        /// 若@PropertySource未设置资源名name
         if (!StringUtils.hasText(name)) {
             for (String location : locations) {
-                this.propertySources.push(new ResourcePropertySource(location, classLoader));
+
+                PropertySource rps = new ResourcePropertySource(location, classLoader);
+                String rname = rps.getName();
+
+                /// 若该资源已存在，则替换
+                if (mps.contains(rname) && this.propertySourceNames.contains(rname)) {
+                    PropertySource<?> existing = mps.get(rname);
+//                    PropertySource<?> newSource = (rps instanceof ResourcePropertySource ? ((ResourcePropertySource) propertySource).withResourceName() : propertySource);
+                    PropertySource<?> newSource = rps;
+                    if (existing instanceof CompositePropertySource) {
+                        ((CompositePropertySource) existing).addFirstPropertySource(newSource);
+                    } else {
+                        if (existing instanceof ResourcePropertySource) {
+                            existing = (ResourcePropertySource) existing;
+                        }
+                        CompositePropertySource composite = new CompositePropertySource(rname);
+                        composite.addPropertySource(newSource);
+                        composite.addPropertySource(existing);
+                        mps.replace(rname, composite);
+                    }
+                }
+                /// 若该资源不存在
+                else {
+                    this.propertySourceNames.add(rname);
+                    mps.addLast(rps);
+                }
             }
-        } else {
+        }
+        /// 若@PropertySource设置了资源名name
+        else {
 
             /// 如果仅指定了1个属性文件
             if (locationCount == 1) {
-                this.propertySources.push(new ResourcePropertySource(name, locations[0], classLoader));
+
+                this.propertySourceNames.add(name);
+                mps.addLast(new ResourcePropertySource(name, locations[0], classLoader));
+//                this.propertySources.push(new ResourcePropertySource(name, locations[0], classLoader));
             }
             /// 如果指定了多个属性文件
             else {
@@ -212,7 +252,9 @@ public class ConfigurationClassParser {
                 for (int i = locations.length - 1; i >= 0; i--) {
                     ps.addPropertySource(new ResourcePropertySource(locations[i], classLoader));
                 }
-                this.propertySources.push(ps);
+//                this.propertySources.push(ps);
+                this.propertySourceNames.add(name);
+                mps.addLast(ps);
             }
         }
     }
@@ -245,7 +287,7 @@ public class ConfigurationClassParser {
                 }
 
                 // 将@Import的class作为map加入configClass的importBeanDefinitionRegistrars，加入的class必须实现ImportBeanDefinitionRegistrar接口
-                configClass.addImportBeanDefinitionRegistrar(obj, c.getMetadata());
+                configClass.addImportBeanDefinitionRegistrar(obj, configClass.getMetadata());
             } else {
                 // 将该类作为普通@Configuration标注的类进行处理，添加到configurationClasses map
                 processConfigurationClass(c);

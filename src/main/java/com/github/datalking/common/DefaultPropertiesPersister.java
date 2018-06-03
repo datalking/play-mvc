@@ -15,18 +15,15 @@ import java.util.Enumeration;
 import java.util.Properties;
 
 /**
+ * properties文件操作类
+ *
  * @author yaoo on 5/28/18
  */
 public class DefaultPropertiesPersister implements PropertiesPersister {
 
     // Determine whether Properties.load(Reader) is available (on JDK 1.6+)
-    private static final boolean loadFromReaderAvailable =
-            ClassUtils.hasMethod(Properties.class, "load", new Class[] {Reader.class});
-
-    // Determine whether Properties.store(Writer, String) is available (on JDK 1.6+)
-    private static final boolean storeToWriterAvailable =
-            ClassUtils.hasMethod(Properties.class, "store", new Class[] {Writer.class, String.class});
-
+    private static final boolean loadFromReaderAvailable = ClassUtils.hasMethod(Properties.class, "load", new Class[]{Reader.class});
+    private static final boolean storeToWriterAvailable = ClassUtils.hasMethod(Properties.class, "store", new Class[]{Writer.class, String.class});
 
     public void load(Properties props, InputStream is) throws IOException {
         props.load(is);
@@ -36,8 +33,7 @@ public class DefaultPropertiesPersister implements PropertiesPersister {
         if (loadFromReaderAvailable) {
             // On JDK 1.6+
             props.load(reader);
-        }
-        else {
+        } else {
             // Fall back to manual parsing.
             doLoad(props, reader);
         }
@@ -45,15 +41,19 @@ public class DefaultPropertiesPersister implements PropertiesPersister {
 
     protected void doLoad(Properties props, Reader reader) throws IOException {
         BufferedReader in = new BufferedReader(reader);
+
         while (true) {
             String line = in.readLine();
             if (line == null) {
                 return;
             }
+
             line = StringUtils.trimLeadingWhitespace(line);
             if (line.length() > 0) {
                 char firstChar = line.charAt(0);
+
                 if (firstChar != '#' && firstChar != '!') {
+
                     while (endsWithContinuationMarker(line)) {
                         String nextLine = in.readLine();
                         line = line.substring(0, line.length() - 1);
@@ -61,14 +61,17 @@ public class DefaultPropertiesPersister implements PropertiesPersister {
                             line += StringUtils.trimLeadingWhitespace(nextLine);
                         }
                     }
+
                     int separatorIndex = line.indexOf("=");
                     if (separatorIndex == -1) {
                         separatorIndex = line.indexOf(":");
                     }
+
                     String key = (separatorIndex != -1 ? line.substring(0, separatorIndex) : line);
                     String value = (separatorIndex != -1) ? line.substring(separatorIndex + 1) : "";
                     key = StringUtils.trimTrailingWhitespace(key);
                     value = StringUtils.trimLeadingWhitespace(value);
+
                     props.put(unescape(key), unescape(value));
                 }
             }
@@ -87,20 +90,17 @@ public class DefaultPropertiesPersister implements PropertiesPersister {
 
     protected String unescape(String str) {
         StringBuilder result = new StringBuilder(str.length());
-        for (int index = 0; index < str.length();) {
+        for (int index = 0; index < str.length(); ) {
             char c = str.charAt(index++);
             if (c == '\\') {
                 c = str.charAt(index++);
                 if (c == 't') {
                     c = '\t';
-                }
-                else if (c == 'r') {
+                } else if (c == 'r') {
                     c = '\r';
-                }
-                else if (c == 'n') {
+                } else if (c == 'n') {
                     c = '\n';
-                }
-                else if (c == 'f') {
+                } else if (c == 'f') {
                     c = '\f';
                 }
             }
@@ -118,8 +118,7 @@ public class DefaultPropertiesPersister implements PropertiesPersister {
         if (storeToWriterAvailable) {
             // On JDK 1.6+
             props.store(writer, header);
-        }
-        else {
+        } else {
             // Fall back to manual parsing.
             doStore(props, writer, header);
         }
@@ -133,7 +132,7 @@ public class DefaultPropertiesPersister implements PropertiesPersister {
         }
         out.write("#" + new Date());
         out.newLine();
-        for (Enumeration keys = props.keys(); keys.hasMoreElements();) {
+        for (Enumeration keys = props.keys(); keys.hasMoreElements(); ) {
             String key = (String) keys.nextElement();
             String val = props.getProperty(key);
             out.write(escape(key, true) + "=" + escape(val, false));

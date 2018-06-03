@@ -179,8 +179,8 @@ public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
             if (singletonObject == null) {
                 beforeSingletonCreation(beanName);
                 boolean newSingleton = false;
-
                 try {
+
                     singletonObject = singletonFactory.getObject();
                     newSingleton = true;
                 } catch (Exception e) {

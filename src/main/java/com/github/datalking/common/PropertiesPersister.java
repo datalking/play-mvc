@@ -8,6 +8,8 @@ import java.io.Writer;
 import java.util.Properties;
 
 /**
+ * properties文件操作 接口
+ *
  * @author yaoo on 5/28/18
  */
 public interface PropertiesPersister {

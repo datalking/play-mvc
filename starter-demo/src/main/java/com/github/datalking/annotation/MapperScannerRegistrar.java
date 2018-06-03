@@ -31,6 +31,7 @@ public class MapperScannerRegistrar implements ImportBeanDefinitionRegistrar, Re
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
 
+        // 获取@MapperScan注解的所有属性键值对
         AnnotationAttributes annoAttrs = AnnotationAttributes.fromMap(
                 importingClassMetadata.getAnnotationAttributes(MapperScan.class.getName()));
 

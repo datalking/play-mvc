@@ -7,6 +7,8 @@ import java.util.Map;
  */
 public interface ConfigurableEnvironment extends Environment, ConfigurablePropertyResolver {
 
+    MutablePropertySources getPropertySources();
+
     void setActiveProfiles(String... profiles);
 
     void addActiveProfile(String profile);

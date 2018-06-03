@@ -15,6 +15,10 @@ public abstract class EnumerablePropertySource<T> extends PropertySource<T> {
         super(name, source);
     }
 
+    protected EnumerablePropertySource(String name) {
+        super(name);
+    }
+
     public boolean containsProperty(String name) {
         Assert.notNull(name, "Property name must not be null");
         for (String candidate : getPropertyNames()) {

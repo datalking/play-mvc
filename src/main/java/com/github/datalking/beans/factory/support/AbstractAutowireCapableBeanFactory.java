@@ -127,7 +127,6 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         //注册bean销毁的方法
 //      registerDisposableBeanIfNecessary(beanName, bean, mbd);
 
-
         return exposedObject;
     }
 
@@ -378,7 +377,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         Object beanInstance = null;
 
         try {
-//beanInstance = this.beanFactory.getInstantiationStrategy().instantiate(mbd, beanName, this.beanFactory, factoryBean, factoryMethodToUse, argsToUse);
+//            beanInstance = this.beanFactory.getInstantiationStrategy().instantiate(mbd, beanName, this.beanFactory, factoryBean, factoryMethodToUse, argsToUse);
 
             beanInstance = factoryMethodToUse.invoke(factoryBean);
         } catch (IllegalAccessException | InvocationTargetException e) {
@@ -483,11 +482,12 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
     @Override
     public Object applyBeanPostProcessorsBeforeInitialization(Object existingBean, String beanName) {
-
         Object result = existingBean;
         List<BeanPostProcessor> bppList = getBeanPostProcessors();
         for (BeanPostProcessor bpp : bppList) {
+
             result = bpp.postProcessBeforeInitialization(result, beanName);
+
             if (result == null) {
                 return result;
             }

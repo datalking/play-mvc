@@ -3,6 +3,16 @@ spring笔记
 
 ## spring ummary
 
+- WebMvcConfigurationSupport精简了5个方法
+    - beanNameHandlerMapping()
+    - mvcResourceUrlProvider()
+    - mvcValidator()
+    - mvcUriComponentsContributor()
+    - mvcViewResolver()
+
+- spring处理带有@Configuration注解的类时，先子类，再父类，一直上溯到java.lang.Object
+    - 但保存bean方法到configurationClasses时，用的是子类，而不是父类
+- play-mvc处理带有@Configuration注解的类时，只处理子类，以及子类继承的带有@Bean注解标注的方法
 - AnnotationConfigUtils.attributesForRepeatable() 获取注解的所有属性
 
 ## faq
