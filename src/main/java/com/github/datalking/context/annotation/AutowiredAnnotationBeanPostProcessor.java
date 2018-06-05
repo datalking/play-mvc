@@ -130,9 +130,12 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
      */
     @Override
     public void postProcessMergedBeanDefinition(RootBeanDefinition beanDefinition, Class<?> beanType, String beanName) {
+
         if (beanType != null) {
+
             // 查找bean的依赖项
             InjectionMetadata metadata = findAutowiringMetadata(beanName, beanType, null);
+
             // 添加进RootBeanDefinition
             metadata.checkConfigMembers(beanDefinition);
         }
@@ -235,10 +238,12 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
         }
     }
 
-
+    /**
+     * 查找beanName依赖注入的字段或方法
+     */
     private InjectionMetadata findAutowiringMetadata(String beanName, Class<?> clazz, PropertyValues pvs) {
 
-        // Fall back to class name as cache key, for backwards compatibility with custom callers.
+        // 使用beanName或class全名作为缓存的key
         String cacheKey = (StringUtils.hasLength(beanName) ? beanName : clazz.getName());
 
         // 从缓存中查找bean的依赖信息
@@ -273,7 +278,9 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
         do {
             LinkedList<InjectionMetadata.InjectedElement> currElements = new LinkedList<>();
 
-            for (Field field : targetClass.getDeclaredFields()) {
+            /// 获取依赖注入的字段
+            Field[] fs = targetClass.getDeclaredFields();
+            for (Field field : fs) {
 
                 // 提取字段的@Autowired或@Value注解，若无此注解，返回null
                 Annotation ann = findAutowiredAnnotation(field);
@@ -291,12 +298,18 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
                     currElements.add(new AutowiredFieldElement(field, required));
                 }
             }
-            for (Method method : targetClass.getDeclaredMethods()) {
+
+            /// 获取依赖注入的方法
+            Method[] ms = targetClass.getDeclaredMethods();
+            for (Method method : ms) {
                 Annotation ann = null;
                 Method bridgedMethod = BridgeMethodResolver.findBridgedMethod(method);
+
                 if (BridgeMethodResolver.isVisibilityBridgeMethodPair(method, bridgedMethod)) {
+
                     ann = findAutowiredAnnotation(bridgedMethod);
                 }
+
                 if (ann != null && method.equals(ClassUtils.getMostSpecificMethod(method, clazz))) {
                     if (Modifier.isStatic(method.getModifiers())) {
                         if (logger.isWarnEnabled()) {
@@ -314,6 +327,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
                     currElements.add(new AutowiredMethodElement(method, required, pd));
                 }
             }
+
             elements.addAll(0, currElements);
             targetClass = targetClass.getSuperclass();
         }
@@ -326,12 +340,15 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
      * 提取字段的@Autowired或@Value注解
      */
     private Annotation findAutowiredAnnotation(AccessibleObject ao) {
+
         for (Class<? extends Annotation> type : this.autowiredAnnotationTypes) {
+
             Annotation ann = AnnotationUtils.getAnnotation(ao, type);
             if (ann != null) {
                 return ann;
             }
         }
+
         return null;
     }
 

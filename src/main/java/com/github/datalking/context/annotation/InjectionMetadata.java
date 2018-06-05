@@ -37,15 +37,15 @@ public class InjectionMetadata {
     }
 
     public void checkConfigMembers(RootBeanDefinition beanDefinition) {
+
         Set<InjectedElement> checkedElements = new LinkedHashSet<>(this.injectedElements.size());
+
         for (InjectedElement element : this.injectedElements) {
+            // 获取字段或方法
             Member member = element.getMember();
             if (!beanDefinition.isExternallyManagedConfigMember(member)) {
                 beanDefinition.registerExternallyManagedConfigMember(member);
                 checkedElements.add(element);
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Registered injected element on class [" + this.targetClass.getName() + "]: " + element);
-                }
             }
         }
         this.checkedElements = checkedElements;

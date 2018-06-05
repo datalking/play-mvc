@@ -336,9 +336,9 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 
             return new DependencyProviderFactory().createDependencyProvider(descriptor, beanName);
         } else {
-
+            Class<?> clazz = descriptor.getDependencyType();
             /// 可能返回的是代理对象，如mybatis的mapper
-            return doResolveDependency(descriptor, descriptor.getDependencyType(), beanName, autowiredBeanNames, typeConverter);
+            return doResolveDependency(descriptor, clazz, beanName, autowiredBeanNames, typeConverter);
         }
     }
 
@@ -348,15 +348,18 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
                                          Set<String> autowiredBeanNames,
                                          TypeConverter typeConverter) {
 
-        // 获取@Value注解的值，可能含有占位符
-        Object value = getAutowireCandidateResolver().getSuggestedValue(descriptor);
+        // 获取@Value注解的值用来注入，可能含有占位符
+        Object value = this.autowireCandidateResolver.getSuggestedValue(descriptor);
 
+        /// 若已获取到注解中值，则解析占位符后直接注入字段
         if (value != null) {
             if (value instanceof String) {
 
                 // 使用 PropertySourcesPlaceholderConfigurer 解析占位符
                 String strVal = resolveEmbeddedValue((String) value);
                 BeanDefinition bd = (beanName != null && containsBean(beanName) ? getMergedBeanDefinition(beanName) : null);
+
+                // 这里可以更改值，默认不更改
                 value = evaluateBeanDefinitionString(strVal, bd);
             }
 
@@ -433,7 +436,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
             }
             return matchingBeans;
         }
-        /// 若type是普通Object
+        /// 若type是普通Class
         else {
 
             // ==== 寻找依赖bean的候选项，保存到matchingBeans
@@ -582,6 +585,12 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
     public AutowireCandidateResolver getAutowireCandidateResolver() {
         return this.autowireCandidateResolver;
     }
+
+    public void setAutowireCandidateResolver(final AutowireCandidateResolver autowireCandidateResolver) {
+        Assert.notNull(autowireCandidateResolver, "AutowireCandidateResolver must not be null");
+        this.autowireCandidateResolver = autowireCandidateResolver;
+    }
+
 
     protected Object evaluateBeanDefinitionString(String value, BeanDefinition beanDefinition) {
 //        if (this.beanExpressionResolver == null) {

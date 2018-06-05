@@ -148,8 +148,7 @@ public class ClassPathMapperScanner extends ClassPathBeanDefinitionScanner {
         for (BeanDefinitionHolder holder : beanDefinitions) {
             definition = (GenericBeanDefinition) holder.getBeanDefinition();
 
-            // the mapper interface is the original class of the bean
-            // but the actual class of the bean is MapperFactoryBean
+            // the mapper interface is the original class of the bean but the actual class of the bean is MapperFactoryBean
             // 将扫描到的接口类型作为构造方法的参数
             definition.getConstructorArgumentValues().addGenericArgumentValue(definition.getBeanClassName()); // issue #59
 
@@ -179,6 +178,7 @@ public class ClassPathMapperScanner extends ClassPathBeanDefinitionScanner {
                 explicitFactoryUsed = true;
             }
 
+            /// 如果没有设置SqlSessionFactory或者SqlSessionTemplate，按类型注入
             if (!explicitFactoryUsed) {
                 // 设置dao相关bean的autowire类型为by type
                 definition.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_BY_TYPE);

@@ -25,7 +25,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 获取@Qualifier、@Value注解的值
+ * 获取@Qualifier、@Value注解的值进行autowire
+ * 默认使用此实现类，在AnnotationConfigUtils中实例化
  *
  * @author yaoo on 5/29/18
  */

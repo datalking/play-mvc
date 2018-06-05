@@ -4,6 +4,8 @@ import com.github.datalking.beans.factory.config.AnnotatedBeanDefinition;
 import com.github.datalking.beans.factory.config.BeanDefinition;
 import com.github.datalking.beans.factory.config.BeanDefinitionHolder;
 import com.github.datalking.beans.factory.support.BeanDefinitionRegistry;
+import com.github.datalking.beans.factory.support.DefaultListableBeanFactory;
+import com.github.datalking.beans.factory.support.QualifierAnnotationAutowireCandidateResolver;
 import com.github.datalking.beans.factory.support.RootBeanDefinition;
 import com.github.datalking.common.meta.AnnotationAttributes;
 import com.github.datalking.common.meta.AnnotationMetadata;
@@ -84,6 +86,11 @@ public class AnnotationConfigUtils {
 
     public static Set<BeanDefinitionHolder> registerAnnotationConfigProcessors(
             BeanDefinitionRegistry registry, Object source) {
+
+        DefaultListableBeanFactory beanFactory = (DefaultListableBeanFactory) registry;
+        if (!(beanFactory.getAutowireCandidateResolver() instanceof QualifierAnnotationAutowireCandidateResolver)) {
+            beanFactory.setAutowireCandidateResolver(new QualifierAnnotationAutowireCandidateResolver());
+        }
 
         Set<BeanDefinitionHolder> beanDefs = new LinkedHashSet<>(4);
 

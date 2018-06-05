@@ -157,9 +157,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         Object beanInstance = null;
         try {
             beanInstance = bd.getBeanClass().newInstance();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }
 
@@ -206,6 +204,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         if (hasInstAwareBpps || needsDepCheck) {
 //            PropertyDescriptor[] filteredPds = filterPropertyDescriptorsForDependencyCheck(bw, mbd.allowCaching);
             PropertyDescriptor[] filteredPds = null;
+
             if (hasInstAwareBpps) {
                 List<BeanPostProcessor> bpps = getBeanPostProcessors();
                 for (BeanPostProcessor bp : bpps) {
@@ -226,8 +225,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             }
         }
 
+        // 将BeanDefinition的属性注入到bean实例
         applyPropertyValues(beanName, mbd, bw, pvs);
-
     }
 
     /**
@@ -236,6 +235,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
     protected void applyMergedBeanDefinitionPostProcessors(RootBeanDefinition mbd, Class<?> beanType, String beanName) {
         List<BeanPostProcessor> bpps = getBeanPostProcessors();
         for (BeanPostProcessor bp : bpps) {
+
             if (bp instanceof MergedBeanDefinitionPostProcessor) {
                 MergedBeanDefinitionPostProcessor bdp = (MergedBeanDefinitionPostProcessor) bp;
                 bdp.postProcessMergedBeanDefinition(mbd, beanType, beanName);

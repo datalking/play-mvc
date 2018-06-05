@@ -57,13 +57,6 @@ public class MapperScannerConfigurer
 
     private BeanNameGenerator nameGenerator;
 
-    /**
-     * This property lets you set the base package for your mapper interface files.
-     * You can set more than one package by using a semicolon or comma as a separator.
-     * Mappers will be searched for recursively starting in the specified package(s).
-     *
-     * @param basePackage base package name
-     */
     public void setBasePackage(String basePackage) {
         this.basePackage = basePackage;
     }
@@ -195,6 +188,7 @@ public class MapperScannerConfigurer
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) {
 
         if (this.processPropertyPlaceHolders) {
+
             // 处理applicationContext.xml文件中MapperScannerConfigurer配置的占位符
             processPropertyPlaceHolders();
         }

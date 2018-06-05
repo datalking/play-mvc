@@ -96,19 +96,20 @@ public class RootBeanDefinition extends AbstractBeanDefinition {
 
     public void registerExternallyManagedConfigMember(Member configMember) {
 //        synchronized (this.postProcessingLock) {
-            if (this.externallyManagedConfigMembers == null) {
-                this.externallyManagedConfigMembers = new HashSet<Member>(1);
-            }
-            this.externallyManagedConfigMembers.add(configMember);
+        if (this.externallyManagedConfigMembers == null) {
+            this.externallyManagedConfigMembers = new HashSet<Member>(1);
+        }
+        this.externallyManagedConfigMembers.add(configMember);
 //        }
     }
 
     public boolean isExternallyManagedConfigMember(Member configMember) {
 //        synchronized (this.postProcessingLock) {
-            return (this.externallyManagedConfigMembers != null &&
-                    this.externallyManagedConfigMembers.contains(configMember));
+        return (this.externallyManagedConfigMembers != null &&
+                this.externallyManagedConfigMembers.contains(configMember));
 //        }
     }
+
     @Override
     public RootBeanDefinition cloneBeanDefinition() {
         return new RootBeanDefinition(this);
