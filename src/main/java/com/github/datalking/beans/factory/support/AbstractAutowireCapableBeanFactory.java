@@ -73,7 +73,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             bd.setBeanClass(beanClass);
         }
 
-        // ==== 执行 BeanPostProcessor 的 postProcessBeforeInstantiation 和 postProcessAfterInitialization
+        // ==== 执行实例化前置处理器，即BeanPostProcessor的postProcessBeforeInstantiation()和postProcessAfterInitialization()
         Object bean = resolveBeforeInstantiation(beanName, bd);
         // 如果生成的代理对象不为空，则直接返回
         if (bean != null) {
@@ -103,7 +103,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         final Object bean = (instanceWrapper != null ? instanceWrapper.getWrappedInstance() : null);
 
         if (!bd.postProcessed) {
-            // 构建需要autowire的元数据添加到缓存，再添加到externallyManagedConfigMembers
+            // 构建autowire需要的元数据添加到缓存，再添加到externallyManagedConfigMembers
             applyMergedBeanDefinitionPostProcessors(bd, bean.getClass(), beanName);
             bd.postProcessed = true;
         }
@@ -207,11 +207,12 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 //            PropertyDescriptor[] filteredPds = filterPropertyDescriptorsForDependencyCheck(bw, mbd.allowCaching);
             PropertyDescriptor[] filteredPds = null;
             if (hasInstAwareBpps) {
-                for (BeanPostProcessor bp : getBeanPostProcessors()) {
+                List<BeanPostProcessor> bpps = getBeanPostProcessors();
+                for (BeanPostProcessor bp : bpps) {
                     if (bp instanceof InstantiationAwareBeanPostProcessor) {
                         InstantiationAwareBeanPostProcessor ibp = (InstantiationAwareBeanPostProcessor) bp;
 
-                        // 这里会通过AutowiredAnnotationBeanPostProcessor的方法自动注入依赖的bean，直接从缓存中取autowire的字段
+                        // 下面会通过AutowiredAnnotationBeanPostProcessor的方法自动注入依赖的bean，直接从缓存中取autowire的字段
                         // 解析@Value中属性占位符的入口
                         pvs = ibp.postProcessPropertyValues(pvs, filteredPds, bw.getWrappedInstance(), beanName);
                         if (pvs == null) {
@@ -233,10 +234,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
      * 构建autowire的元数据添加到缓存
      */
     protected void applyMergedBeanDefinitionPostProcessors(RootBeanDefinition mbd, Class<?> beanType, String beanName) {
-        for (BeanPostProcessor bp : getBeanPostProcessors()) {
+        List<BeanPostProcessor> bpps = getBeanPostProcessors();
+        for (BeanPostProcessor bp : bpps) {
             if (bp instanceof MergedBeanDefinitionPostProcessor) {
                 MergedBeanDefinitionPostProcessor bdp = (MergedBeanDefinitionPostProcessor) bp;
-
                 bdp.postProcessMergedBeanDefinition(mbd, beanType, beanName);
             }
         }

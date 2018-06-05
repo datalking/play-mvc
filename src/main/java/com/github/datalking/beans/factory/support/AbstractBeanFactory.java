@@ -222,7 +222,6 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
         // 从beanDefinitionMap里面取
         BeanDefinition bd = getBeanDefinition(beanName);
         return getMergedBeanDefinition(beanName, bd);
-
     }
 
     protected RootBeanDefinition getMergedBeanDefinition(String beanName, BeanDefinition bd) {

@@ -144,7 +144,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
     @Override
     public void preInstantiateSingletons() {
 
-        // 遍历的是副本，此时仍然可以beanDefinition
+        // 遍历的是副本，遍历过程中仍可以添加BeanDefinition
         List<String> beanNames = new ArrayList<>(this.beanDefinitionNames);
 
         for (String beanName : beanNames) {

@@ -8,6 +8,7 @@ import java.lang.annotation.Target;
 
 /**
  * 标注为需要自动装配的bean
+ * 类似于jsr的@Inject
  * 装配bean时默认by type
  *
  * @author yaoo on 4/2/18

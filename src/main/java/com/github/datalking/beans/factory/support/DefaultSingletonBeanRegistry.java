@@ -180,7 +180,7 @@ public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
                 beforeSingletonCreation(beanName);
                 boolean newSingleton = false;
                 try {
-
+                    // ==== 调用createBean()创建bean实例并注入属性及依赖
                     singletonObject = singletonFactory.getObject();
                     newSingleton = true;
                 } catch (Exception e) {

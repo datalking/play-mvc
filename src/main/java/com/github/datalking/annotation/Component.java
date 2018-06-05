@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 
 /**
  * 标注为普通bean
- * 类似于Spring的@Component
+ * 类似于jsr的@Named
  *
  * @author yaoo on 4/2/18
  */

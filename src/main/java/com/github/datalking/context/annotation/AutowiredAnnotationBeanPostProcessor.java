@@ -56,7 +56,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     /**
-     * 支持自动注入的注解类型
+     * 支持自动注入的注解类型，默认3个@Autowired、@Vaule、@Inject
      */
     private final Set<Class<? extends Annotation>> autowiredAnnotationTypes = new LinkedHashSet<>();
 
@@ -126,7 +126,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 
 
     /**
-     * 构建autowire的元数据，加入缓存
+     * 构建autowire需要的元数据，加入缓存
      */
     @Override
     public void postProcessMergedBeanDefinition(RootBeanDefinition beanDefinition, Class<?> beanType, String beanName) {
@@ -275,7 +275,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 
             for (Field field : targetClass.getDeclaredFields()) {
 
-                // 提取字段的@Autowired或@Value注解
+                // 提取字段的@Autowired或@Value注解，若无此注解，返回null
                 Annotation ann = findAutowiredAnnotation(field);
 
                 if (ann != null) {
@@ -286,7 +286,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
                         continue;
                     }
 
-                    // 检查该字段是否必须
+                    // 检查该字段是否必须，默认为true
                     boolean required = determineRequiredStatus(ann);
                     currElements.add(new AutowiredFieldElement(field, required));
                 }

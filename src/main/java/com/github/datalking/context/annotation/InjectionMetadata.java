@@ -13,6 +13,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -36,18 +37,18 @@ public class InjectionMetadata {
     }
 
     public void checkConfigMembers(RootBeanDefinition beanDefinition) {
-//        Set<InjectedElement> checkedElements = new LinkedHashSet<>(this.injectedElements.size());
-//        for (InjectedElement element : this.injectedElements) {
-//            Member member = element.getMember();
-//            if (!beanDefinition.isExternallyManagedConfigMember(member)) {
-//                beanDefinition.registerExternallyManagedConfigMember(member);
-//                checkedElements.add(element);
-//                if (logger.isDebugEnabled()) {
-//                    logger.debug("Registered injected element on class [" + this.targetClass.getName() + "]: " + element);
-//                }
-//            }
-//        }
-//        this.checkedElements = checkedElements;
+        Set<InjectedElement> checkedElements = new LinkedHashSet<>(this.injectedElements.size());
+        for (InjectedElement element : this.injectedElements) {
+            Member member = element.getMember();
+            if (!beanDefinition.isExternallyManagedConfigMember(member)) {
+                beanDefinition.registerExternallyManagedConfigMember(member);
+                checkedElements.add(element);
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Registered injected element on class [" + this.targetClass.getName() + "]: " + element);
+                }
+            }
+        }
+        this.checkedElements = checkedElements;
     }
 
     public void inject(Object target, String beanName, PropertyValues pvs) throws Throwable {
@@ -56,11 +57,7 @@ public class InjectionMetadata {
 
         if (!elementsToIterate.isEmpty()) {
 
-            boolean debug = logger.isDebugEnabled();
             for (InjectedElement element : elementsToIterate) {
-//                if (debug) {
-//                    logger.debug("Processing injected element of bean '" + beanName + "': " + element);
-//                }
                 element.inject(target, beanName, pvs);
             }
         }
