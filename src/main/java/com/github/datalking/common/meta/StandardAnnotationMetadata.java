@@ -1,6 +1,7 @@
 package com.github.datalking.common.meta;
 
 import com.github.datalking.annotation.ComponentScan;
+import com.github.datalking.annotation.MapperScan;
 import com.github.datalking.util.AnnotationUtils;
 import com.github.datalking.util.StringUtils;
 
@@ -129,15 +130,33 @@ public class StandardAnnotationMetadata extends StandardClassMetadata implements
             return null;
         }
 
+        // 保存注解的所有属性键值对
         Map<String, Object> annoMap = new LinkedHashMap<>();
 
         String annotationName = annotationClass.getName();
-        final String componentScanAnnoFullPack = "com.github.datalking.annotation.ComponentScan";
 
-        if (componentScanAnnoFullPack.equals(annotationName)) {
-            annoMap.put("basePackages", getIntrospectedClass().getAnnotation(ComponentScan.class).basePackages());
-            annoMap.put("basePackageClasses", getIntrospectedClass().getAnnotation(ComponentScan.class).basePackageClasses());
-            annoMap.put("value", getIntrospectedClass().getAnnotation(ComponentScan.class).value());
+        final String componentScanAnnoFullPack = "com.github.datalking.annotation.ComponentScan";
+        /// 若注解为@ComponentScan，则将所有属性值加入map
+        if (annotationName.equals(componentScanAnnoFullPack)) {
+            ComponentScan a = getIntrospectedClass().getAnnotation(ComponentScan.class);
+            annoMap.put("basePackages", a.basePackages());
+            annoMap.put("basePackageClasses", a.basePackageClasses());
+            annoMap.put("value", a.value());
+        }
+
+        final String mapperScanAnnoFullPack = "com.github.datalking.annotation.MapperScan";
+        /// 若注解为@MapperScan，则将所有属性值加入map
+        if (annotationName.equals(mapperScanAnnoFullPack)) {
+            MapperScan a = getIntrospectedClass().getAnnotation(MapperScan.class);
+            annoMap.put("basePackages", a.basePackages());
+            annoMap.put("basePackageClasses", a.basePackageClasses());
+            annoMap.put("value", a.value());
+            annoMap.put("nameGenerator", a.nameGenerator());
+            annoMap.put("annotationClass", a.annotationClass());
+            annoMap.put("markerInterface", a.markerInterface());
+            annoMap.put("sqlSessionTemplateRef", a.sqlSessionTemplateRef());
+            annoMap.put("sqlSessionFactoryRef", a.sqlSessionFactoryRef());
+            annoMap.put("factoryBean", a.factoryBean());
         }
 
         return annoMap;

@@ -33,6 +33,7 @@ public class BeanDefinitionVisitor {
         visitFactoryBeanName(beanDefinition);
         visitFactoryMethodName(beanDefinition);
         visitScope(beanDefinition);
+        // 注入BeanDefinition中PropertyValues的@Value属性值，解析属性占位符
         visitPropertyValues(beanDefinition.getPropertyValues());
         ConstructorArgumentValues cas = beanDefinition.getConstructorArgumentValues();
         visitIndexedArgumentValues(cas.getIndexedArgumentValues());

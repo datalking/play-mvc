@@ -95,7 +95,7 @@ public class AnnotationAttributes extends LinkedHashMap<String, Object> {
     /**
      * 从输入的map中创建AnnotationAttributes
      *
-     * @param map 输入键值对
+     * @param map 注解所有属性键值对
      * @return AnnotationAttributes
      */
     public static AnnotationAttributes fromMap(Map<String, Object> map) {

@@ -40,7 +40,7 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 
     private final Map<String, AutowireCandidateQualifier> qualifiers = new LinkedHashMap<>(0);
 
-    private ConstructorArgumentValues constructorArgumentValues;
+    private ConstructorArgumentValues constructorArgumentValues =new ConstructorArgumentValues();
 
     /**
      * 一般情况下，beanDefinitionReader阶段是字符串，createBean阶段是class对象

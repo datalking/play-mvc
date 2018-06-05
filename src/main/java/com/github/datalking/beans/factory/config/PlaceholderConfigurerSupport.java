@@ -60,7 +60,7 @@ public abstract class PlaceholderConfigurerSupport extends PropertyResourceConfi
     }
 
     /**
-     * 解析所有BeanDefinition中的属性占位符
+     * 解析BeanDefinitionMap中所有的属性占位符
      */
     protected void doProcessProperties(ConfigurableListableBeanFactory beanFactoryToProcess,
                                        StringValueResolver valueResolver) {
@@ -83,6 +83,7 @@ public abstract class PlaceholderConfigurerSupport extends PropertyResourceConfi
             }
         }
 
+//        System.out.println();
         // New in Spring 2.5: resolve placeholders in alias target names and aliases as well.
 //        beanFactoryToProcess.resolveAliases(valueResolver);
 

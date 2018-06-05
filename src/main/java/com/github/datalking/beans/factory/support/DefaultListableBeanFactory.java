@@ -139,7 +139,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
     }
 
     /**
-     * 通过调用getBean()触发实例化bean
+     * 通过调用getBean()来实例化bean
      */
     @Override
     public void preInstantiateSingletons() {
@@ -149,20 +149,18 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 
         for (String beanName : beanNames) {
 
-//            if (beanName.equals("requestMappingHandlerMapping")) {
-//                System.out.println("====preInstantiateSingletons: " + beanName);
-//            }
+            if (beanName.equals("requestMappingHandlerMapping")) {
+                System.out.println("====preInstantiateSingletons: " + beanName);
+            }
 
             getBean(beanName);
         }
 
+        /// 触发afterSingletonsInstantiated()后处理器
+        for (String beanName : beanNames) {
+
+        }
     }
-//    public void preInstantiateSingletons() throws Exception {
-//        for (Iterator it = this.beanDefinitionNames.iterator(); it.hasNext(); ) {
-//            String beanName = (String) it.next();
-//            getBean(beanName);
-//        }
-//    }
 
     // ======== ConfiguraleListableBeanFactory ========
 

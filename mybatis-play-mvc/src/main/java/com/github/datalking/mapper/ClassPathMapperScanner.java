@@ -195,7 +195,11 @@ public class ClassPathMapperScanner extends ClassPathBeanDefinitionScanner {
         }
     }
 
-    //    @Override
+    /**
+     * 继承mybatis的处理
+     * 将接口也加入候选bean
+     */
+    @Override
     protected boolean isCandidateComponent(AnnotatedBeanDefinition beanDefinition) {
 //        return beanDefinition.getMetadata().isInterface() && beanDefinition.getMetadata().isIndependent();
         return beanDefinition.getMetadata().isInterface();

@@ -13,6 +13,7 @@ import com.github.datalking.util.ResourceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Modifier;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -59,6 +60,7 @@ public class ClassPathBeanDefinitionScanner {
 
         for (String basePackage : basePackages) {
 
+            // 扫描指定包下所有的.class文件，为直接或间接带有@Component注解的类生成BeanDefinition
             Set<BeanDefinition> candidates = findCandidateComponents(basePackage);
 
             for (BeanDefinition candidate : candidates) {
@@ -83,7 +85,7 @@ public class ClassPathBeanDefinitionScanner {
     }
 
     /**
-     * 获取指定包下的.class文件，生成BeanDefinition
+     * 扫描指定包下所有的.class文件，为直接或间接带有@Component注解的类生成BeanDefinition
      *
      * @param basePackage 指定包全限定名
      * @return 包下所有class对应的BeanDefinition
@@ -96,10 +98,17 @@ public class ClassPathBeanDefinitionScanner {
 
         for (Class c : classSet) {
 
+            AnnotatedBeanDefinition abd = new AnnotatedGenericBeanDefinition(c);
+
+            /// 若class带有@Component注解，则加入候选
+            /// 若class不带有@Compoent注解，且class不是接口或抽象类，也加入候选扩大范围 todo 改进与mybatis集成的方式
             if (isCandidateComponent(c)) {
-                AnnotatedBeanDefinition abd = new AnnotatedGenericBeanDefinition(c);
+                candidates.add(abd);
+            } else if (isCandidateComponent(abd)) {
                 candidates.add(abd);
             }
+
+
         }
 
         return candidates;
@@ -138,6 +147,16 @@ public class ClassPathBeanDefinitionScanner {
         return false;
     }
 
+    /**
+     * 将不是接口和抽象类的类也加入
+     * 便于集成mybatis
+     */
+    protected boolean isCandidateComponent(AnnotatedBeanDefinition beanDefinition) {
+        Class c = beanDefinition.getClass();
+        return !(c.isInterface() || Modifier.isAbstract(c.getModifiers()));
+
+    }
+
     protected boolean checkCandidate(String beanName, BeanDefinition beanDefinition) throws IllegalStateException {
         if (!this.registry.containsBeanDefinition(beanName)) {
             return true;
@@ -170,7 +189,7 @@ public class ClassPathBeanDefinitionScanner {
     }
 
     public void setBeanNameGenerator(BeanNameGenerator beanNameGenerator) {
-        this.beanNameGenerator = (BeanNameGenerator)(beanNameGenerator != null ? beanNameGenerator : new AnnotationBeanNameGenerator());
+        this.beanNameGenerator = (BeanNameGenerator) (beanNameGenerator != null ? beanNameGenerator : new AnnotationBeanNameGenerator());
     }
 
     public BeanDefinitionRegistry getRegistry() {

@@ -92,7 +92,7 @@ public class PropertySourcesPlaceholderConfigurer extends PlaceholderConfigurerS
                 return (resolved.equals(nullValue) ? null : resolved);
             }
         };
-
+        // 解析BeanDefinitionMap中所有的属性占位符
         doProcessProperties(beanFactoryToProcess, valueResolver);
     }
 

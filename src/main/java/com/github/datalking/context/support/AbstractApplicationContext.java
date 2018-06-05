@@ -154,6 +154,10 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
             // 实例化国际化语言相关bean
             initMessageSource();
 
+//            initApplicationEventMulticaster();
+//            onRefresh();
+//            registerListeners();
+
             // 通过调用getBean()创建非懒加载而是需要立即实例化的bean
             finishBeanFactoryInitialization(beanFactory);
 

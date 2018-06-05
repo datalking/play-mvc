@@ -121,20 +121,20 @@ public class ConfigurationClassPostProcessor
                 String[] newCandidateNames = registry.getBeanDefinitionNames();
                 Set<String> oldCandidateNames = new HashSet<>(Arrays.asList(candidateNames));
                 Set<String> alreadyParsedClasses = new HashSet<>();
-
+                /// 将old加入already
                 for (ConfigurationClass configurationClass : alreadyParsed) {
                     alreadyParsedClasses.add(configurationClass.getMetadata().getClassName());
                 }
 
                 for (String candidateName : newCandidateNames) {
-
+                    /// 若name不再old中
                     if (!oldCandidateNames.contains(candidateName)) {
                         BeanDefinition bd = registry.getBeanDefinition(candidateName);
                         // if (ConfigurationClassUtils.checkConfigurationClassCandidate(bd, this.metadataReaderFactory)
                         /// 加载类
                         Class beanClass = ((AbstractAutowireCapableBeanFactory) registry).doResolveBeanClass((AbstractBeanDefinition) bd);
                         ((AbstractBeanDefinition) bd).setBeanClass(beanClass);
-
+                        /// 且 name也有@Configuration注解
                         if (beanClass != null && beanClass.isAnnotationPresent(Configuration.class)
                                 && !alreadyParsedClasses.contains(bd.getBeanClassName())) {
                             candidates.add(new BeanDefinitionHolder(bd, candidateName));
