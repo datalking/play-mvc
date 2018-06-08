@@ -3,6 +3,7 @@ java笔记
 
 ## faq
 
+- (String)obj 与 obj.toString() 的区别
 - java 8 接口 静态方法 原理
 
 ## java web

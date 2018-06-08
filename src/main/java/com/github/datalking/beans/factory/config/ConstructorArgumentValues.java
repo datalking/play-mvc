@@ -115,20 +115,24 @@ public class ConstructorArgumentValues {
     }
 
     private void addOrMergeGenericArgumentValue(ValueHolder newValue) {
+
         if (newValue.getName() != null) {
             for (Iterator<ValueHolder> it = this.genericArgumentValues.iterator(); it.hasNext(); ) {
                 ValueHolder currentValue = it.next();
                 if (newValue.getName().equals(currentValue.getName())) {
+
                     if (newValue.getValue() instanceof Mergeable) {
                         Mergeable mergeable = (Mergeable) newValue.getValue();
                         if (mergeable.isMergeEnabled()) {
                             newValue.setValue(mergeable.merge(currentValue.getValue()));
                         }
                     }
+
                     it.remove();
                 }
             }
         }
+
         this.genericArgumentValues.add(newValue);
     }
 
@@ -256,13 +260,13 @@ public class ConstructorArgumentValues {
 //    public static class ValueHolder implements BeanMetadataElement {
     public static class ValueHolder {
 
-        // 构造方法参数值
+        // 构造方法xxx
         private Object value;
 
-        // 构造方法参数类型
+        // 构造方法xxx
         private String type;
 
-        // 构造方法参数名称
+        // 构造方法xxx
         private String name;
 
         private Object source;

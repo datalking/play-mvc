@@ -82,7 +82,7 @@ public class QualifierAnnotationAutowireCandidateResolver implements AutowireCan
             // no qualification necessary
             return true;
         }
-
+        /// todo 简化规则
         boolean match = checkQualifiers(bdHolder, descriptor.getAnnotations());
         if (match) {
             MethodParameter methodParam = descriptor.getMethodParameter();
@@ -251,9 +251,9 @@ public class QualifierAnnotationAutowireCandidateResolver implements AutowireCan
      * Determine whether the given dependency carries a value annotation.
      */
     public Object getSuggestedValue(DependencyDescriptor descriptor) {
-
+        // 先查找@Value注解的字段
         Object value = findValue(descriptor.getAnnotations());
-
+        /// 若value为空，再查找方法参数
         if (value == null) {
             MethodParameter methodParam = descriptor.getMethodParameter();
             if (methodParam != null) {

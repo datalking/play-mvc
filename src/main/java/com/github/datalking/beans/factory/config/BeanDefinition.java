@@ -43,6 +43,7 @@ public interface BeanDefinition {
 
     boolean isAutowireCandidate();
 
+    Class<?> getBeanClass();
 
 //    void setDependsOn(String... dependsOn);
 //

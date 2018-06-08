@@ -8,6 +8,8 @@ import com.github.datalking.beans.factory.ObjectFactory;
 import com.github.datalking.beans.factory.config.BeanDefinition;
 import com.github.datalking.beans.factory.config.BeanDefinitionHolder;
 import com.github.datalking.beans.factory.config.ConfigurableListableBeanFactory;
+import com.github.datalking.beans.factory.config.ConstructorArgumentValues;
+import com.github.datalking.beans.factory.config.ConstructorArgumentValues.ValueHolder;
 import com.github.datalking.beans.factory.config.DependencyDescriptor;
 import com.github.datalking.common.ParameterNameDiscoverer;
 import com.github.datalking.exception.BeansException;
@@ -50,7 +52,8 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
         }
     }
 
-    private AutowireCandidateResolver autowireCandidateResolver = new SimpleAutowireCandidateResolver();
+    //    private AutowireCandidateResolver autowireCandidateResolver = new SimpleAutowireCandidateResolver();
+    private AutowireCandidateResolver autowireCandidateResolver = new QualifierAnnotationAutowireCandidateResolver();
 
     // 所有BeanDefinition
     private final Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>(256);
@@ -211,8 +214,8 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
                 new ConstructorResolver(this).resolveFactoryMethodIfPossible(mbd);
             }
         }
-        return getAutowireCandidateResolver().isAutowireCandidate(
-                new BeanDefinitionHolder(mbd, beanName, getAliases(beanName)), descriptor);
+        BeanDefinitionHolder bdHolder = new BeanDefinitionHolder(mbd, beanName, getAliases(beanName));
+        return this.autowireCandidateResolver.isAutowireCandidate(bdHolder, descriptor);
     }
 
     public String[] getAliases(String name) {
@@ -250,15 +253,41 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
             // 各种BeanDefinition添加进 mergedBeanDefinitions
             RootBeanDefinition bd = getMergedLocalBeanDefinition(beanName);
 
-            /// 若是普通bean
+            // 当前迭代的bean的class
+            Class clazz = null;
+            // 为true时针对泛型处理
+            boolean clazzIsFactory = false;
+
             if (bd.hasBeanClass()) {
-                if (type.isAssignableFrom(bd.getBeanClass())) {
+                clazz = bd.getBeanClass();
+            }
+
+            if (clazz != null) {
+
+                /// 若是普通bean，且是type的子类，则满足条件
+                if (type.isAssignableFrom(clazz)) {
                     result.add(beanName);
+                    continue;
+                }
+
+                /// 若是普通bean，且不是FactoryBean的直接子类，则跳过
+                if (!FactoryBean.class.isAssignableFrom(clazz)) {
+                    continue;
+                }
+
+                /// 若是FactoryBean的子类，则需要特殊处理
+                if (FactoryBean.class.isAssignableFrom(clazz)) {
+                    // 为true时针对泛型处理
+                    clazzIsFactory = true;
                 }
             }
-            /// 若是FactoryBean
-            else {
 
+            /// 若是FactoryBean
+            if (clazzIsFactory || isFactoryBean(beanName)) {
+
+                ConstructorArgumentValues args = bd.getConstructorArgumentValues();
+
+                /// 从bean方法的返回值获取bean信息
                 if (bd.getFactoryMethodName() != null) {
                     if (bd instanceof ConfigurationClassBeanDefinition) {
                         String returnTypeName = ((ConfigurationClassBeanDefinition) bd).getFactoryMethodMetadata().getReturnTypeName();
@@ -270,14 +299,50 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
                         }
                         if (type.isAssignableFrom(c)) {
                             result.add(beanName);
+                            continue;
                         }
                     }
                 }
+                /// 从泛型参数中获取bean类型
+                else if (!args.isEmpty()) {
+                    Map<Integer, ValueHolder> indexedArgumentValues = args.getIndexedArgumentValues();
+                    List<ValueHolder> genericArgumentValues = args.getGenericArgumentValues();
+//                    for (Map.Entry<Integer, ValueHolder> entry : indexedArgumentValues.entrySet()) {
+//                        {
+//                            String typeName = entry.getValue().getType();
+//                            try {
+//                                clazz = Class.forName(typeName);
+//                            } catch (ClassNotFoundException e) {
+//                                e.printStackTrace();
+//                            }
+//                            if (type.isAssignableFrom(clazz)) {
+//                                result.add(beanName);
+//                            }
+//                        }
+//                    }
+                    if (genericArgumentValues != null && !genericArgumentValues.isEmpty()) {
+                        for (ValueHolder v : genericArgumentValues) {
+                            String typeName = (String) v.getValue();
+                            try {
+                                clazz = Class.forName(typeName);
+                            } catch (ClassNotFoundException e) {
+                                e.printStackTrace();
+                            }
+                            if (type.isAssignableFrom(clazz)) {
+                                result.add(beanName);
+                                continue;
+                            }
+                        }
+                    }
+
+                } else {
+
+                }
 
             }
-
         }
 
+        /// 再在手动注册的bean里面找
         for (String beanName : this.manualSingletonNames) {
             if (isFactoryBean(beanName)) {
                 if (isTypeMatch(beanName, type)) {
@@ -478,7 +543,8 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 
             // ==== 若是class，则直接调用getBean()返回实例化的对象
             Object obj = (instanceCandidate instanceof Class ?
-                    descriptor.resolveCandidate(autowiredBeanName, type, this) : instanceCandidate);
+                    descriptor.resolveCandidate(autowiredBeanName, type, this) :
+                    instanceCandidate);
 
             return obj;
         }
@@ -586,7 +652,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
         return this.autowireCandidateResolver;
     }
 
-    public void setAutowireCandidateResolver(final AutowireCandidateResolver autowireCandidateResolver) {
+    public void setAutowireCandidateResolver(AutowireCandidateResolver autowireCandidateResolver) {
         Assert.notNull(autowireCandidateResolver, "AutowireCandidateResolver must not be null");
         this.autowireCandidateResolver = autowireCandidateResolver;
     }
@@ -600,6 +666,9 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 //        return this.beanExpressionResolver.evaluate(value, new BeanExpressionContext(this, scope));
     }
 
+    /**
+     * 根据beanName查找候选bean
+     */
     protected Map<String, Object> findAutowireCandidates(String beanName,
                                                          Class<?> requiredType,
                                                          DependencyDescriptor descriptor) {
@@ -607,7 +676,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
         String[] candidateNames = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(
                 this, requiredType, true, descriptor.isEager());
 
-        // 记录匹配的candidate，如bookDaoMapper -> class对象
+        // 记录匹配的candidate，如bookDaoMapper -> bean对象，已经实例化
         Map<String, Object> result = new LinkedHashMap<>(candidateNames.length);
 
         for (Class<?> autowiringType : this.resolvableDependencies.keySet()) {
@@ -624,7 +693,9 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 
         for (String candidateName : candidateNames) {
             if (!candidateName.equals(beanName) && isAutowireCandidate(candidateName, descriptor)) {
-                result.put(candidateName, getBean(candidateName));
+                // 实例化bean
+                Object obj = getBean(candidateName);
+                result.put(candidateName, obj);
             }
         }
 

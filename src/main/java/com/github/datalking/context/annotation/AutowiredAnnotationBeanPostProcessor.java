@@ -143,19 +143,26 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 
     @Override
     public Constructor<?>[] determineCandidateConstructors(Class<?> beanClass, String beanName) {
+
         // Quick check on the concurrent map first, with minimal locking.
         Constructor<?>[] candidateConstructors = this.candidateConstructorsCache.get(beanClass);
+
         if (candidateConstructors == null) {
             synchronized (this.candidateConstructorsCache) {
                 candidateConstructors = this.candidateConstructorsCache.get(beanClass);
+
                 if (candidateConstructors == null) {
                     Constructor<?>[] rawCandidates = beanClass.getDeclaredConstructors();
                     List<Constructor<?>> candidates = new ArrayList<>(rawCandidates.length);
+
                     Constructor<?> requiredConstructor = null;
                     Constructor<?> defaultConstructor = null;
+
                     for (Constructor<?> candidate : rawCandidates) {
+
                         Annotation ann = findAutowiredAnnotation(candidate);
                         if (ann != null) {
+
                             if (requiredConstructor != null) {
                                 try {
                                     throw new Exception(beanName + "Invalid autowire-marked constructor: " + candidate + ". Found constructor with 'required' Autowired annotation already: " + requiredConstructor);
@@ -163,10 +170,11 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
                                     e.printStackTrace();
                                 }
                             }
+
                             if (candidate.getParameterTypes().length == 0) {
-                                throw new IllegalStateException(
-                                        "Autowired annotation requires at least one argument: " + candidate);
+                                throw new IllegalStateException("Autowired annotation requires at least one argument: " + candidate);
                             }
+
                             boolean required = determineRequiredStatus(ann);
                             if (required) {
                                 if (!candidates.isEmpty()) {
@@ -176,14 +184,15 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
                                         e.printStackTrace();
                                     }
                                 }
-
                                 requiredConstructor = candidate;
                             }
+
                             candidates.add(candidate);
                         } else if (candidate.getParameterTypes().length == 0) {
                             defaultConstructor = candidate;
                         }
                     }
+
                     if (!candidates.isEmpty()) {
                         // Add default constructor to list of optional constructors, as fallback.
                         if (requiredConstructor == null) {
@@ -200,10 +209,12 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
                     } else {
                         candidateConstructors = new Constructor<?>[0];
                     }
+
                     this.candidateConstructorsCache.put(beanClass, candidateConstructors);
                 }
             }
         }
+
         return (candidateConstructors.length > 0 ? candidateConstructors : null);
     }
 

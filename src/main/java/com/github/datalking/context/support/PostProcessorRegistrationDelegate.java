@@ -63,7 +63,7 @@ public class PostProcessorRegistrationDelegate {
             invokeBeanFactoryPostProcessors(beanFactoryPostProcessors, beanFactory);
         }
 
-        /// 处理上面过程中新增的BeanFactoryPostProcessor
+        /// 处理上面过程中新增的BeanFactoryPostProcessor，如PlaceholderConfigurerSupport
         String[] postProcessorNames = beanFactory.getBeanNamesForType(BeanFactoryPostProcessor.class);
         List<BeanFactoryPostProcessor> postProcessors = new ArrayList<>();
 

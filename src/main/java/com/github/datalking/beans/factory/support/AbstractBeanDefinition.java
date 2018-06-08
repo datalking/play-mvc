@@ -40,7 +40,7 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 
     private final Map<String, AutowireCandidateQualifier> qualifiers = new LinkedHashMap<>(0);
 
-    private ConstructorArgumentValues constructorArgumentValues =new ConstructorArgumentValues();
+    private ConstructorArgumentValues constructorArgumentValues = new ConstructorArgumentValues();
 
     /**
      * 一般情况下，beanDefinitionReader阶段是字符串，createBean阶段是class对象
@@ -85,10 +85,11 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 
     protected AbstractBeanDefinition(BeanDefinition original) {
         setBeanClassName(original.getBeanClassName());
-        setPropertyValues(new MutablePropertyValues(original.getPropertyValues()));
         setLazyInit(original.isLazyInit());
         setFactoryBeanName(original.getFactoryBeanName());
         setFactoryMethodName(original.getFactoryMethodName());
+        setConstructorArgumentValues(new ConstructorArgumentValues(original.getConstructorArgumentValues()));
+        setPropertyValues(new MutablePropertyValues(original.getPropertyValues()));
 
         //  拷贝其他字段
         if (original instanceof AbstractBeanDefinition) {
@@ -96,6 +97,9 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
             if (originalAbd.hasBeanClass()) {
                 setBeanClass(originalAbd.getBeanClass());
             }
+            setAutowireMode(originalAbd.getAutowireMode());
+            setAutowireCandidate(originalAbd.isAutowireCandidate());
+            setPrimary(originalAbd.isPrimary());
         }
     }
 
@@ -120,16 +124,28 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
         }
     }
 
-    public Class<?> getBeanClass() throws IllegalStateException {
+    public Class<?> getBeanClass() {
         Object beanClassObject = this.beanClass;
         if (beanClassObject == null) {
             throw new IllegalStateException("No bean class specified on bean definition");
         }
 
         // 类尚未加载，抛出异常
-        if (!(beanClassObject instanceof Class)) {
-            throw new IllegalStateException("Bean class name [" + beanClassObject + "] has not been resolved into an actual Class");
+//        if (!(beanClassObject instanceof Class)) {
+//            throw new IllegalStateException("Bean class name [" + beanClassObject + "] has not been resolved into an actual Class");
+//        }
+
+        if (beanClassObject.getClass().getName().equals(String.class.getName())) {
+            Class<?> c = null;
+            try {
+                c = Class.forName((String) beanClassObject);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+
+            return c;
         }
+
         return (Class<?>) beanClassObject;
     }
 
@@ -140,9 +156,12 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
     @Override
     public String getBeanClassName() {
         Object beanClassObject = this.beanClass;
+
         if (beanClassObject instanceof Class) {
+
             return ((Class<?>) beanClassObject).getName();
         } else {
+
             return (String) beanClassObject;
         }
     }
@@ -214,10 +233,6 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 
     public void setFactoryMethodName(String factoryMethodName) {
         this.factoryMethodName = factoryMethodName;
-    }
-
-    public ConstructorArgumentValues getConstructorArgumentValues() {
-        return this.constructorArgumentValues;
     }
 
     public int getAutowireMode() {
@@ -295,6 +310,16 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 
     public MethodOverrides getMethodOverrides() {
         return this.methodOverrides;
+    }
+
+    public void setConstructorArgumentValues(ConstructorArgumentValues constructorArgumentValues) {
+        this.constructorArgumentValues =
+                (constructorArgumentValues != null ? constructorArgumentValues : new ConstructorArgumentValues());
+    }
+
+    @Override
+    public ConstructorArgumentValues getConstructorArgumentValues() {
+        return this.constructorArgumentValues;
     }
 
     @Override

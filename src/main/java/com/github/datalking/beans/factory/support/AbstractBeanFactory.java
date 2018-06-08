@@ -370,7 +370,7 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
 
     /**
      * 根据RootBeanDefinition的getBeanClass()预测bean类型
-     * 只是简单的判断，不处理FactoryBean和InstantiationAwareBeanPostProcessors
+     * 只是简单的判断，不处理InstantiationAwareBeanPostProcessors
      */
     protected Class<?> predictBeanType(String beanName, RootBeanDefinition mbd, Class<?>... typesToMatch) {
         Class<?> targetType = mbd.getTargetType();
@@ -378,6 +378,7 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
             return targetType;
         }
         if (mbd.getFactoryMethodName() != null) {
+
             return null;
         }
 
@@ -438,16 +439,18 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
 
     }
 
+    /**
+     * 只判断简单的情况
+     */
     public boolean isFactoryBean(String name) {
 
         //String beanName = transformedBeanName(name);
         String beanName = name;
         Object beanInstance = getSingleton(beanName, false);
 
+        /// 直接根据bean对象的类型判断
         if (beanInstance != null) {
             return (beanInstance instanceof FactoryBean);
-        } else if (containsSingleton(beanName)) {
-            return false;
         }
 
         return isFactoryBean(beanName, getMergedLocalBeanDefinition(beanName));
@@ -455,9 +458,16 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
 
     protected boolean isFactoryBean(String beanName, RootBeanDefinition mbd) {
 
-        Class<?> beanType = predictBeanType(beanName, mbd, FactoryBean.class);
+//        Class<?> beanType = predictBeanType(beanName, mbd, FactoryBean.class);
 
-        return (beanType != null && FactoryBean.class.isAssignableFrom(beanType));
+        if (mbd.getFactoryBeanName() != null && mbd.getFactoryMethodName() != null) {
+            return true;
+        } else if (!mbd.getConstructorArgumentValues().isEmpty()) {
+            return true;
+        }
+
+//        return (beanType != null && FactoryBean.class.isAssignableFrom(beanType));
+        return false;
     }
 
     public String resolveEmbeddedValue(String value) {

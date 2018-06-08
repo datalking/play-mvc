@@ -27,6 +27,7 @@ import com.github.datalking.util.ObjectUtils;
 import com.github.datalking.util.StringUtils;
 
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -130,22 +131,37 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         return exposedObject;
     }
 
-    protected BeanWrapper createBeanInstance(String beanName, RootBeanDefinition bd, Object[] args) {
+    protected BeanWrapper createBeanInstance(String beanName, RootBeanDefinition mbd, Object[] args) {
 
-        Class beanClass = doResolveBeanClass(bd);
+        Class beanClass = doResolveBeanClass(mbd);
 //        bd.setBeanClass(beanClass);
 
 
         // 根据ConfigurationClassBeanDefinition指定的FactoryMethod创建bean实例
-        if (bd.getFactoryMethodName() != null) {
-            return instantiateUsingFactoryMethod(beanName, bd, args);
+        if (mbd.getFactoryMethodName() != null) {
+            return instantiateUsingFactoryMethod(beanName, mbd, args);
         }
+
+        if (!mbd.getConstructorArgumentValues().isEmpty()) {
+//            return autowireConstructor(beanName, mbd, ctors, args);
+            return autowireConstructor(beanName, mbd, null, args);
+        }
+
 
         //todo 选择构造器
 
         //直接使用无参构造函数创建对象
-        return instantiateBean(beanName, bd);
+        return instantiateBean(beanName, mbd);
 
+    }
+
+    protected BeanWrapper autowireConstructor(String beanName,
+                                              RootBeanDefinition mbd,
+                                              Constructor<?>[] ctors,
+                                              Object[] explicitArgs) {
+
+        ConstructorResolver resolver = new ConstructorResolver(this);
+        return resolver.autowireConstructor(beanName, mbd, ctors, explicitArgs);
     }
 
     /**

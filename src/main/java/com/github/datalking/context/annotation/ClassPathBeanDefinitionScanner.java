@@ -152,9 +152,15 @@ public class ClassPathBeanDefinitionScanner {
      * 便于集成mybatis
      */
     protected boolean isCandidateComponent(AnnotatedBeanDefinition beanDefinition) {
-        Class c = beanDefinition.getClass();
-        return !(c.isInterface() || Modifier.isAbstract(c.getModifiers()));
 
+        Class c = beanDefinition.getBeanClass();
+
+        if (c == null) {
+            return false;
+        } else {
+
+            return (!c.isInterface()) && (!Modifier.isAbstract(c.getModifiers()));
+        }
     }
 
     protected boolean checkCandidate(String beanName, BeanDefinition beanDefinition) throws IllegalStateException {
