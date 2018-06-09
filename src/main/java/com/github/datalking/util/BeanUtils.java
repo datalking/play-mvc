@@ -290,9 +290,12 @@ public abstract class BeanUtils {
     }
 
     public static MethodParameter getWriteMethodParameter(PropertyDescriptor pd) {
+
         if (pd instanceof GenericTypeAwarePropertyDescriptor) {
+
             return new MethodParameter(((GenericTypeAwarePropertyDescriptor) pd).getWriteMethodParameter());
         } else {
+
             return new MethodParameter(pd.getWriteMethod(), 0);
         }
     }

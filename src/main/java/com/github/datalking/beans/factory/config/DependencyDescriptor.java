@@ -79,6 +79,7 @@ public class DependencyDescriptor implements Serializable {
         this.required = required;
         this.eager = eager;
     }
+
     public DependencyDescriptor(DependencyDescriptor original) {
         this.methodParameter = (original.methodParameter != null ? new MethodParameter(original.methodParameter) : null);
         this.field = original.field;
@@ -274,5 +275,10 @@ public class DependencyDescriptor implements Serializable {
         return beanFactory.getBean(beanName);
     }
 
+
+    @Override
+    public String toString() {
+        return (this.field != null ? "field '" + this.field.getName() + "'" : this.methodParameter.toString());
+    }
 
 }

@@ -22,21 +22,21 @@ import com.github.datalking.common.ParameterNameDiscoverer;
 import com.github.datalking.common.PriorityOrdered;
 import com.github.datalking.exception.BeansException;
 import com.github.datalking.exception.UnsatisfiedDependencyException;
-import com.github.datalking.util.BeanUtils;
+import com.github.datalking.util.MethodUtils;
 import com.github.datalking.util.ObjectUtils;
 import com.github.datalking.util.StringUtils;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-
-import static com.github.datalking.beans.factory.support.AutowireUtils.isExcludedFromDependencyCheck;
 
 /**
  * BeanFactory抽象类
@@ -137,20 +137,18 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 //        bd.setBeanClass(beanClass);
 
 
-        // 根据ConfigurationClassBeanDefinition指定的FactoryMethod创建bean实例
+        /// 根据ConfigurationClassBeanDefinition指定的FactoryMethod创建bean实例
         if (mbd.getFactoryMethodName() != null) {
             return instantiateUsingFactoryMethod(beanName, mbd, args);
         }
 
+        /// 根据参数匹配构造方法，并创建bean实例
         if (!mbd.getConstructorArgumentValues().isEmpty()) {
 //            return autowireConstructor(beanName, mbd, ctors, args);
             return autowireConstructor(beanName, mbd, null, args);
         }
 
-
-        //todo 选择构造器
-
-        //直接使用无参构造函数创建对象
+        /// 直接使用无参构造函数创建对象
         return instantiateBean(beanName, mbd);
 
     }
@@ -279,6 +277,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         }
     }
 
+    /**
+     * 按类型注入bean的属性
+     * 如处理sqlSessionFactory
+     */
     protected void autowireByType(String beanName, AbstractBeanDefinition mbd, BeanWrapper bw, MutablePropertyValues pvs) {
 
 //        TypeConverter converter = getCustomTypeConverter();
@@ -287,22 +289,53 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             converter = bw;
         }
 
+        // 记录该依赖项所依赖的其他bean
         Set<String> autowiredBeanNames = new LinkedHashSet<>(4);
 
-        // 获取bean非基本类型和非字符串类型的属性，就是ref类型的
+        // 获取bean非基本类型和非字符串类型的属性，可以是set方法的参数，不能是ref类型字段
+        // todo 只处理了mybatis
         String[] propertyNames = unsatisfiedNonSimpleProperties(mbd, bw);
+
+        Class<?> beanClass = mbd.getBeanClass();
+        Field[] fields = beanClass.getDeclaredFields();
+        Set<Method> methods = MethodUtils.getSetMethodsIncludingParent(beanClass);
 
         for (String propertyName : propertyNames) {
             try {
-                PropertyDescriptor pd = bw.getPropertyDescriptor(propertyName);
-                // Don't try autowiring by type for type Object: never makes sense, even if it technically is a unsatisfied, non-simple property.
-                if (Object.class != pd.getPropertyType()) {
-                    MethodParameter methodParam = BeanUtils.getWriteMethodParameter(pd);
+                Class<?> pType = null;
+                Method setMethod = null;
+
+                /// 获取该属性对应的字段
+//                PropertyDescriptor pd = bw.getPropertyDescriptor(propertyName);
+                for (Field f : fields) {
+                    if (f.getName().equals(propertyName)) {
+                        pType = f.getType();
+                    }
+                }
+
+                /// 若该属性不是字段，则尝试获取方法 todo 只处理了单参数
+                if (pType == null) {
+                    for (Method m : methods) {
+                        if (propertyName.equals(StringUtils.getBeanNameFromSetMethod(m.getName()))) {
+                            setMethod = m;
+                            pType = m.getParameterTypes()[0];
+                        }
+                    }
+                }
+
+                // 不处理Object类型的注入，没意义
+//                if (Object.class != pd.getPropertyType()) {
+                if (Object.class != pType) {
+
+                    // 获取该属性对应的方法参数
+//                    MethodParameter methodParam = BeanUtils.getWriteMethodParameter(pd);
+                    MethodParameter methodParam = new MethodParameter(setMethod, 0);
                     // Do not allow eager init for type matching in case of a prioritized post-processor.
                     boolean eager = !PriorityOrdered.class.isAssignableFrom(bw.getWrappedClass());
 
                     DependencyDescriptor desc = new AutowireByTypeDependencyDescriptor(methodParam, eager);
 
+                    // 获取代表属性值的对象，可能包含getBean()
                     Object autowiredArgument = resolveDependency(desc, beanName, autowiredBeanNames, converter);
 
                     if (autowiredArgument != null) {
@@ -324,20 +357,45 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
     /**
      * 获取bean非基本类型和非字符串类型的属性
+     * todo 只处理了mybatis dao的set方法
      */
     protected String[] unsatisfiedNonSimpleProperties(AbstractBeanDefinition mbd, BeanWrapper bw) {
         Set<String> result = new TreeSet<>();
-        PropertyValues pvs = mbd.getPropertyValues();
+        Class<?> beanClass = bw.getWrappedClass();
 
-        PropertyDescriptor[] pds = bw.getPropertyDescriptors();
-        for (PropertyDescriptor pd : pds) {
-            if (pd.getWriteMethod() != null
-                    && !isExcludedFromDependencyCheck(pd) && !pvs.contains(pd.getName())
-                    && !BeanUtils.isSimpleProperty(pd.getPropertyType())) {
+        Set<Method> setMehtods = MethodUtils.getSetMethodsIncludingParent(beanClass);
 
-                result.add(pd.getName());
-            }
+        for (Method m : setMehtods) {
+            String mName = m.getName();
+            result.add(StringUtils.getBeanNameFromSetMethod(mName));
         }
+
+        Set<String> rm = new HashSet<>();
+        /// 去掉字段
+        Field[] fields = beanClass.getDeclaredFields();
+        for (String s:result){
+
+            for (Field f:fields){
+                if (f.getName().equals(s)){
+                    rm.add(s);
+                }
+            }
+
+        }
+
+        result.removeAll(rm);
+
+
+//        PropertyValues pvs = mbd.getPropertyValues();
+//        PropertyDescriptor[] pds = bw.getPropertyDescriptors();
+//        for (PropertyDescriptor pd : pds) {
+//            if (pd.getWriteMethod() != null
+//                    && !isExcludedFromDependencyCheck(pd) && !pvs.contains(pd.getName())
+//                    && !BeanUtils.isSimpleProperty(pd.getPropertyType())) {
+//
+//                result.add(pd.getName());
+//            }
+//        }
 
         return StringUtils.toStringArray(result);
     }

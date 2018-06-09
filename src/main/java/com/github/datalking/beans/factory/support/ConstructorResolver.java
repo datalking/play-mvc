@@ -23,6 +23,7 @@ import com.github.datalking.util.StringUtils;
 
 import java.beans.ConstructorProperties;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -52,10 +53,101 @@ public class ConstructorResolver {
         this.beanFactory = beanFactory;
     }
 
+    /**
+     * 根据参数匹配构造方法，创建bean实例
+     * 简化版
+     * todo 支持可变长参数的构造函数
+     */
     public BeanWrapper autowireConstructor(final String beanName,
                                            final RootBeanDefinition mbd,
                                            Constructor<?>[] chosenCtors,
                                            final Object[] explicitArgs) {
+
+        BeanWrapperImpl bw = new BeanWrapperImpl();
+        this.beanFactory.initBeanWrapper(bw);
+
+        Constructor<?> constructorToUse = null;
+        Object beanInstance = null;
+
+        // 记录实参数量
+        int minNrOfArgs;
+        ConstructorArgumentValues resolvedValues = null;
+        if (explicitArgs != null) {
+            minNrOfArgs = explicitArgs.length;
+        } else {
+            ConstructorArgumentValues cargs = mbd.getConstructorArgumentValues();
+            resolvedValues = new ConstructorArgumentValues();
+            minNrOfArgs = resolveConstructorArguments(beanName, mbd, bw, cargs, resolvedValues);
+        }
+
+        /// 获取实参类型，todo 实参为class时才能这么处理
+        List<ValueHolder> genericArgumentValues = resolvedValues.getGenericArgumentValues();
+        List<Class<?>> actualParamTypes = new ArrayList<>();
+        for (ValueHolder genericArgumentValue : genericArgumentValues) {
+            Object o = genericArgumentValue.getValue();
+            String s = (String) o;
+            Class<?> c = null;
+            try {
+                c = Class.forName(s);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+            actualParamTypes.add(c);
+        }
+
+        Class<?> beanClass = mbd.getBeanClass();
+        Constructor<?>[] candidates = beanClass.getDeclaredConstructors();
+
+        /// todo 这里只针对mybatis的dao进行了处理，构造方法参数直接为class
+        for (Constructor<?> candidate : candidates) {
+            // 泛型擦除了，若要得到泛型，应使用getGenericParameterTypes()
+            Class<?>[] paramTypes = candidate.getParameterTypes();
+
+            /// 若该构造方法参数数量少于实参数量，则跳过
+//            if (paramTypes.length < minNrOfArgs) {
+            if (paramTypes.length < minNrOfArgs || paramTypes.length != actualParamTypes.size()) {
+                continue;
+            }
+
+            /// 若该构造方法参数数量与实参数量相等，则逐个参数比较 todo
+            for (int i = 0; i < paramTypes.length; i++) {
+//                Class<?> c1 = actualParamTypes.get(i);
+                Class<?> c1 = Class.class;
+                Class<?> c2 = paramTypes[i];
+                if (!c1.getName().equals(c2.getName())) {
+                    continue;
+                }
+            }
+
+            constructorToUse = candidate;
+            constructorToUse.setAccessible(true);
+        }
+        try {
+            /// 若找到了合适的构造函数，则基于反射调用构造方法
+            if (constructorToUse != null) {
+
+                beanInstance = constructorToUse.newInstance(actualParamTypes.toArray());
+            }
+            /// 若没找到构造函数，则调用默认的无参构造函数方法
+            else {
+
+                beanInstance = beanClass.newInstance();
+            }
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+
+        bw.setWrappedInstance(beanInstance);
+        return bw;
+    }
+
+    /**
+     * 根据参数匹配构造方法，创建bean实例
+     */
+    public BeanWrapper autowireConstructorBak(final String beanName,
+                                              final RootBeanDefinition mbd,
+                                              Constructor<?>[] chosenCtors,
+                                              final Object[] explicitArgs) {
 
         BeanWrapperImpl bw = new BeanWrapperImpl();
         this.beanFactory.initBeanWrapper(bw);
@@ -93,7 +185,7 @@ public class ConstructorResolver {
 
             int minNrOfArgs;
 
-            /// 若传入的参数非空
+            /// 若传入的参数非空，一般为空
             if (explicitArgs != null) {
                 minNrOfArgs = explicitArgs.length;
             }
@@ -101,6 +193,8 @@ public class ConstructorResolver {
             else {
                 ConstructorArgumentValues cargs = mbd.getConstructorArgumentValues();
                 resolvedValues = new ConstructorArgumentValues();
+
+                // 将cargs拷贝到resolvedValues
                 minNrOfArgs = resolveConstructorArguments(beanName, mbd, bw, cargs, resolvedValues);
             }
 
@@ -139,6 +233,7 @@ public class ConstructorResolver {
                 }
 
                 ArgumentsHolder argsHolder = null;
+
                 if (resolvedValues != null) {
                     try {
                         String[] paramNames = null;
@@ -148,6 +243,7 @@ public class ConstructorResolver {
                         if (paramNames == null) {
                             ParameterNameDiscoverer pnd = this.beanFactory.getParameterNameDiscoverer();
                             if (pnd != null) {
+                                // 获取构造方法参数名称
                                 paramNames = pnd.getParameterNames(candidate);
                             }
                         }
@@ -156,21 +252,6 @@ public class ConstructorResolver {
                         argsHolder = createArgumentArray(beanName, mbd, resolvedValues, bw, paramTypes, paramNames, candidate, autowiring);
                     } catch (Exception ex) {
                         ex.printStackTrace();
-//                        if (i == candidates.length - 1 && constructorToUse == null) {
-//                            if (causes != null) {
-//                                for (Exception cause : causes) {
-//                                    this.beanFactory.onSuppressedException(cause);
-//                                }
-//                            }
-//                            throw ex;
-//                        } else {
-//                            // Swallow and try next constructor.
-//                            if (causes == null) {
-//                                causes = new LinkedList<Exception>();
-//                            }
-//                            causes.add(ex);
-//                            continue;
-//                        }
                     }
                 } else {
                     // Explicit arguments given -> arguments length must match exactly.
@@ -187,13 +268,17 @@ public class ConstructorResolver {
                         argsHolder.getAssignabilityWeight(paramTypes));
 
                 // Choose this constructor if it represents the closest match.
+                /// 若能找到最匹配的构造方法
                 if (typeDiffWeight < minTypeDiffWeight) {
+
                     constructorToUse = candidate;
                     argsHolderToUse = argsHolder;
                     argsToUse = argsHolder.arguments;
                     minTypeDiffWeight = typeDiffWeight;
                     ambiguousConstructors = null;
-                } else if (constructorToUse != null && typeDiffWeight == minTypeDiffWeight) {
+                }
+                /// 若找到多个匹配的构造方法
+                else if (constructorToUse != null && typeDiffWeight == minTypeDiffWeight) {
                     if (ambiguousConstructors == null) {
                         ambiguousConstructors = new LinkedHashSet<>();
                         ambiguousConstructors.add(constructorToUse);
@@ -220,8 +305,10 @@ public class ConstructorResolver {
         try {
             Object beanInstance;
 
-            beanInstance = this.beanFactory.getInstantiationStrategy().instantiate(
-                    mbd, beanName, this.beanFactory, constructorToUse, argsToUse);
+            InstantiationStrategy strategy = this.beanFactory.getInstantiationStrategy();
+
+            // 原理是基于java反射调用构造方法创建对象
+            beanInstance = strategy.instantiate(mbd, beanName, this.beanFactory, constructorToUse, argsToUse);
 
             bw.setWrappedInstance(beanInstance);
             return bw;
@@ -233,8 +320,6 @@ public class ConstructorResolver {
     /**
      * Resolve the factory method in the specified bean definition, if possible.
      * {@link RootBeanDefinition#getResolvedFactoryMethod()} can be checked for the result.
-     *
-     * @param mbd the bean definition to check
      */
     public void resolveFactoryMethodIfPossible(RootBeanDefinition mbd) {
         Class<?> factoryClass;
@@ -515,34 +600,41 @@ public class ConstructorResolver {
         int minNrOfArgs = cargs.getArgumentCount();
 
         for (Map.Entry<Integer, ConstructorArgumentValues.ValueHolder> entry : cargs.getIndexedArgumentValues().entrySet()) {
+
             int index = entry.getKey();
             if (index < 0) {
                 throw new BeanCreationException(mbd.getBeanClassName(), beanName, "Invalid constructor argument index: " + index);
             }
+
             if (index > minNrOfArgs) {
                 minNrOfArgs = index + 1;
             }
+
             ConstructorArgumentValues.ValueHolder valueHolder = entry.getValue();
+
             if (valueHolder.isConverted()) {
+
                 resolvedValues.addIndexedArgumentValue(index, valueHolder);
             } else {
 
                 Object resolvedValue = valueResolver.resolveValueIfNecessary("constructor argument", valueHolder.getValue());
 
-                ConstructorArgumentValues.ValueHolder resolvedValueHolder = new ConstructorArgumentValues.ValueHolder(resolvedValue, valueHolder.getType(), valueHolder.getName());
+                ValueHolder resolvedValueHolder = new ValueHolder(resolvedValue, valueHolder.getType(), valueHolder.getName());
                 resolvedValueHolder.setSource(valueHolder);
                 resolvedValues.addIndexedArgumentValue(index, resolvedValueHolder);
             }
         }
 
         for (ConstructorArgumentValues.ValueHolder valueHolder : cargs.getGenericArgumentValues()) {
+
             if (valueHolder.isConverted()) {
+
                 resolvedValues.addGenericArgumentValue(valueHolder);
             } else {
-                Object resolvedValue =
-                        valueResolver.resolveValueIfNecessary("constructor argument", valueHolder.getValue());
-                ConstructorArgumentValues.ValueHolder resolvedValueHolder =
-                        new ConstructorArgumentValues.ValueHolder(resolvedValue, valueHolder.getType(), valueHolder.getName());
+
+                Object resolvedValue = valueResolver.resolveValueIfNecessary("constructor argument", valueHolder.getValue());
+
+                ValueHolder resolvedValueHolder = new ValueHolder(resolvedValue, valueHolder.getType(), valueHolder.getName());
                 resolvedValueHolder.setSource(valueHolder);
                 resolvedValues.addGenericArgumentValue(resolvedValueHolder);
             }

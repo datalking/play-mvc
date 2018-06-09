@@ -11,6 +11,7 @@ import static com.github.datalking.util.Assert.notNull;
 /**
  * 自动创建Mapper接口实现类的代理对象
  * 直接将Mapper接口注入到Service层的Bean中，可以避免编写DAO层的实现类，直接使用Mapper接口对象
+ * 包含afterPropertiesSet()方法
  * BeanFactory that enables injection of MyBatis mapper interfaces.
  * It can be set up with a SqlSessionFactory or a pre-configured SqlSessionTemplate.
  * <p>

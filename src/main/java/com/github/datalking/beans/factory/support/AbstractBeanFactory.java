@@ -180,7 +180,7 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
 
     protected Object getObjectFromFactoryBean(FactoryBean<?> factory, String beanName, boolean shouldPostProcess) {
 
-        /// todo 支持缓存
+        /// todo 要支持缓存
         Object object = doGetObjectFromFactoryBean(factory, beanName);
         if (object != null && shouldPostProcess) {
 //            object = postProcessObjectFromFactoryBean(object, beanName);
@@ -284,7 +284,9 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
         return this.hasInstantiationAwareBeanPostProcessors;
     }
 
-
+    /**
+     * 判断name名称的bean是否是targetType类型
+     */
     @Override
     public boolean isTypeMatch(String name, Class<?> targetType) {
 
@@ -333,7 +335,9 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
             BeanDefinitionHolder dbd = mbd.getDecoratedDefinition();
             if (dbd != null && !isFactoryDereference(name)) {
                 RootBeanDefinition tbd = getMergedBeanDefinition(dbd.getBeanName(), dbd.getBeanDefinition(), mbd);
+
                 Class<?> targetClass = predictBeanType(dbd.getBeanName(), tbd, typesToMatch);
+
                 if (targetClass != null && !FactoryBean.class.isAssignableFrom(targetClass)) {
                     return typeToMatch.isAssignableFrom(targetClass);
                 }
@@ -357,7 +361,9 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
             }
             /// 若是特殊FactoryBean
             if (isFactoryDereference(name)) {
+
                 beanType = predictBeanType(beanName, mbd, FactoryBean.class);
+
                 if (beanType == null || !FactoryBean.class.isAssignableFrom(beanType)) {
                     return false;
                 }
@@ -440,6 +446,7 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
     }
 
     /**
+     * 直接根据bean实例判断
      * 只判断简单的情况
      */
     public boolean isFactoryBean(String name) {
@@ -456,9 +463,18 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
         return isFactoryBean(beanName, getMergedLocalBeanDefinition(beanName));
     }
 
+    /**
+     * 根据RootBeanDefinition的信息判断
+     */
     protected boolean isFactoryBean(String beanName, RootBeanDefinition mbd) {
 
 //        Class<?> beanType = predictBeanType(beanName, mbd, FactoryBean.class);
+
+        if (mbd.hasBeanClass()){
+            if (FactoryBean.class.isAssignableFrom(mbd.getBeanClass())){
+                return true;
+            }
+        }
 
         if (mbd.getFactoryBeanName() != null && mbd.getFactoryMethodName() != null) {
             return true;

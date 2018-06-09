@@ -10,8 +10,6 @@ import com.github.datalking.util.StringUtils;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.security.AccessController;
-import java.security.PrivilegedExceptionAction;
 
 /**
  * @author yaoo on 5/29/18
@@ -32,27 +30,21 @@ public class SimpleInstantiationStrategy implements InstantiationStrategy {
             Constructor<?> constructorToUse;
 //            synchronized (beanDefinition.constructorArgumentLock) {
             constructorToUse = (Constructor<?>) beanDefinition.resolvedConstructorOrFactoryMethod;
+
             if (constructorToUse == null) {
                 final Class<?> clazz = beanDefinition.getBeanClass();
                 if (clazz.isInterface()) {
                     throw new BeanInstantiationException(clazz, "Specified class is an interface");
                 }
                 try {
-                    if (System.getSecurityManager() != null) {
-                        constructorToUse = AccessController.doPrivileged(new PrivilegedExceptionAction<Constructor>() {
-                            public Constructor<?> run() throws Exception {
-                                return clazz.getDeclaredConstructor((Class[]) null);
-                            }
-                        });
-                    } else {
-                        constructorToUse = clazz.getDeclaredConstructor((Class[]) null);
-                    }
+                    constructorToUse = clazz.getDeclaredConstructor((Class[]) null);
                     beanDefinition.resolvedConstructorOrFactoryMethod = constructorToUse;
                 } catch (Exception ex) {
                     throw new BeanInstantiationException(clazz, "No default constructor found", ex);
                 }
             }
 //            }
+
             return BeanUtils.instantiateClass(constructorToUse);
         } else {
             // Must generate CGLIB subclass.
@@ -66,20 +58,13 @@ public class SimpleInstantiationStrategy implements InstantiationStrategy {
         throw new UnsupportedOperationException("Method Injection not supported in SimpleInstantiationStrategy");
     }
 
-    public Object instantiate(RootBeanDefinition beanDefinition, String beanName, BeanFactory owner,
-                              final Constructor<?> ctor, Object[] args) {
+    public Object instantiate(RootBeanDefinition beanDefinition,
+                              String beanName,
+                              BeanFactory owner,
+                              final Constructor<?> ctor,
+                              Object[] args) {
 
         if (beanDefinition.getMethodOverrides().isEmpty()) {
-
-//            if (System.getSecurityManager() != null) {
-//                // use own privileged to change accessibility (when security is on)
-//                AccessController.doPrivileged(new PrivilegedAction<Object>() {
-//                    public Object run() {
-//                        ReflectionUtils.makeAccessible(ctor);
-//                        return null;
-//                    }
-//                });
-//            }
 
             return BeanUtils.instantiateClass(ctor, args);
         } else {
@@ -96,24 +81,18 @@ public class SimpleInstantiationStrategy implements InstantiationStrategy {
         throw new UnsupportedOperationException("Method Injection not supported in SimpleInstantiationStrategy");
     }
 
-    public Object instantiate(RootBeanDefinition beanDefinition, String beanName, BeanFactory owner,
-                              Object factoryBean, final Method factoryMethod, Object[] args) {
+    public Object instantiate(RootBeanDefinition beanDefinition,
+                              String beanName,
+                              BeanFactory owner,
+                              Object factoryBean,
+                              final Method factoryMethod,
+                              Object[] args) {
 
         try {
-//            if (System.getSecurityManager() != null) {
-//                AccessController.doPrivileged(new PrivilegedAction<Object>() {
-//                    public Object run() {
-//                        ReflectionUtils.makeAccessible(factoryMethod);
-//                        return null;
-//                    }
-//                });
-//            }
-//            else {
             ReflectionUtils.makeAccessible(factoryMethod);
-//            }
-
             Method priorInvokedFactoryMethod = currentlyInvokedFactoryMethod.get();
             try {
+
                 currentlyInvokedFactoryMethod.set(factoryMethod);
                 return factoryMethod.invoke(factoryBean, args);
             } finally {

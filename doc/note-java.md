@@ -33,6 +33,9 @@ java笔记
 
 ## summary
 
+- getFields()只能获取public的字段，包括父类的。
+- getDeclaredFields()只能获取自己声明的各种字段，包括public，protected，private。
+
 - java 10 计划废除序列化
     - private字段以明文保存，不安全
     - 序列化保存的是对象的状态，静态变量属于类的状态，因此 序列化并不保存静态变量

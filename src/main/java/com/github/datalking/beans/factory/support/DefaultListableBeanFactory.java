@@ -21,6 +21,7 @@ import com.github.datalking.util.ObjectUtils;
 
 import javax.inject.Provider;
 import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -241,7 +242,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
     }
 
     /**
-     * 获取指定class类型的bean名称
+     * 获取指定class类型对应的bean名称
      * 包括扫描的bean
      */
     @Override
@@ -289,17 +290,40 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 
                 /// 从bean方法的返回值获取bean信息
                 if (bd.getFactoryMethodName() != null) {
+
                     if (bd instanceof ConfigurationClassBeanDefinition) {
                         String returnTypeName = ((ConfigurationClassBeanDefinition) bd).getFactoryMethodMetadata().getReturnTypeName();
-                        Class c = null;
+                        Class returnTypeClass = null;
                         try {
-                            c = Class.forName(returnTypeName);
+                            returnTypeClass = Class.forName(returnTypeName);
                         } catch (ClassNotFoundException e) {
                             e.printStackTrace();
                         }
-                        if (type.isAssignableFrom(c)) {
+
+                        /// 若返回值类型直接是匹配的类型的子类，则符合
+                        if (type.isAssignableFrom(returnTypeClass)) {
                             result.add(beanName);
                             continue;
+                        }
+
+                        /// 若返回值类型不是匹配类型的直接子类，而是FactoryBean，且FactoryBean的泛型恰好是匹配类型的子类，则也符合
+                        // todo 使用通用的方法
+                        if (FactoryBean.class.isAssignableFrom(returnTypeClass)) {
+
+                            /// 根据FactoryBean接口中定义的方法来确定可创建的bean类型
+                            Method m = null;
+                            try {
+                                m = returnTypeClass.getMethod("getObject");
+                            } catch (NoSuchMethodException e) {
+                                e.printStackTrace();
+                            }
+                            if (m != null) {
+                                Class<?> factoryObjType = m.getReturnType();
+                                if (type.isAssignableFrom(factoryObjType)) {
+                                    result.add(beanName);
+                                    continue;
+                                }
+                            }
                         }
                     }
                 }

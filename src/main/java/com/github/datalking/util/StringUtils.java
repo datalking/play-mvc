@@ -56,6 +56,11 @@ public abstract class StringUtils {
         return (str != null && str.length() > 0);
     }
 
+    public static String getBeanNameFromSetMethod(String setMethodName) {
+        String s = setMethodName.substring(3);
+        return firstLetterLowerCase(s);
+    }
+
     public static String firstLetterUpperCase(String original) {
         Assert.notNull(original, "输入字符串不能为空");
         String result = "";
