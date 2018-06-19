@@ -453,7 +453,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
         try {
 //            beanInstance = this.beanFactory.getInstantiationStrategy().instantiate(mbd, beanName, this.beanFactory, factoryBean, factoryMethodToUse, argsToUse);
-
+            // todo 处理构造方法的参数，一般也是解析并getBean()
             beanInstance = factoryMethodToUse.invoke(factoryBean);
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
