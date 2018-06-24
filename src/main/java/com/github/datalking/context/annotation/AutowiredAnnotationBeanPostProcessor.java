@@ -452,7 +452,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
                     Set<String> autowiredBeanNames = new LinkedHashSet<>(1);
                     TypeConverter typeConverter = beanFactory.getTypeConverter();
 
-                    // ==== 获取依赖字段的对象，实现autowire字段的入口，也可以注入字符串类型的字段，是解析@Value中占位符的入口
+                    // ==== 创建作为依赖字段的对象，是实现autowire字段的入口，也可以注入字符串类型的字段，是解析@Value中占位符的入口
                     value = beanFactory.resolveDependency(desc, beanName, autowiredBeanNames, typeConverter);
 
                     /// 加入缓存
@@ -527,12 +527,15 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
                     DependencyDescriptor[] descriptors = new DependencyDescriptor[paramTypes.length];
                     Set<String> autowiredBeanNames = new LinkedHashSet<>(paramTypes.length);
                     TypeConverter typeConverter = beanFactory.getTypeConverter();
+
                     for (int i = 0; i < arguments.length; i++) {
                         MethodParameter methodParam = new MethodParameter(method, i);
+
                         GenericTypeResolver.resolveParameterType(methodParam, bean.getClass());
                         descriptors[i] = new DependencyDescriptor(methodParam, this.required);
-                        arguments[i] = beanFactory.resolveDependency(
-                                descriptors[i], beanName, autowiredBeanNames, typeConverter);
+
+                        arguments[i] = beanFactory.resolveDependency(descriptors[i], beanName, autowiredBeanNames, typeConverter);
+
                         if (arguments[i] == null && !this.required) {
                             arguments = null;
                             break;
@@ -545,12 +548,16 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
                                 for (int i = 0; i < arguments.length; i++) {
                                     this.cachedMethodArguments[i] = descriptors[i];
                                 }
+
                                 registerDependentBeans(beanName, autowiredBeanNames);
                                 if (autowiredBeanNames.size() == paramTypes.length) {
                                     Iterator<String> it = autowiredBeanNames.iterator();
+
                                     for (int i = 0; i < paramTypes.length; i++) {
                                         String autowiredBeanName = it.next();
+
                                         if (beanFactory.containsBean(autowiredBeanName)) {
+
                                             if (beanFactory.isTypeMatch(autowiredBeanName, paramTypes[i])) {
                                                 this.cachedMethodArguments[i] = new RuntimeBeanReference(autowiredBeanName);
                                             }

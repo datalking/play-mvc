@@ -55,7 +55,7 @@ public class ConstructorResolver {
 
     /**
      * 根据参数匹配构造方法，创建bean实例
-     * 简化版
+     * 特殊版 针对mybatis dao实例的创建
      * todo 支持可变长参数的构造函数
      */
     public BeanWrapper autowireConstructor(final String beanName,

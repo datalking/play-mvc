@@ -72,7 +72,7 @@ public class QualifierAnnotationAutowireCandidateResolver implements AutowireCan
     }
 
     public boolean isAutowireCandidate(BeanDefinitionHolder bdHolder, DependencyDescriptor descriptor) {
-
+        /// 默认跳过if
         if (!bdHolder.getBeanDefinition().isAutowireCandidate()) {
             // if explicitly false, do not proceed with qualifier check
             return false;
@@ -82,7 +82,7 @@ public class QualifierAnnotationAutowireCandidateResolver implements AutowireCan
             // no qualification necessary
             return true;
         }
-        /// todo 简化规则
+        /// 默认返回true todo 简化规则
         boolean match = checkQualifiers(bdHolder, descriptor.getAnnotations());
         if (match) {
             MethodParameter methodParam = descriptor.getMethodParameter();
@@ -104,10 +104,12 @@ public class QualifierAnnotationAutowireCandidateResolver implements AutowireCan
             return true;
         }
         SimpleTypeConverter typeConverter = new SimpleTypeConverter();
+
         for (Annotation annotation : annotationsToSearch) {
             Class<? extends Annotation> type = annotation.annotationType();
             boolean checkMeta = true;
             boolean fallbackToMeta = false;
+
             if (isQualifier(type)) {
                 if (!checkQualifier(bdHolder, annotation, typeConverter)) {
                     fallbackToMeta = true;
@@ -115,28 +117,35 @@ public class QualifierAnnotationAutowireCandidateResolver implements AutowireCan
                     checkMeta = false;
                 }
             }
+
             if (checkMeta) {
                 boolean foundMeta = false;
+
                 for (Annotation metaAnn : type.getAnnotations()) {
                     Class<? extends Annotation> metaType = metaAnn.annotationType();
+
                     if (isQualifier(metaType)) {
                         foundMeta = true;
                         // Only accept fallback match if @Qualifier annotation has a value...
                         // Otherwise it is just a marker for a custom qualifier annotation.
-                        if ((fallbackToMeta && StringUtils.isEmpty(AnnotationUtils.getValue(metaAnn))) ||
-                                !checkQualifier(bdHolder, metaAnn, typeConverter)) {
+                        if ((fallbackToMeta
+                                && StringUtils.isEmpty(AnnotationUtils.getValue(metaAnn)))
+                                || !checkQualifier(bdHolder, metaAnn, typeConverter)) {
                             return false;
                         }
                     }
                 }
+
                 if (fallbackToMeta && !foundMeta) {
                     return false;
                 }
             }
         }
+
         return true;
     }
 
+    // 检查是否有@Qualifier注解
     protected boolean isQualifier(Class<? extends Annotation> annotationType) {
         for (Class<? extends Annotation> qualifierType : this.qualifierTypes) {
             if (annotationType.equals(qualifierType) || annotationType.isAnnotationPresent(qualifierType)) {
@@ -156,15 +165,18 @@ public class QualifierAnnotationAutowireCandidateResolver implements AutowireCan
         if (qualifier == null) {
             qualifier = bd.getQualifier(ClassUtils.getShortName(type));
         }
+
         if (qualifier == null) {
             // First, check annotation on factory method, if applicable
             Annotation targetAnnotation = getFactoryMethodAnnotation(bd, type);
+
             if (targetAnnotation == null) {
                 RootBeanDefinition dbd = getResolvedDecoratedDefinition(bd);
                 if (dbd != null) {
                     targetAnnotation = getFactoryMethodAnnotation(dbd, type);
                 }
             }
+
             if (targetAnnotation == null) {
                 // Look for matching annotation on the target class
                 if (this.beanFactory != null) {
@@ -177,20 +189,24 @@ public class QualifierAnnotationAutowireCandidateResolver implements AutowireCan
                         // Not the usual case - simply forget about the type check...
                     }
                 }
+
                 if (targetAnnotation == null && bd.hasBeanClass()) {
                     targetAnnotation = AnnotationUtils.getAnnotation(ClassUtils.getUserClass(bd.getBeanClass()), type);
                 }
             }
+
             if (targetAnnotation != null && targetAnnotation.equals(annotation)) {
                 return true;
             }
         }
 
         Map<String, Object> attributes = AnnotationUtils.getAnnotationAttributes(annotation);
+
         if (attributes.isEmpty() && qualifier == null) {
             // If no attributes, the qualifier must be present
             return false;
         }
+
         for (Map.Entry<String, Object> entry : attributes.entrySet()) {
             String attributeName = entry.getKey();
             Object expectedValue = entry.getValue();
@@ -203,8 +219,10 @@ public class QualifierAnnotationAutowireCandidateResolver implements AutowireCan
                 // Fall back on bean definition attribute
                 actualValue = bd.getAttribute(attributeName);
             }
-            if (actualValue == null && attributeName.equals(AutowireCandidateQualifier.VALUE_KEY) &&
-                    expectedValue instanceof String && bdHolder.matchesName((String) expectedValue)) {
+            if (actualValue == null
+                    && attributeName.equals(AutowireCandidateQualifier.VALUE_KEY)
+                    && expectedValue instanceof String
+                    && bdHolder.matchesName((String) expectedValue)) {
                 // Fall back on bean name (or alias) match
                 continue;
             }
@@ -224,8 +242,10 @@ public class QualifierAnnotationAutowireCandidateResolver implements AutowireCan
 
     protected RootBeanDefinition getResolvedDecoratedDefinition(RootBeanDefinition rbd) {
         BeanDefinitionHolder decDef = rbd.getDecoratedDefinition();
+
         if (decDef != null && this.beanFactory instanceof ConfigurableListableBeanFactory) {
             ConfigurableListableBeanFactory clbf = (ConfigurableListableBeanFactory) this.beanFactory;
+
             if (clbf.containsBeanDefinition(decDef.getBeanName())) {
 //                BeanDefinition dbd = clbf.getMergedBeanDefinition(decDef.getBeanName());
                 BeanDefinition dbd = clbf.getMergedBeanDefinition(decDef.getBeanName());

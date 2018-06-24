@@ -45,6 +45,7 @@ start from [http://localhost:8999](http://localhost:8999)
 ## todo
 
 
+- [ ] 处理applyPropertyValues()时传入的FactoryBean，如dao实例
 - [ ] 测试 @PathVariable 多个路径参数
 - [ ] 支持 @Service
 - [ ] 支持 Redirect 

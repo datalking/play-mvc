@@ -22,6 +22,7 @@ import com.github.datalking.common.ParameterNameDiscoverer;
 import com.github.datalking.common.PriorityOrdered;
 import com.github.datalking.exception.BeansException;
 import com.github.datalking.exception.UnsatisfiedDependencyException;
+import com.github.datalking.util.ClassUtils;
 import com.github.datalking.util.MethodUtils;
 import com.github.datalking.util.ObjectUtils;
 import com.github.datalking.util.StringUtils;
@@ -104,7 +105,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         final Object bean = (instanceWrapper != null ? instanceWrapper.getWrappedInstance() : null);
 
         if (!bd.postProcessed) {
-            // 构建autowire需要的元数据添加到缓存，再添加到externallyManagedConfigMembers
+            // 构建autowire需要的元数据添加到缓存，只查找需要注入的字段，并添加到externallyManagedConfigMembers
             applyMergedBeanDefinitionPostProcessors(bd, bean.getClass(), beanName);
             bd.postProcessed = true;
         }
@@ -120,7 +121,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
         Object exposedObject = bean;
         if (exposedObject != null) {
-
+            // sqlsessionFactoryBean会创建DefaultSqlSessionFactory实例
             //==== 调用 postProcessBeforeInitialization > afterPropertiesSet > postProcessAfterInitialization
             exposedObject = initializeBean(beanName, exposedObject, bd);
         }
@@ -335,6 +336,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
                     DependencyDescriptor desc = new AutowireByTypeDependencyDescriptor(methodParam, eager);
 
+                    // todo 解析sqlSessionFactory时，得到的是DefaultSqlSessionFactory实例；解析sqlSessionTemplete得到的是null
                     // 获取代表属性值的对象，可能包含getBean()
                     Object autowiredArgument = resolveDependency(desc, beanName, autowiredBeanNames, converter);
 
@@ -373,10 +375,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         Set<String> rm = new HashSet<>();
         /// 去掉字段
         Field[] fields = beanClass.getDeclaredFields();
-        for (String s:result){
+        for (String s : result) {
 
-            for (Field f:fields){
-                if (f.getName().equals(s)){
+            for (Field f : fields) {
+                if (f.getName().equals(s)) {
                     rm.add(s);
                 }
             }
@@ -429,6 +431,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         }
         factoryClass = factoryBean.getClass();
 
+        /// 查找最接近的方法
         Method factoryMethodToUse = null;
         //ArgumentsHolder argsHolderToUse = null;
         //Object[] argsToUse = null;
@@ -449,14 +452,56 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             }
         }
 
+        // 目标bean实例
         Object beanInstance = null;
 
-        try {
+        // 获取工厂方法的参数 todo 处理工厂方法的参数，一般也是解析并getBean()
+        Class<?>[] types = factoryMethodToUse.getParameterTypes();
+
+        /// 若方法没有参数，则直接调用此工厂方法
+        if (types != null && types.length == 0) {
+            try {
+
 //            beanInstance = this.beanFactory.getInstantiationStrategy().instantiate(mbd, beanName, this.beanFactory, factoryBean, factoryMethodToUse, argsToUse);
-            // todo 处理构造方法的参数，一般也是解析并getBean()
-            beanInstance = factoryMethodToUse.invoke(factoryBean);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
+                beanInstance = factoryMethodToUse.invoke(factoryBean);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                e.printStackTrace();
+            }
+
+        }
+        /// 若方法存在参数，则解析方法参数，并调用此工厂方法 todo 根据参数名称getBean()，这里默认根据参数type实例化
+        else {
+            // 存储所有参数
+            List<Object> args = new ArrayList<>();
+
+            /// 获取所有参数的
+            for (Class<?> c : types) {
+
+                String classToBeanName = ClassUtils.getCamelCaseNameFromClass(c);
+
+                if (containsBeanDefinition(classToBeanName)){
+//                    beanFactory.resolveDependency(new DependencyDescriptor(param, true), beanName, autowiredBeanNames, typeConverter);
+                    Object obj = getBean(classToBeanName);
+                    args.add(obj);
+                }
+//                else if (containsBeanDefinition(paramName))
+                else{
+                    try {
+                        throw new Exception(beanName+"使用工厂方法创建时，输入参数无法解析");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            if (!args.isEmpty()){
+                try {
+                    beanInstance = factoryMethodToUse.invoke(factoryBean,args.toArray());
+                } catch (IllegalAccessException | InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+            }
+
         }
 
         if (beanInstance == null) {
@@ -477,17 +522,27 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
     protected void applyPropertyValues(String beanName, BeanDefinition bd, BeanWrapper bw, PropertyValues pvs) {
 
         List<PropertyValue> pvList = bd.getPropertyValues().getPropertyValueList();
+
+        MutablePropertyValues mpvs = null;
+        if (pvs instanceof MutablePropertyValues) {
+            mpvs = (MutablePropertyValues) pvs;
+        }
+
+        if (mpvs!=null){
+            pvList = mpvs.getPropertyValueList();
+        }
+
         List<PropertyValue> deepCopy = new ArrayList<>(pvList.size());
 
         BeanDefinitionValueResolver valueResolver = new BeanDefinitionValueResolver(this);
-
 
         for (PropertyValue pv : pvList) {
 
             String pvName = pv.getName();
             Object pvValue = pv.getValue();
 
-            // ==== 属性值类型转换，使用默认转换器，ref转bean实例，string直接返回值
+            // ==== 属性值类型转换
+            // 默认转换规则：ref转bean实例，string直接返回值
             Object resolvedValue = null;
             try {
                 resolvedValue = valueResolver.resolveValueIfNecessary(pv, pvValue);

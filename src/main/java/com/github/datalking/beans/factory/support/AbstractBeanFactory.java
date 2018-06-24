@@ -107,7 +107,8 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
                               boolean typeCheckOnly) {
 
         //将别名解析为bean唯一名称
-        //final String name = transformedBeanName(name);
+        //final String beanName = transformedBeanName(name);
+        final String beanName = name;
 
         // 最终返回的bean
         Object targetBean;
@@ -127,15 +128,17 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
             // 先标记为已经创建
             markBeanAsCreated(name);
 
-            final RootBeanDefinition bd = getMergedLocalBeanDefinition(name);
-            if (bd == null) {
+            final RootBeanDefinition mbd = getMergedLocalBeanDefinition(name);
+            if (mbd == null) {
                 throw new NoSuchBeanDefinitionException(name + " 对应的BeanDefinition不存在");
             }
 
-            ///判断scope为单例，创建单例bean
-            targetBean = getSingleton(name, (ObjectFactory) () -> createBean(name, bd, args));
+            /// 先判断scope为单例，这里默认单例，创建单例bean
+            sharedInstance = getSingleton(name, (ObjectFactory) () -> createBean(name, mbd, args));
 
+            targetBean = getObjectForBeanInstance(sharedInstance, name, beanName, mbd);
         }
+
 
         return (T) targetBean;
     }
@@ -156,6 +159,7 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
             return beanInstance;
         }
 
+        /// 若beanInstance为FactoryBean
         Object object = null;
 //        if (mbd == null) {
 //            object = getCachedObjectForFactoryBean(beanName);
@@ -169,6 +173,7 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
             }
 
             // bean是否为合成的，合成bean在获得FactoryBean创建好的bean对象实例后，不需要后置处理
+            // 默认false
             boolean synthetic = (mbd != null && mbd.isSynthetic());
 
             // 使用FactoryBean创建bean实例对象
@@ -470,8 +475,8 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
 
 //        Class<?> beanType = predictBeanType(beanName, mbd, FactoryBean.class);
 
-        if (mbd.hasBeanClass()){
-            if (FactoryBean.class.isAssignableFrom(mbd.getBeanClass())){
+        if (mbd.hasBeanClass()) {
+            if (FactoryBean.class.isAssignableFrom(mbd.getBeanClass())) {
                 return true;
             }
         }

@@ -50,7 +50,7 @@ public class InjectionMetadata {
         }
         this.checkedElements = checkedElements;
     }
-
+    // 将元数据注入targetBean
     public void inject(Object target, String beanName, PropertyValues pvs) throws Throwable {
         Collection<InjectedElement> elementsToIterate =
                 (this.checkedElements != null ? this.checkedElements : this.injectedElements);

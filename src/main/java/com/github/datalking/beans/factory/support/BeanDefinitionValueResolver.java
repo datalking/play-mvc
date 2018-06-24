@@ -47,7 +47,7 @@ public class BeanDefinitionValueResolver {
             return value;
         }
 
-        return null;
+        return value;
     }
 
     private Object resolveReference(Object argName, RuntimeBeanReference ref) {

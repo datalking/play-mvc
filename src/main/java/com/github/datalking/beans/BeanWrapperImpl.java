@@ -101,7 +101,6 @@ public class BeanWrapperImpl extends AbstractPropertyAccessor implements BeanWra
         for (PropertyValue pv : propertyValues) {
 
             setPropertyValue(pv);
-
         }
 
     }

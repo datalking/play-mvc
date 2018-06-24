@@ -13,6 +13,7 @@ import java.io.File;
 
 public class MainApp {
 
+    
     public static void main(String[] args) throws ServletException, LifecycleException {
 
         String webappDirLoc = "starter-demo/src/main/webapp/";

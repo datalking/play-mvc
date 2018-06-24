@@ -307,7 +307,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
                         }
 
                         /// 若返回值类型不是匹配类型的直接子类，而是FactoryBean，且FactoryBean的泛型恰好是匹配类型的子类，则也符合
-                        // todo 使用通用的方法
+                        // todo 更通用的方法
                         if (FactoryBean.class.isAssignableFrom(returnTypeClass)) {
 
                             /// 根据FactoryBean接口中定义的方法来确定可创建的bean类型
@@ -691,7 +691,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
     }
 
     /**
-     * 根据beanName查找候选bean
+     * 根据外层beanName的字段类型和依赖描述元数据创建候选bean
      */
     protected Map<String, Object> findAutowireCandidates(String beanName,
                                                          Class<?> requiredType,

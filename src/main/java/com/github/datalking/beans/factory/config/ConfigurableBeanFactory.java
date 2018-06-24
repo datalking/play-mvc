@@ -2,6 +2,7 @@ package com.github.datalking.beans.factory.config;
 
 import com.github.datalking.beans.TypeConverter;
 import com.github.datalking.beans.factory.BeanFactory;
+import com.github.datalking.common.StringValueResolver;
 
 /**
  * ConfigurableBeanFactory 接口
@@ -38,6 +39,8 @@ public interface ConfigurableBeanFactory extends BeanFactory {
     BeanDefinition getMergedBeanDefinition(String beanName);
 
     void registerScope(String scopeName, Scope scope);
+
+    void addEmbeddedValueResolver(StringValueResolver valueResolver);
 
 //void destroyBean(String beanName, Object beanInstance);
 //void registerAlias(String beanName, String alias) ;
