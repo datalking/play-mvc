@@ -299,7 +299,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
         Class<?> beanClass = mbd.getBeanClass();
         Field[] fields = beanClass.getDeclaredFields();
-        Set<Method> methods = MethodUtils.getSetMethodsIncludingParent(beanClass);
+        Set<Method> setMethods = MethodUtils.getSetMethodsIncludingParent(beanClass);
 
         for (String propertyName : propertyNames) {
             try {
@@ -316,7 +316,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
                 /// 若该属性不是字段，则尝试获取方法 todo 只处理了单参数
                 if (pType == null) {
-                    for (Method m : methods) {
+                    for (Method m : setMethods) {
                         if (propertyName.equals(StringUtils.getBeanNameFromSetMethod(m.getName()))) {
                             setMethod = m;
                             pType = m.getParameterTypes()[0];
@@ -471,32 +471,32 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         }
         /// 若方法存在参数，则解析方法参数，并调用此工厂方法 todo 根据参数名称getBean()，这里默认根据参数type实例化
         else {
-            // 存储所有参数
+            // 存储所有实参对象
             List<Object> args = new ArrayList<>();
 
-            /// 获取所有参数的
+            /// 获取所有参数的类型
             for (Class<?> c : types) {
 
                 String classToBeanName = ClassUtils.getCamelCaseNameFromClass(c);
 
-                if (containsBeanDefinition(classToBeanName)){
+                if (containsBeanDefinition(classToBeanName)) {
 //                    beanFactory.resolveDependency(new DependencyDescriptor(param, true), beanName, autowiredBeanNames, typeConverter);
                     Object obj = getBean(classToBeanName);
                     args.add(obj);
                 }
 //                else if (containsBeanDefinition(paramName))
-                else{
+                else {
                     try {
-                        throw new Exception(beanName+"使用工厂方法创建时，输入参数无法解析");
+                        throw new Exception(beanName + "使用工厂方法创建时，输入参数无法解析");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
             }
 
-            if (!args.isEmpty()){
+            if (!args.isEmpty()) {
                 try {
-                    beanInstance = factoryMethodToUse.invoke(factoryBean,args.toArray());
+                    beanInstance = factoryMethodToUse.invoke(factoryBean, args.toArray());
                 } catch (IllegalAccessException | InvocationTargetException e) {
                     e.printStackTrace();
                 }
@@ -528,7 +528,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             mpvs = (MutablePropertyValues) pvs;
         }
 
-        if (mpvs!=null){
+        if (mpvs != null) {
             pvList = mpvs.getPropertyValueList();
         }
 
@@ -542,13 +542,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             Object pvValue = pv.getValue();
 
             // ==== 属性值类型转换
-            // 默认转换规则：ref转bean实例，string直接返回值
+            // 默认转换规则：循环ref转bean实例，string直接返回值
             Object resolvedValue = null;
-            try {
-                resolvedValue = valueResolver.resolveValueIfNecessary(pv, pvValue);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            resolvedValue = valueResolver.resolveValueIfNecessary(pv, pvValue);
 
             deepCopy.add(new PropertyValue(pvName, resolvedValue));
         }

@@ -157,6 +157,11 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
                 System.out.println("====preInstantiateSingletons: " + beanName);
             }
 
+            /// 如果是FactoryBean，则计算bean
+            if (isFactoryBean(beanName)) {
+
+            }
+
             getBean(beanName);
         }
 
@@ -566,9 +571,9 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
             }
 
             // ==== 若是class，则直接调用getBean()返回实例化的对象
-            Object obj = (instanceCandidate instanceof Class ?
-                    descriptor.resolveCandidate(autowiredBeanName, type, this) :
-                    instanceCandidate);
+            Object obj = (instanceCandidate instanceof Class
+                    ? descriptor.resolveCandidate(autowiredBeanName, type, this)
+                    : instanceCandidate);
 
             return obj;
         }

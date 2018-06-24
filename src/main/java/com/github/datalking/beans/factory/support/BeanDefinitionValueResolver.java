@@ -36,17 +36,19 @@ public class BeanDefinitionValueResolver {
 
     public Object resolveValueIfNecessary(Object argName, Object value) {
 
+        /// 处理循环引用
         if (value instanceof RuntimeBeanReference) {
 
             RuntimeBeanReference ref = (RuntimeBeanReference) value;
             return resolveReference(argName, ref);
-
         }
-        // ==== 处理字符串类型
+
+        /// 处理字符串类型
         else if (value instanceof String) {
             return value;
         }
 
+        /// 默认返回原对象
         return value;
     }
 

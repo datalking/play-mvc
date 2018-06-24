@@ -45,7 +45,7 @@ start from [http://localhost:8999](http://localhost:8999)
 ## todo
 
 
-- [ ] 处理applyPropertyValues()时传入的FactoryBean，如dao实例
+- [ ] mybatis daoMapper实例创建时需要注入SqlSessionFactory
 - [ ] 测试 @PathVariable 多个路径参数
 - [ ] 支持 @Service
 - [ ] 支持 Redirect 
@@ -55,6 +55,7 @@ start from [http://localhost:8999](http://localhost:8999)
 - [ ] 支持内置tomcat直接启动mvc应用 
 - [ ] servlet和filter支持 `async` 处理
 
+- [x] 处理applyPropertyValues()时传入对象到set方法，如传入 SqlSessionFactory到dao
 - [x] 支持 @PathVariable
 - [x] 支持 @RequestParam 
 - [x] 支持 @ResponseBody 

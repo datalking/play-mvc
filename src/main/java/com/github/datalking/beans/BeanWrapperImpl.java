@@ -3,6 +3,8 @@ package com.github.datalking.beans;
 import com.github.datalking.common.convert.TypeConverterDelegate;
 import com.github.datalking.common.convert.descriptor.Property;
 import com.github.datalking.common.convert.descriptor.TypeDescriptor;
+import com.github.datalking.util.MethodUtils;
+import com.github.datalking.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 包装bean属性 实现类
@@ -165,70 +168,102 @@ public class BeanWrapperImpl extends AbstractPropertyAccessor implements BeanWra
 
     }
 
+    /**
+     * 设置pv
+     */
     public void setPropertyValue(PropertyValue pv) {
 
+        String pname = pv.getName();
+        Object pvalue = pv.getValue();
+
         Field declaredField = null;
-
         try {
 
-            declaredField = this.wrappedObject.getClass().getDeclaredField(pv.getName());
+            // 获取属性名对应的字段
+            declaredField = this.wrappedObject.getClass().getDeclaredField(pname);
         } catch (NoSuchFieldException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
 
-        declaredField.setAccessible(true);
-        Object value = pv.getValue();
+        /// 若字段存在，则直接通过反射赋值
+        if (declaredField != null) {
+            declaredField.setAccessible(true);
 
-        Class clazz = declaredField.getType();
-        String typeName = clazz.getName();
+            Class clazz = declaredField.getType();
+            String typeName = clazz.getName();
 
-        try {
-            switch (typeName) {
+            try {
+                switch (typeName) {
 
+                    /// 默认转换8种基本类型、string
+                    case "byte":
+                    case "java.lang.Byte":
+                        declaredField.set(this.wrappedObject, Byte.valueOf(pvalue.toString()));
+                        break;
+                    case "short":
+                    case "java.lang.Short":
+                        declaredField.set(this.wrappedObject, Short.valueOf(pvalue.toString()));
+                        break;
+                    case "int":
+                    case "java.lang.Integer":
+                        declaredField.set(this.wrappedObject, Integer.valueOf(pvalue.toString()));
+                        break;
+                    case "long":
+                    case "java.lang.Long":
+                        declaredField.set(this.wrappedObject, Long.valueOf(pvalue.toString()));
+                    case "float":
+                    case "java.lang.Float":
+                        declaredField.set(this.wrappedObject, Float.valueOf(pvalue.toString()));
+                        break;
+                    case "double":
+                    case "java.lang.Double":
+                        declaredField.set(this.wrappedObject, Double.valueOf(pvalue.toString()));
+                        break;
+                    case "char":
+                    case "java.lang.Character":
+                        declaredField.set(this.wrappedObject, pvalue);
+                        break;
+                    case "boolean":
+                    case "java.lang.Boolean":
+                        declaredField.set(this.wrappedObject, Boolean.valueOf(pvalue.toString()));
+                        break;
+                    case "java.lang.String":
+                        declaredField.set(this.wrappedObject, String.valueOf(pvalue.toString()));
+                        break;
 
-                /// 8种基本类型 + string
-                case "byte":
-                case "java.lang.Byte":
-                    declaredField.set(this.wrappedObject, Byte.valueOf(value.toString()));
-                    break;
-                case "short":
-                case "java.lang.Short":
-                    declaredField.set(this.wrappedObject, Short.valueOf(value.toString()));
-                    break;
-                case "int":
-                case "java.lang.Integer":
-                    declaredField.set(this.wrappedObject, Integer.valueOf(value.toString()));
-                    break;
-                case "long":
-                case "java.lang.Long":
-                    declaredField.set(this.wrappedObject, Long.valueOf(value.toString()));
-                case "float":
-                case "java.lang.Float":
-                    declaredField.set(this.wrappedObject, Float.valueOf(value.toString()));
-                    break;
-                case "double":
-                case "java.lang.Double":
-                    declaredField.set(this.wrappedObject, Double.valueOf(value.toString()));
-                    break;
-                case "char":
-                case "java.lang.Character":
-                    declaredField.set(this.wrappedObject, value);
-                    break;
-                case "boolean":
-                case "java.lang.Boolean":
-                    declaredField.set(this.wrappedObject, Boolean.valueOf(value.toString()));
-                    break;
-                case "java.lang.String":
-                    declaredField.set(this.wrappedObject, String.valueOf(value.toString()));
-                    break;
-
-                ///默认处理引用类型
-                default:
-                    declaredField.set(this.wrappedObject, value);
+                    ///默认处理引用类型
+                    default:
+                        declaredField.set(this.wrappedObject, pvalue);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
+        /// 若字段不存在，则检查set方法是否存在，若写方法存在，则反射赋值；否则字段为null
+        else {
+
+            Class<?> beanClass = this.wrappedObject.getClass();
+            // 该类所有set方法
+            Set<Method> setMethods = MethodUtils.getSetMethodsIncludingParent(beanClass);
+            // 属性对应的set方法
+            Method setMethod = null;
+
+            for (Method m : setMethods) {
+                if (pname.equals(StringUtils.getBeanNameFromSetMethod(m.getName()))) {
+                    setMethod = m;
+                }
+            }
+
+            if (setMethod != null) {
+                try {
+
+                    setMethod.invoke(this.wrappedObject, pvalue);
+                } catch (IllegalAccessException | InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
     }
 
 
@@ -259,7 +294,9 @@ public class BeanWrapperImpl extends AbstractPropertyAccessor implements BeanWra
      * @return 转换成的Property
      */
     private Property property(PropertyDescriptor pd) {
+
         GenericTypeAwarePropertyDescriptor typeAware = (GenericTypeAwarePropertyDescriptor) pd;
+
         return new Property(typeAware.getBeanClass(), typeAware.getReadMethod(), typeAware.getWriteMethod(), typeAware.getName());
     }
 
