@@ -15,6 +15,7 @@ import java.util.Set;
  */
 public class RootBeanDefinition extends AbstractBeanDefinition {
 
+    // bean的目标类型
     private volatile Class<?> targetType;
 
     private BeanDefinitionHolder decoratedDefinition;

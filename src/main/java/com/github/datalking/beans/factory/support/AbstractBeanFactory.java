@@ -62,7 +62,7 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
 
     // ======== abstract methods ========
 
-    protected abstract Object createBean(String beanName, RootBeanDefinition bd, Object[] args);
+    protected abstract Object createBean(String beanName, RootBeanDefinition mbd, Object[] args);
 
     protected abstract BeanDefinition getBeanDefinition(String beanName);
 
@@ -107,40 +107,64 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
                               boolean typeCheckOnly) {
 
         //将别名解析为bean唯一名称
-        //final String beanName = transformedBeanName(name);
-        final String beanName = name;
+        final String beanName = transformedBeanName(name);
+//        final String beanName = name;
 
         // 最终返回的bean
         Object targetBean;
 
         /// 从3级缓存中找bean
-        Object sharedInstance = getSingleton(name);
+        Object sharedInstance = getSingleton(beanName);
 
         /// 如果name对应的bean实例已缓存，则直接返回bean
         if (sharedInstance != null && args == null) {
 
             // 获取bean实例，处理FactoryBean的入口
-            targetBean = getObjectForBeanInstance(sharedInstance, name, name, null);
+            targetBean = getObjectForBeanInstance(sharedInstance, name, beanName, null);
         }
         /// 如果name对应的bean实例不存在，则新建bean
         else {
 
             // 先标记为已经创建
-            markBeanAsCreated(name);
+            markBeanAsCreated(beanName);
 
-            final RootBeanDefinition mbd = getMergedLocalBeanDefinition(name);
+            final RootBeanDefinition mbd = getMergedLocalBeanDefinition(beanName);
             if (mbd == null) {
-                throw new NoSuchBeanDefinitionException(name + " 对应的BeanDefinition不存在");
+                throw new NoSuchBeanDefinitionException(beanName + " 对应的BeanDefinition不存在");
             }
 
             /// 先判断scope为单例，这里默认单例，创建单例bean
-            sharedInstance = getSingleton(name, (ObjectFactory) () -> createBean(name, mbd, args));
+            sharedInstance = getSingleton(beanName, (ObjectFactory) () -> createBean(beanName, mbd, args));
 
             targetBean = getObjectForBeanInstance(sharedInstance, name, beanName, mbd);
         }
 
 
         return (T) targetBean;
+    }
+
+    /**
+     * 名称处理
+     * todo 支持别名解析
+     */
+    protected String transformedBeanName(String name) {
+
+        String canonicalName = name;
+
+//        String resolvedName;
+//        do {
+//            resolvedName = this.aliasMap.get(canonicalName);
+//            if (resolvedName != null) {
+//                canonicalName = resolvedName;
+//            }
+//        }
+//        while (resolvedName != null);
+
+        if (canonicalName.startsWith(FACTORY_BEAN_PREFIX)) {
+            canonicalName = canonicalName.substring(1);
+        }
+
+        return canonicalName;
     }
 
     /**
@@ -381,15 +405,17 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
 
     /**
      * 根据RootBeanDefinition的getBeanClass()预测bean类型
-     * 只是简单的判断，不处理InstantiationAwareBeanPostProcessors
+     * 只是简单的判断，被子类覆盖
      */
     protected Class<?> predictBeanType(String beanName, RootBeanDefinition mbd, Class<?>... typesToMatch) {
+
         Class<?> targetType = mbd.getTargetType();
         if (targetType != null) {
             return targetType;
         }
-        if (mbd.getFactoryMethodName() != null) {
 
+
+        if (mbd.getFactoryMethodName() != null) {
             return null;
         }
 
@@ -456,11 +482,11 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
      */
     public boolean isFactoryBean(String name) {
 
-        //String beanName = transformedBeanName(name);
-        String beanName = name;
+        String beanName = transformedBeanName(name);
+//        String beanName = name;
         Object beanInstance = getSingleton(beanName, false);
 
-        /// 直接根据bean对象的类型判断
+        /// 直接根据bean实例的类型判断
         if (beanInstance != null) {
             return (beanInstance instanceof FactoryBean);
         }
@@ -473,22 +499,28 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
      */
     protected boolean isFactoryBean(String beanName, RootBeanDefinition mbd) {
 
-//        Class<?> beanType = predictBeanType(beanName, mbd, FactoryBean.class);
+        Class<?> beanType = predictBeanType(beanName, mbd, FactoryBean.class);
 
-        if (mbd.hasBeanClass()) {
-            if (FactoryBean.class.isAssignableFrom(mbd.getBeanClass())) {
-                return true;
-            }
-        }
+//        /// 若beanClass非空且是FactoryBean的子类
+//        if (mbd.hasBeanClass()) {
+//            if (FactoryBean.class.isAssignableFrom(mbd.getBeanClass())) {
+//                return true;
+//            }
+//        }
+//
+//        /// 若beanClass不存在，且存在FactoryMethodName，则不为FactoryBean
+//        if (mbd.getFactoryMethodName() != null) {
+//            return false;
+//        }
+//
+//        if (mbd.getFactoryBeanName() != null && mbd.getFactoryMethodName() != null) {
+//            return true;
+//        } else if (!mbd.getConstructorArgumentValues().isEmpty()) {
+//            return true;
+//        }
 
-        if (mbd.getFactoryBeanName() != null && mbd.getFactoryMethodName() != null) {
-            return true;
-        } else if (!mbd.getConstructorArgumentValues().isEmpty()) {
-            return true;
-        }
-
-//        return (beanType != null && FactoryBean.class.isAssignableFrom(beanType));
-        return false;
+        return (beanType != null && FactoryBean.class.isAssignableFrom(beanType));
+//        return false;
     }
 
     public String resolveEmbeddedValue(String value) {

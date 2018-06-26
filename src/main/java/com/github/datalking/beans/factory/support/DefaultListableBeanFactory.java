@@ -160,9 +160,14 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
             /// 如果是FactoryBean，则计算bean
             if (isFactoryBean(beanName)) {
 
+                /// FactoryBean实例化时特殊处理
+                final FactoryBean<?> factory = (FactoryBean<?>) getBean(FACTORY_BEAN_PREFIX + beanName);
+
+            } else {
+
+                getBean(beanName);
             }
 
-            getBean(beanName);
         }
 
         /// 触发afterSingletonsInstantiated()后处理器

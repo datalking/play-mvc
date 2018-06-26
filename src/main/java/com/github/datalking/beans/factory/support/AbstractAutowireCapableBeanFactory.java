@@ -479,12 +479,21 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
                 String classToBeanName = ClassUtils.getCamelCaseNameFromClass(c);
 
+                /// 若方法参数对应的BeanDefinition存在，则直接getBean()
                 if (containsBeanDefinition(classToBeanName)) {
 //                    beanFactory.resolveDependency(new DependencyDescriptor(param, true), beanName, autowiredBeanNames, typeConverter);
                     Object obj = getBean(classToBeanName);
                     args.add(obj);
                 }
 //                else if (containsBeanDefinition(paramName))
+                /// 若方法参数类型对应的BeanDefinition存在，则直接getBean()
+                else if (getBeanNamesForType(c).length > 0) {
+                    // todo 查找最匹配的bean
+                    String bName = getBeanNamesForType(c)[0];
+                    Object obj = getBean(bName);
+                    args.add(obj);
+                }
+                /// 若方法参数对应的bean无法解析，则抛出异常
                 else {
                     try {
                         throw new Exception(beanName + "使用工厂方法创建时，输入参数无法解析");
@@ -709,7 +718,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         return null;
     }
 
-
+    /**
+     * 预测BeanDefinition所代表的bean的类型
+     */
     @Override
     protected Class<?> predictBeanType(String beanName, RootBeanDefinition mbd, Class<?>... typesToMatch) {
         Class<?> targetType = determineTargetType(beanName, mbd, typesToMatch);
@@ -741,6 +752,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
                 mbd.setTargetType(targetType);
             }
         }
+
         return targetType;
     }
 
@@ -797,6 +809,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
     }
 
 
+    public abstract String[] getBeanNamesForType(Class<?> type);
 //public Object autowire(Class<?> beanClass, int autowireMode, boolean dependencyCheck) throws BeansException {
 //public void autowireBean(Object existingBean) {
 
