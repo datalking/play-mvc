@@ -1,4 +1,4 @@
-//package com.github.datalking.config;
+package com.github.datalking.config;//package com.github.datalking.config;
 //
 //import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 //

@@ -301,7 +301,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 
                 ConstructorArgumentValues args = mbd.getConstructorArgumentValues();
 
-                /// 从bean方法的返回值获取bean信息
+                /// 将@Bean方法的返回值类型作为bean类型
                 if (mbd.getFactoryMethodName() != null) {
 
                     if (mbd instanceof ConfigurationClassBeanDefinition) {
@@ -340,7 +340,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
                         }
                     }
                 }
-                /// 从泛型参数中获取bean类型
+                /// 从泛型参数中获取bean类型 todo 说明场景
                 else if (!args.isEmpty()) {
                     Map<Integer, ValueHolder> indexedArgumentValues = args.getIndexedArgumentValues();
                     List<ValueHolder> genericArgumentValues = args.getGenericArgumentValues();

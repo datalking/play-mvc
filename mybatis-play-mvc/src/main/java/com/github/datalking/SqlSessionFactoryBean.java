@@ -224,9 +224,8 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
     }
 
     /**
-     * <b>NOTE:</b> This class <em>overrides</em> any {@code Environment} you have set in the MyBatis
-     * config file. This is used only as a placeholder name. The default value is
-     * {@code SqlSessionFactoryBean.class.getSimpleName()}.
+     * <b>NOTE:</b> This class <em>overrides</em> any {@code Environment} you have set in the MyBatis config file.
+     * This is used only as a placeholder name. The default value is  SqlSessionFactoryBean.class.getSimpleName().
      *
      * @param environment the environment name
      */
@@ -249,12 +248,7 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
 
     /**
      * 创建SqlSessionFactory对象的方法
-     * <p>
-     * The default implementation uses the standard MyBatis {@code XMLConfigBuilder} API to build a
-     * {@code SqlSessionFactory} instance based on an Reader.
-     * It can be specified a {@link Configuration} instance directly(without config file).
-     *
-     * @return SqlSessionFactory
+     * 基于XMLConfigBuilder
      */
     protected SqlSessionFactory buildSqlSessionFactory() {
 
@@ -283,9 +277,6 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
             xmlConfigBuilder = new XMLConfigBuilder(inputStream, null, this.configurationProperties);
             configuration = xmlConfigBuilder.getConfiguration();
         } else {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Property 'configuration' or 'configLocation' not specified, using default MyBatis Configuration");
-            }
             // 直接创建 Configuration 对象并进行配置
             configuration = new Configuration();
             if (this.configurationProperties != null) {
@@ -312,7 +303,8 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
                     ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
 
             for (String packageToScan : typeAliasPackageArray) {
-                configuration.getTypeAliasRegistry()
+                configuration
+                        .getTypeAliasRegistry()
                         .registerAliases(packageToScan, typeAliasesSuperType == null ? Object.class : typeAliasesSuperType);
 
                 if (LOGGER.isDebugEnabled()) {
@@ -340,9 +332,11 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
         }
 
         if (hasLength(this.typeHandlersPackage)) {
-            String[] typeHandlersPackageArray = tokenizeToStringArray(this.typeHandlersPackage,
-                    ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
+            String[] typeHandlersPackageArray =
+                    tokenizeToStringArray(this.typeHandlersPackage, ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
+
             for (String packageToScan : typeHandlersPackageArray) {
+
                 configuration.getTypeHandlerRegistry().register(packageToScan);
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Scanned package: '" + packageToScan + "' for type handlers");
@@ -352,6 +346,7 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
 
         if (!isEmpty(this.typeHandlers)) {
             for (TypeHandler<?> typeHandler : this.typeHandlers) {
+
                 configuration.getTypeHandlerRegistry().register(typeHandler);
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Registered type handler: '" + typeHandler + "'");
@@ -378,9 +373,6 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
                 // ==== 解析mybatis-config.xml
                 xmlConfigBuilder.parse();
 
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Parsed configuration file: '" + this.configLocation + "'");
-                }
             } catch (Exception ex) {
 //                throw new NestedIOException("Failed to parse config resource: " + this.configLocation, ex);
                 ex.printStackTrace();
@@ -430,7 +422,7 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
             }
         }
 
-        /// 最终调用SqlSessionFactoryBuilder.build()，创建 sqlSessionFactory 对象并返回
+        /// 最后调用 SqlSessionFactoryBuilder.build()，创建 sqlSessionFactory 对象并返回
         return this.sqlSessionFactoryBuilder.build(configuration);
     }
 

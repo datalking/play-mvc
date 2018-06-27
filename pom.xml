@@ -5,7 +5,7 @@
 
     <groupId>com.github.datalking</groupId>
     <artifactId>play-mvc</artifactId>
-    <version>0.0.5</version>
+    <version>0.1.0</version>
 
     <packaging>jar</packaging>
     <name>play-mvc</name>
@@ -87,7 +87,6 @@
             <artifactId>javax.inject</artifactId>
             <version>1</version>
         </dependency>
-
         <!--logging-->
         <dependency>
             <groupId>org.slf4j</groupId>

@@ -5,7 +5,7 @@
     <!--<parent>-->
         <!--<artifactId>play-mvc</artifactId>-->
         <!--<groupId>com.github.datalking</groupId>-->
-        <!--<version>0.0.5</version>-->
+        <!--<version>0.1.0</version>-->
     <!--</parent>-->
 
     <groupId>com.github.datalking</groupId>
@@ -31,7 +31,7 @@
         <dependency>
             <groupId>com.github.datalking</groupId>
             <artifactId>play-mvc</artifactId>
-            <version>0.0.5</version>
+            <version>0.1.0</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -55,7 +55,7 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.7.0</version>
+                    <version>3.6.1</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-surefire-plugin</artifactId>

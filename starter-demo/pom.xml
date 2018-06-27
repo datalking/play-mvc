@@ -5,12 +5,12 @@
     <parent>
         <artifactId>play-mvc</artifactId>
         <groupId>com.github.datalking</groupId>
-        <version>0.0.5</version>
+        <version>0.1.0</version>
     </parent>
 
     <artifactId>starter-demo</artifactId>
     <groupId>com1.github.datalking</groupId>
-    <version>0.0.4</version>
+    <version>0.1.0</version>
     <packaging>war</packaging>
 
     <name>starter-demo webapp for play-mvc and mybatis</name>
@@ -26,7 +26,7 @@
         <dependency>
             <groupId>com.github.datalking</groupId>
             <artifactId>play-mvc</artifactId>
-            <version>0.0.5</version>
+            <version>0.1.0</version>
         </dependency>
         <dependency>
             <groupId>org.mybatis</groupId>
@@ -34,9 +34,9 @@
             <version>3.4.4</version>
         </dependency>
         <!--<dependency>-->
-            <!--<groupId>com.github.datalking</groupId>-->
-            <!--<artifactId>mybatis-play-mvc</artifactId>-->
-            <!--<version>0.0.1</version>-->
+        <!--<groupId>com.github.datalking</groupId>-->
+        <!--<artifactId>mybatis-play-mvc</artifactId>-->
+        <!--<version>0.0.1</version>-->
         <!--</dependency>-->
         <dependency>
             <groupId>mysql</groupId>

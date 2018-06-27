@@ -1,4 +1,4 @@
-//package com.github.datalking.config;
+package com.github.datalking.config;//package com.github.datalking.config;
 //
 //import org.mybatis.spring.mapper.ClassPathMapperScanner;
 //import org.mybatis.spring.mapper.MapperFactoryBean;

@@ -1,5 +1,6 @@
 package com.github.datalking.web.servlet;
 
+import com.github.datalking.common.OrderComparator;
 import com.github.datalking.context.ApplicationContext;
 import com.github.datalking.exception.NoSuchBeanDefinitionException;
 import com.github.datalking.util.ClassUtils;
@@ -257,7 +258,7 @@ public class DispatcherServlet extends FrameworkServlet {
                 // 视图名翻译，只有当view名不存在时才执行
                 applyDefaultViewName(request, mv);
 
-                // 执行intercept的后置处理器
+                // 执行intercept的后置处理器，todo 说明场景
                 handlerExecutionChain.applyPostHandle(processedRequest, response, mv);
             } catch (Exception ex) {
                 dispatchException = ex;
@@ -368,7 +369,7 @@ public class DispatcherServlet extends FrameworkServlet {
 
             if (!matchingBeans.isEmpty()) {
                 this.handlerMappings = new ArrayList<>(matchingBeans.values());
-                // OrderComparator.sort(this.handlerMappings);
+                OrderComparator.sort(this.handlerMappings);
             }
         } else {
             try {
@@ -398,7 +399,7 @@ public class DispatcherServlet extends FrameworkServlet {
             Map<String, HandlerAdapter> matchingBeans = context.getBeansOfType(HandlerAdapter.class);
             if (!matchingBeans.isEmpty()) {
                 this.handlerAdapters = new ArrayList<>(matchingBeans.values());
-                //OrderComparator.sort(this.handlerAdapters);
+                OrderComparator.sort(this.handlerAdapters);
             }
         } else {
             try {
@@ -427,7 +428,7 @@ public class DispatcherServlet extends FrameworkServlet {
 
             if (!matchingBeans.isEmpty()) {
                 this.handlerExceptionResolvers = new ArrayList<>(matchingBeans.values());
-                //OrderComparator.sort(this.handlerExceptionResolvers);
+                OrderComparator.sort(this.handlerExceptionResolvers);
             }
         } else {
             try {
@@ -553,7 +554,7 @@ public class DispatcherServlet extends FrameworkServlet {
                 logger.trace("Testing handler map [" + hm + "] in DispatcherServlet with name '" + getServletName() + "'");
             }
 
-            // 默认使用 RequestMappingHandlerMapping 处理
+            // 默认使用 RequestMappingHandlerMapping 处理，得到匹配url的bean及其中的method
             HandlerExecutionChain handler = hm.getHandler(request);
             if (handler != null) {
                 return handler;

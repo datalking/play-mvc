@@ -1,7 +1,6 @@
 package com.github.datalking.common.meta;
 
 import com.github.datalking.annotation.ComponentScan;
-import com.github.datalking.annotation.MapperScan;
 import com.github.datalking.util.AnnotationUtils;
 import com.github.datalking.util.StringUtils;
 
@@ -145,19 +144,19 @@ public class StandardAnnotationMetadata extends StandardClassMetadata implements
         }
 
         final String mapperScanAnnoFullPack = "com.github.datalking.annotation.MapperScan";
-        /// 若注解为@MapperScan，则将所有属性值加入map
-        if (annotationName.equals(mapperScanAnnoFullPack)) {
-            MapperScan a = getIntrospectedClass().getAnnotation(MapperScan.class);
-            annoMap.put("basePackages", a.basePackages());
-            annoMap.put("basePackageClasses", a.basePackageClasses());
-            annoMap.put("value", a.value());
-            annoMap.put("nameGenerator", a.nameGenerator());
-            annoMap.put("annotationClass", a.annotationClass());
-            annoMap.put("markerInterface", a.markerInterface());
-            annoMap.put("sqlSessionTemplateRef", a.sqlSessionTemplateRef());
-            annoMap.put("sqlSessionFactoryRef", a.sqlSessionFactoryRef());
-            annoMap.put("factoryBean", a.factoryBean());
-        }
+        /// 若注解为@MapperScan，则将所有属性值加入map todo 抽象出公共方法
+//        if (annotationName.equals(mapperScanAnnoFullPack)) {
+//            MapperScan a = getIntrospectedClass().getAnnotation(MapperScan.class);
+//            annoMap.put("basePackages", a.basePackages());
+//            annoMap.put("basePackageClasses", a.basePackageClasses());
+//            annoMap.put("value", a.value());
+//            annoMap.put("nameGenerator", a.nameGenerator());
+//            annoMap.put("annotationClass", a.annotationClass());
+//            annoMap.put("markerInterface", a.markerInterface());
+//            annoMap.put("sqlSessionTemplateRef", a.sqlSessionTemplateRef());
+//            annoMap.put("sqlSessionFactoryRef", a.sqlSessionFactoryRef());
+//            annoMap.put("factoryBean", a.factoryBean());
+//        }
 
         return annoMap;
     }

@@ -141,20 +141,14 @@ public class ClassPathMapperScanner extends ClassPathBeanDefinitionScanner {
     }
 
     /**
-     * 修改扫描得到的Bean信息
+     * 修改扫描到的mybatis相关的DAO的BeanDefinition
      */
     private void processBeanDefinitions(Set<BeanDefinitionHolder> beanDefinitions) {
         GenericBeanDefinition definition;
         for (BeanDefinitionHolder holder : beanDefinitions) {
             definition = (GenericBeanDefinition) holder.getBeanDefinition();
 
-            if (logger.isDebugEnabled()) {
-                logger.debug("Creating MapperFactoryBean with name '" + holder.getBeanName()
-                        + "' and '" + definition.getBeanClassName() + "' mapperInterface");
-            }
-
-            // the mapper interface is the original class of the bean
-            // but, the actual class of the bean is MapperFactoryBean
+            // the mapper interface is the original class of the bean but the actual class of the bean is MapperFactoryBean
             // 将扫描到的接口类型作为构造方法的参数
             definition.getConstructorArgumentValues().addGenericArgumentValue(definition.getBeanClassName()); // issue #59
 
@@ -165,31 +159,28 @@ public class ClassPathMapperScanner extends ClassPathBeanDefinitionScanner {
 
             boolean explicitFactoryUsed = false;
             if (StringUtils.hasText(this.sqlSessionFactoryBeanName)) {
+
                 definition.getPropertyValues().add("sqlSessionFactory", new RuntimeBeanReference(this.sqlSessionFactoryBeanName));
                 explicitFactoryUsed = true;
             } else if (this.sqlSessionFactory != null) {
+
                 definition.getPropertyValues().add("sqlSessionFactory", this.sqlSessionFactory);
                 explicitFactoryUsed = true;
             }
 
             if (StringUtils.hasText(this.sqlSessionTemplateBeanName)) {
-                if (explicitFactoryUsed) {
-                    logger.warn("Cannot use both: sqlSessionTemplate and sqlSessionFactory together. sqlSessionFactory is ignored.");
-                }
+
                 definition.getPropertyValues().add("sqlSessionTemplate", new RuntimeBeanReference(this.sqlSessionTemplateBeanName));
                 explicitFactoryUsed = true;
             } else if (this.sqlSessionTemplate != null) {
-                if (explicitFactoryUsed) {
-                    logger.warn("Cannot use both: sqlSessionTemplate and sqlSessionFactory together. sqlSessionFactory is ignored.");
-                }
+
                 definition.getPropertyValues().add("sqlSessionTemplate", this.sqlSessionTemplate);
                 explicitFactoryUsed = true;
             }
 
+            /// 如果没有设置SqlSessionFactory或者SqlSessionTemplate，按类型注入
             if (!explicitFactoryUsed) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Enabling autowire by type for MapperFactoryBean with name '" + holder.getBeanName() + "'.");
-                }
+                // 设置dao相关bean的autowire类型为by type
                 definition.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_BY_TYPE);
             }
         }
@@ -204,6 +195,7 @@ public class ClassPathMapperScanner extends ClassPathBeanDefinitionScanner {
 //        return beanDefinition.getMetadata().isInterface() && beanDefinition.getMetadata().isIndependent();
         return beanDefinition.getMetadata().isInterface();
     }
+
 
     //    @Override
     protected boolean checkCandidate(String beanName, BeanDefinition beanDefinition) {

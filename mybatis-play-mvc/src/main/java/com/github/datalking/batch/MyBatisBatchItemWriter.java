@@ -1,4 +1,4 @@
-//package com.github.datalking.batch;
+package com.github.datalking.batch;//package com.github.datalking.batch;
 //
 //import org.apache.ibatis.executor.BatchResult;
 //import org.apache.ibatis.logging.Log;

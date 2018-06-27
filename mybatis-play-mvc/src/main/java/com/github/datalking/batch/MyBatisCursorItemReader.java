@@ -1,4 +1,4 @@
-//package com.github.datalking.batch;
+package com.github.datalking.batch;//package com.github.datalking.batch;
 //
 //import org.apache.ibatis.cursor.Cursor;
 //import org.apache.ibatis.session.ExecutorType;
