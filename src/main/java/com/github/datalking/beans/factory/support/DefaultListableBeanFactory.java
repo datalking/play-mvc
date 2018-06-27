@@ -153,17 +153,19 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 
         for (String beanName : beanNames) {
 
-            if (beanName.equals("requestMappingHandlerMapping")) {
+            if (beanName.equals("dataSource")) {
                 System.out.println("====preInstantiateSingletons: " + beanName);
             }
 
             /// 如果是FactoryBean，则计算bean
             if (isFactoryBean(beanName)) {
 
-                /// FactoryBean实例化时特殊处理
+                // FactoryBean实例化时特殊处理
                 final FactoryBean<?> factory = (FactoryBean<?>) getBean(FACTORY_BEAN_PREFIX + beanName);
 
-            } else {
+            }
+            /// 如果不是FactoryBean，则直接实例化
+            else {
 
                 getBean(beanName);
             }
@@ -262,17 +264,18 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
         for (String beanName : this.beanDefinitionNames) {
 
             // 各种BeanDefinition添加进 mergedBeanDefinitions
-            RootBeanDefinition bd = getMergedLocalBeanDefinition(beanName);
+            RootBeanDefinition mbd = getMergedLocalBeanDefinition(beanName);
 
             // 当前迭代的bean的class
             Class clazz = null;
             // 为true时针对泛型处理
             boolean clazzIsFactory = false;
 
-            if (bd.hasBeanClass()) {
-                clazz = bd.getBeanClass();
+            if (mbd.hasBeanClass()) {
+                clazz = mbd.getBeanClass();
             }
 
+            /// 若beanClass存在
             if (clazz != null) {
 
                 /// 若是普通bean，且是type的子类，则满足条件
@@ -293,16 +296,16 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
                 }
             }
 
-            /// 若是FactoryBean
-            if (clazzIsFactory || isFactoryBean(beanName)) {
+            /// 若是Class是FactoryBean或本身是FactoryBean
+            if (clazzIsFactory || isFactoryBean(beanName) || mbd.getFactoryMethodName() != null) {
 
-                ConstructorArgumentValues args = bd.getConstructorArgumentValues();
+                ConstructorArgumentValues args = mbd.getConstructorArgumentValues();
 
                 /// 从bean方法的返回值获取bean信息
-                if (bd.getFactoryMethodName() != null) {
+                if (mbd.getFactoryMethodName() != null) {
 
-                    if (bd instanceof ConfigurationClassBeanDefinition) {
-                        String returnTypeName = ((ConfigurationClassBeanDefinition) bd).getFactoryMethodMetadata().getReturnTypeName();
+                    if (mbd instanceof ConfigurationClassBeanDefinition) {
+                        String returnTypeName = ((ConfigurationClassBeanDefinition) mbd).getFactoryMethodMetadata().getReturnTypeName();
                         Class returnTypeClass = null;
                         try {
                             returnTypeClass = Class.forName(returnTypeName);
@@ -454,7 +457,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
         if (value != null) {
             if (value instanceof String) {
 
-                // 使用 PropertySourcesPlaceholderConfigurer 解析占位符
+                //==== 使用 PropertySourcesPlaceholderConfigurer 解析占位符
                 String strVal = resolveEmbeddedValue((String) value);
                 BeanDefinition bd = (beanName != null && containsBean(beanName) ? getMergedBeanDefinition(beanName) : null);
 
@@ -538,7 +541,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
         /// 若type是普通Class
         else {
 
-            // ==== 寻找依赖bean的候选项，保存到matchingBeans
+            //==== 查找候选Bean并通过getBean()实例化，保存到matchingBeans
             Map<String, Object> matchingBeans = findAutowireCandidates(beanName, type, descriptor);
 
             if (matchingBeans.isEmpty()) {

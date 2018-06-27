@@ -48,9 +48,11 @@ public class SpringManagedTransaction implements Transaction {
 
     @Override
     public Connection getConnection() throws SQLException {
+
         if (this.connection == null) {
             openConnection();
         }
+
         return this.connection;
     }
 

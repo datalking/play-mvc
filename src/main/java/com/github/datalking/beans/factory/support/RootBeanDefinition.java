@@ -20,7 +20,7 @@ public class RootBeanDefinition extends AbstractBeanDefinition {
 
     private BeanDefinitionHolder decoratedDefinition;
 
-    // 记录是否已经执行post processor
+    // 记录是否已经执行postProcessor
     volatile Boolean beforeInstantiationResolved;
 
     Object resolvedConstructorOrFactoryMethod;

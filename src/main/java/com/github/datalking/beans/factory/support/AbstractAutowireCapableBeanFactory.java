@@ -116,7 +116,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             addSingletonFactory(beanName, () -> bean);
         }
 
-        //==== 注入属性，包括autowire依赖的bean
+        //==== 注入字段属性，包括autowire依赖的bean
         populateBean(beanName, bd, instanceWrapper);
 
         Object exposedObject = bean;
@@ -143,7 +143,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             return instantiateUsingFactoryMethod(beanName, mbd, args);
         }
 
-        /// 根据参数匹配构造方法，并创建bean实例
+        /// 根据参数匹配构造方法，并创建bean实例 todo 场景是
         if (!mbd.getConstructorArgumentValues().isEmpty()) {
 //            return autowireConstructor(beanName, mbd, ctors, args);
             return autowireConstructor(beanName, mbd, null, args);
@@ -183,7 +183,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
     }
 
     /**
-     * 将BeanDefinition的属性注入bean
+     * 将BeanDefinition的属性注入bean，注入普通字段和@Autowired、@Value的字段
      * autowire的入口
      */
     private void populateBean(String beanName, RootBeanDefinition mbd, BeanWrapper bw) {
@@ -228,7 +228,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
                         // 下面会通过AutowiredAnnotationBeanPostProcessor的方法自动注入依赖的bean，直接从缓存中取autowire的字段
                         // 解析@Value中属性占位符的入口
-                        pvs = ibp.postProcessPropertyValues(pvs, filteredPds, bw.getWrappedInstance(), beanName);
+                        Object obj = bw.getWrappedInstance();
+                        pvs = ibp.postProcessPropertyValues(pvs, filteredPds, obj, beanName);
                         if (pvs == null) {
                             return;
                         }
@@ -420,7 +421,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         //boolean isStatic;
 
         try {
-
+            //==== 实例化外层Bean
             factoryBean = getBean(factoryBeanName);
             if (factoryBean == null) {
                 throw new Exception(beanName + "找不到FactoryBeanName");
@@ -479,20 +480,20 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
                 String classToBeanName = ClassUtils.getCamelCaseNameFromClass(c);
 
-                /// 若方法参数对应的BeanDefinition存在，则直接getBean()
-                if (containsBeanDefinition(classToBeanName)) {
-//                    beanFactory.resolveDependency(new DependencyDescriptor(param, true), beanName, autowiredBeanNames, typeConverter);
-                    Object obj = getBean(classToBeanName);
-                    args.add(obj);
-                }
-//                else if (containsBeanDefinition(paramName))
                 /// 若方法参数类型对应的BeanDefinition存在，则直接getBean()
-                else if (getBeanNamesForType(c).length > 0) {
+                if (getBeanNamesForType(c).length > 0) {
                     // todo 查找最匹配的bean
                     String bName = getBeanNamesForType(c)[0];
                     Object obj = getBean(bName);
                     args.add(obj);
                 }
+                /// 若方法参数类型对应的BeanDefinition存在，则直接getBean()
+                else if (containsBeanDefinition(classToBeanName)) {
+//                    beanFactory.resolveDependency(new DependencyDescriptor(param, true), beanName, autowiredBeanNames, typeConverter);
+                    Object obj = getBean(classToBeanName);
+                    args.add(obj);
+                }
+//                else if (containsBeanDefinition(paramName))
                 /// 若方法参数对应的bean无法解析，则抛出异常
                 else {
                     try {

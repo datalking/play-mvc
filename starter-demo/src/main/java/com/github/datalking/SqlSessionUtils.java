@@ -54,7 +54,7 @@ public abstract class SqlSessionUtils {
         notNull(sessionFactory, NO_SQL_SESSION_FACTORY_SPECIFIED);
         notNull(executorType, NO_EXECUTOR_TYPE_SPECIFIED);
 
-        // 从Spring事务管理器中获取SqlSessionHolder ，其中封装了SqlSession对象
+        // 从Spring事务管理器中获取SqlSessionHolder，其中封装了SqlSession对象，一般得到null
         SqlSessionHolder holder = (SqlSessionHolder) TransactionSynchronizationManager.getResource(sessionFactory);
 
         SqlSession session = sessionHolder(executorType, holder);

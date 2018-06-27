@@ -293,6 +293,7 @@ public class SqlSessionTemplate implements SqlSession, DisposableBean {
 
             try {
 
+                // 基于反射调用SqlSession的 select方法
                 Object result = method.invoke(sqlSession, args);
 
                 /// 若事务不由spring管理，则提交事务

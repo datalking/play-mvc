@@ -54,7 +54,7 @@ public class PostProcessorRegistrationDelegate {
             }
 //            sortPostProcessors(beanFactory, priorityOrderedPostProcessors);
 
-            // 扫描BeanDefinitionMap中带有@Configuration的类，再进一步扫描@Bean、@ComponentScan
+            // 通过ConfigurationClassPostProcessor扫描beanDefinitionMap中带有@Configuration的类，再进一步扫描@Bean、@ComponentScan
             // 注册AnnotationAwareAspectJAutoProxyCreator的BeanDefinition
             invokeBeanDefinitionRegistryPostProcessors(priorityOrderedPostProcessors, registry);
         }
@@ -63,7 +63,7 @@ public class PostProcessorRegistrationDelegate {
             invokeBeanFactoryPostProcessors(beanFactoryPostProcessors, beanFactory);
         }
 
-        /// 处理上面过程中新增的BeanFactoryPostProcessor，如PlaceholderConfigurerSupport
+        // 获取上面过程中新增的BeanFactoryPostProcessor，如PlaceholderConfigurerSupport，也包含已处理过的
         String[] postProcessorNames = beanFactory.getBeanNamesForType(BeanFactoryPostProcessor.class);
         List<BeanFactoryPostProcessor> postProcessors = new ArrayList<>();
 

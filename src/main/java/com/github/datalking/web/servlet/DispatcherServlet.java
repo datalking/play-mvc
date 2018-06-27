@@ -8,7 +8,6 @@ import com.github.datalking.util.web.WebUtils;
 import com.github.datalking.web.context.WebApplicationContext;
 import com.github.datalking.web.mvc.ModelAndView;
 import com.github.datalking.web.mvc.View;
-import com.github.datalking.web.servlet.FlashMapManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -147,7 +146,7 @@ public class DispatcherServlet extends FrameworkServlet {
     }
 
     /**
-     * 实际请求处理方法，每一个请求都会经过这个方法处理
+     * 实际处理请求的方法，每一个请求都会经过这个方法处理
      * <p>
      * 覆盖父类方法
      */
@@ -199,7 +198,7 @@ public class DispatcherServlet extends FrameworkServlet {
 
     /**
      * 转发请求到控制器方法
-     * 实现MVC
+     * 每一个请求都会经过这个方法处理
      */
     protected void doDispatch(HttpServletRequest request, HttpServletResponse response) throws Exception {
 

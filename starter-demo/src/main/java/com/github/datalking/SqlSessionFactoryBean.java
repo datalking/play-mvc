@@ -303,7 +303,8 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
                     ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
 
             for (String packageToScan : typeAliasPackageArray) {
-                configuration.getTypeAliasRegistry()
+                configuration
+                        .getTypeAliasRegistry()
                         .registerAliases(packageToScan, typeAliasesSuperType == null ? Object.class : typeAliasesSuperType);
 
                 if (LOGGER.isDebugEnabled()) {
@@ -331,9 +332,11 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
         }
 
         if (hasLength(this.typeHandlersPackage)) {
-            String[] typeHandlersPackageArray = tokenizeToStringArray(this.typeHandlersPackage,
-                    ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
+            String[] typeHandlersPackageArray =
+                    tokenizeToStringArray(this.typeHandlersPackage, ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
+
             for (String packageToScan : typeHandlersPackageArray) {
+
                 configuration.getTypeHandlerRegistry().register(packageToScan);
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Scanned package: '" + packageToScan + "' for type handlers");
@@ -343,6 +346,7 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
 
         if (!isEmpty(this.typeHandlers)) {
             for (TypeHandler<?> typeHandler : this.typeHandlers) {
+
                 configuration.getTypeHandlerRegistry().register(typeHandler);
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Registered type handler: '" + typeHandler + "'");

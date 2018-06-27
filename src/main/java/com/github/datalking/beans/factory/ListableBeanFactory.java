@@ -1,6 +1,5 @@
 package com.github.datalking.beans.factory;
 
-import java.lang.annotation.Annotation;
 import java.util.Map;
 
 /**

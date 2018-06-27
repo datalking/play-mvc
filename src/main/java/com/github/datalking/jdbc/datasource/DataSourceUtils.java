@@ -13,7 +13,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
- * 从DataSource获取jdbc连接的工具类
+ * 数据库DataSource操作 工具类
  */
 public abstract class DataSourceUtils {
 
@@ -23,6 +23,7 @@ public abstract class DataSourceUtils {
 
     public static Connection getConnection(DataSource dataSource) throws Exception {
         try {
+
             return doGetConnection(dataSource);
         } catch (SQLException ex) {
             throw new Exception("Could not get JDBC Connection", ex);
@@ -274,7 +275,7 @@ public abstract class DataSourceUtils {
      */
     public static void doCloseConnection(Connection con, DataSource dataSource) throws SQLException {
 //        if (!(dataSource instanceof SmartDataSource) || ((SmartDataSource) dataSource).shouldClose(con)) {
-            con.close();
+        con.close();
 //        }
     }
 
@@ -339,7 +340,6 @@ public abstract class DataSourceUtils {
     /**
      * Callback for resource cleanup at the end of a non-native JDBC transaction
      * (e.g. when participating in a JtaTransactionManager transaction).
-     *
      */
     private static class ConnectionSynchronization extends TransactionSynchronizationAdapter {
 

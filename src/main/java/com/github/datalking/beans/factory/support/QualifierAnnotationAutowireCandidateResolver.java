@@ -271,7 +271,7 @@ public class QualifierAnnotationAutowireCandidateResolver implements AutowireCan
      * Determine whether the given dependency carries a value annotation.
      */
     public Object getSuggestedValue(DependencyDescriptor descriptor) {
-        // 先查找@Value注解的字段
+        // 先查找@Value注解中设置的值
         Object value = findValue(descriptor.getAnnotations());
         /// 若value为空，再查找方法参数
         if (value == null) {
@@ -314,7 +314,7 @@ public class QualifierAnnotationAutowireCandidateResolver implements AutowireCan
     }
 
     protected Object extractValue(Annotation valueAnnotation) {
-
+        // 提取@Value注解中的值，可以含有${}占位符
         Object value = AnnotationUtils.getValue(valueAnnotation);
 
         if (value == null) {
