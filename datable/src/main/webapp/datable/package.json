@@ -1,0 +1,45 @@
+{
+  "name": "datable",
+  "version": "1.0.0",
+  "description": "hello, datable",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "start": "npm run demo",
+    "demo": "webpack-dev-server --devtool eval-source-map --progress --color --history-api-fallback --config './webpack.config.js' --mode development",
+    "watch": "webpack --config webpack.config.js --mode development --watch --progress ",
+    "build": "webpack --config webpack.config.js --mode development ",
+    "build.demo": "webpack --config webpack.config.demo.js --mode development ",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "uptonking",
+  "license": "MIT",
+  "dependencies": {
+    "bulma": "^0.6.2",
+    "classnames": "^2.2.5",
+    "exenv": "^1.2.2",
+    "font-awesome": "^4.7.0",
+    "warning": "^3.0.0"
+  },
+  "devDependencies": {
+    "babel-loader": "^7.1.4",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "css-loader": "^0.28.11",
+    "extract-text-webpack-plugin": "^4.0.0-beta.0",
+    "file-loader": "^1.1.11",
+    "filemanager-webpack-plugin": "^1.0.26",
+    "image-webpack-loader": "^4.2.0",
+    "node-sass": "^4.8.3",
+    "prop-types": "^15.6.1",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "sass-loader": "^6.0.7",
+    "style-loader": "^0.20.3",
+    "transfer-webpack-plugin": "^0.1.4",
+    "url-loader": "^1.0.1",
+    "webpack": "^4.2.0",
+    "webpack-cli": "^2.0.13",
+    "webpack-dev-server": "^3.1.1"
+  }
+}
