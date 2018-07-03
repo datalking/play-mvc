@@ -1,6 +1,8 @@
 # faq for play-mvc
 
-
+- intellij idea的bug？   
+只有被依赖的项目在下面，当前项目才能运行？
+demo-quickstart只有放到上面才能运行?
 
 - play-mvc没有使用父子容器的设计，源码上支持spring的父子容器，但推荐将parent即RootApplicationContext设为null
 

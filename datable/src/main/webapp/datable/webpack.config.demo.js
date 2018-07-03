@@ -10,7 +10,8 @@ module.exports = {
     ],
 
     output: {
-        path: path.join(__dirname, 'public'),
+        // path: path.join(__dirname, 'public'),
+        path: __dirname,
         filename: 'bundle.js',
     },
 
@@ -43,7 +44,7 @@ module.exports = {
                         options: {
                             name: '[name].[ext]',
                             outputPath: 'fonts/',    // where the fonts will go
-                            // publicPath: '../'       // override the default path
+                            publicPath: '../'       // override the default path
                         }
                     }]
                 },
@@ -59,16 +60,16 @@ module.exports = {
             new webpack.NamedModulesPlugin(),
             new webpack.HotModuleReplacementPlugin(),
             // new webpack.NoErrorsPlugin(),
-            new FileManagerPlugin({
-                onEnd: [
-                    {
-                        copy: [
-                            //目录是相对于执行npm run命令的根目录，而不是webpack.config.js的位置
-                            {source: "./public", destination: "./docs"}
-                        ]
-                    },
-                ]
-            }),
+            // new FileManagerPlugin({
+            //     onEnd: [
+            //         {
+            //             copy: [
+            //                 //目录是相对于执行npm run命令的根目录，而不是webpack.config.js的位置
+            //                 {source: "./public", destination: "./docs"}
+            //             ]
+            //         },
+            //     ]
+            // }),
         ],
 
     // resolve: {

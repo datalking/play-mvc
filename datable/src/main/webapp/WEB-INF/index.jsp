@@ -9,7 +9,7 @@
 <body>
 <header>
     <h1> HTML5 AND CSS3 测试页 </h1>
-    <h4>in webapp/index.jsp</h4>
+    <h4>in webapp/WEB_INF/index.jsp</h4>
     <nav>
         <ul>
             <a href="">Home</a>

@@ -5,8 +5,10 @@ import com.github.datalking.common.meta.AnnotationAttributes;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -30,6 +32,43 @@ public abstract class AnnotationUtils {
 
     private static final Map<Class<? extends Annotation>, List<Method>> attributeMethodsCache = new ConcurrentHashMap<>(256);
 
+    /**
+     * 获取注解的所有属性键值对
+     */
+    public static Map<String, Object> getAnnotationAttributes(Class clazz, Class annotationClass) {
+        Assert.notNull(annotationClass, "输入的注解类不能为空");
+
+        if (!clazz.isAnnotationPresent(annotationClass)) {
+            return null;
+        }
+
+        // 保存注解的所有属性键值对，属性名 -> 属性值
+        Map<String, Object> annoMap = new LinkedHashMap<>();
+
+        Annotation a = clazz.getAnnotation(annotationClass);
+        if (a != null) {
+            Class<? extends Annotation> type = a.annotationType();
+            for (Method method : type.getDeclaredMethods()) {
+                Object value = null;
+                try {
+                    value = method.invoke(a);
+                } catch (IllegalAccessException | InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+                annoMap.put(method.getName(), value);
+            }
+        }
+
+        return annoMap;
+    }
+
+    /**
+     * 获取注解的某个属性值
+     */
+    public static Object getAnnotationValue(Class clazz, Class annotationClass, String name) {
+        Map<String, Object> annoMap = getAnnotationAttributes(clazz, annotationClass);
+        return annoMap.get(name);
+    }
 
     public static <A extends Annotation> A findAnnotation(Method method, Class<A> annotationType) {
         Assert.notNull(method, "Method must not be null");

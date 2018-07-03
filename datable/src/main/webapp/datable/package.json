@@ -1,12 +1,12 @@
 {
   "name": "datable",
   "version": "1.0.0",
-  "description": "hello, datable",
+  "description": "power up data processing with excel-like experience",
   "private": true,
   "main": "index.js",
   "scripts": {
     "start": "npm run demo",
-    "demo": "webpack-dev-server --devtool eval-source-map --progress --color --history-api-fallback --config './webpack.config.js' --mode development",
+    "demo": "webpack-dev-server --devtool eval-source-map --progress --color --history-api-fallback --config './webpack.config.demo.js' --mode development",
     "watch": "webpack --config webpack.config.js --mode development --watch --progress ",
     "build": "webpack --config webpack.config.js --mode development ",
     "build.demo": "webpack --config webpack.config.demo.js --mode development ",
@@ -19,6 +19,9 @@
     "classnames": "^2.2.5",
     "exenv": "^1.2.2",
     "font-awesome": "^4.7.0",
+    "prop-types": "^15.6.1",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
     "warning": "^3.0.0"
   },
   "devDependencies": {
@@ -31,9 +34,6 @@
     "filemanager-webpack-plugin": "^1.0.26",
     "image-webpack-loader": "^4.2.0",
     "node-sass": "^4.8.3",
-    "prop-types": "^15.6.1",
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0",
     "sass-loader": "^6.0.7",
     "style-loader": "^0.20.3",
     "transfer-webpack-plugin": "^0.1.4",

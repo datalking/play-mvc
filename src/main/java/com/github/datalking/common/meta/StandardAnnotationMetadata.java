@@ -1,10 +1,11 @@
 package com.github.datalking.common.meta;
 
-import com.github.datalking.annotation.ComponentScan;
 import com.github.datalking.util.AnnotationUtils;
+import com.github.datalking.util.Assert;
 import com.github.datalking.util.StringUtils;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -123,40 +124,48 @@ public class StandardAnnotationMetadata extends StandardClassMetadata implements
      * @param classValuesAsString 值是否转为str，默认false
      * @return 键值对
      */
-    public Map<String, Object> getAnnotationAttributes(Class<?> annotationClass, boolean classValuesAsString) {
+    public Map<String, Object> getAnnotationAttributes(Class annotationClass, boolean classValuesAsString) {
+        Assert.notNull(annotationClass, "输入的注解类不能为空");
 
-        if (!getIntrospectedClass().isAnnotationPresent((Class<? extends Annotation>) annotationClass)) {
+        Class<?> clazz = getIntrospectedClass();
+
+        if (!clazz.isAnnotationPresent(annotationClass)) {
             return null;
         }
 
-        // 保存注解的所有属性键值对
+        // 保存注解的所有属性键值对，属性名 -> 属性值
         Map<String, Object> annoMap = new LinkedHashMap<>();
 
-        String annotationName = annotationClass.getName();
-
-        final String componentScanAnnoFullPack = "com.github.datalking.annotation.ComponentScan";
-        /// 若注解为@ComponentScan，则将所有属性值加入map
-        if (annotationName.equals(componentScanAnnoFullPack)) {
-            ComponentScan a = getIntrospectedClass().getAnnotation(ComponentScan.class);
-            annoMap.put("basePackages", a.basePackages());
-            annoMap.put("basePackageClasses", a.basePackageClasses());
-            annoMap.put("value", a.value());
+        Annotation a = clazz.getAnnotation(annotationClass);
+        if (a != null) {
+            Class<? extends Annotation> type = a.annotationType();
+            for (Method method : type.getDeclaredMethods()) {
+                Object value = null;
+                try {
+                    value = method.invoke(a);
+                } catch (IllegalAccessException | InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+                annoMap.put(method.getName(), value);
+            }
         }
 
-        final String mapperScanAnnoFullPack = "com.github.datalking.annotation.MapperScan";
-        /// 若注解为@MapperScan，则将所有属性值加入map todo 抽象出公共方法
-//        if (annotationName.equals(mapperScanAnnoFullPack)) {
-//            MapperScan a = getIntrospectedClass().getAnnotation(MapperScan.class);
-//            annoMap.put("basePackages", a.basePackages());
-//            annoMap.put("basePackageClasses", a.basePackageClasses());
-//            annoMap.put("value", a.value());
-//            annoMap.put("nameGenerator", a.nameGenerator());
-//            annoMap.put("annotationClass", a.annotationClass());
-//            annoMap.put("markerInterface", a.markerInterface());
-//            annoMap.put("sqlSessionTemplateRef", a.sqlSessionTemplateRef());
-//            annoMap.put("sqlSessionFactoryRef", a.sqlSessionFactoryRef());
-//            annoMap.put("factoryBean", a.factoryBean());
+
+        // 要提取信息的注解类
+//        String annotationName = annotationClass.getName();
+//
+//        final String componentScanAnnoName = "com.github.datalking.annotation.ComponentScan";
+//        /// 若注解为@ComponentScan，则将所有属性值加入map
+//        if (annotationName.equals(componentScanAnnoName)) {
+//            ComponentScan a = clazz.getAnnotation(ComponentScan.class);
+////            ComponentScan a = clazz.getAnnotation(annotationClass);
+//            if (a != null) {
+//                annoMap.put("basePackages", a.basePackages());
+//                annoMap.put("basePackageClasses", a.basePackageClasses());
+//                annoMap.put("value", a.value());
+//            }
 //        }
+
 
         return annoMap;
     }
