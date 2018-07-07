@@ -1,7 +1,6 @@
 import React from "../../react";
 // import React from "react";
 
-
 import globalStyle from '../../common/style/style';
 import InsertFunctionModal from "../InsertFunctionModal";
 

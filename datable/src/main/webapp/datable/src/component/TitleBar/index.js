@@ -1,8 +1,6 @@
 import React from "../../react";
 // import React from "react";
 
-// import {Tab, TabList, Tabs, TabPanel} from "../Tab";
-
 import globalStyle from '../../common/style/style';
 
 class TitleBar extends React.Component {
@@ -20,7 +18,7 @@ class TitleBar extends React.Component {
             // verticalAlign: 'middle',
             backgroundColor: globalStyle.xlsSkinGreen,
             color: '#fff',
-            display:'table',
+            display: 'table',
         };
         const styleTitleText = {
             lineHeight: '36px',
@@ -31,8 +29,7 @@ class TitleBar extends React.Component {
         }
     }
 
-
-    handleSaveCurrentFile=e=>{
+    handleSaveCurrentFile = e => {
         console.log('====handleSaveCurrentFile');
     }
 
@@ -48,22 +45,22 @@ class TitleBar extends React.Component {
             <div style={s.styleThis}>
                 <div style={{
                     float: 'left',
-                    display:'table-cell',
-                    verticalAlign:'middle',
+                    display: 'table-cell',
+                    verticalAlign: 'middle',
                 }}>
                 <span className="icon">
                   <i className="fa fa-th"></i>
                 </span>
-                    <span className="icon" onClick={this.handleSaveCurrentFile}>
-                  <i className="fa fa-save"></i>
-                </span>
+                    {/*<span className="icon" onClick={this.handleSaveCurrentFile}>*/}
+                  {/*<i className="fa fa-save"></i>*/}
+                {/*</span>*/}
                 </div>
                 <div style={{
                     float: 'left',
                     textAlign: 'center',
                     width: '84%',
-                    display:'table-cell',
-                    verticalAlign:'middle',
+                    display: 'table-cell',
+                    verticalAlign: 'middle',
 
                 }}>
                     <span style={s.styleTitleText}>{title}</span>

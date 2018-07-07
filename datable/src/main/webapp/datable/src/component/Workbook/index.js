@@ -89,8 +89,8 @@ class Workbook extends React.Component {
                 // height={600}
                 minTableCol={32}
                 minTableRow={100}
-                minCellWidth={50}
-                cellHeight={28}
+                minCellWidth={96}
+                cellHeight={32}
                 getData={function getData(data) {
                     console.log(data);
                 }}

@@ -10,7 +10,7 @@
 
     <groupId>com.github.datalking</groupId>
     <artifactId>mybatis-play-mvc</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
 
     <name>mybatis-play-mvc</name>
     <url>https://github.com/datalking/mybatis-play-mvc</url>
@@ -31,7 +31,7 @@
         <dependency>
             <groupId>com.github.datalking</groupId>
             <artifactId>play-mvc</artifactId>
-            <version>0.1.0</version>
+            <version>0.1.1</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

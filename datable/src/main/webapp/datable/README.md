@@ -23,6 +23,14 @@ start from [http://localhost:8900](http://localhost:8900)
 
 ## todo
 
+- excel import & view
+- excel export
+- excel edit
+- csv, json support
+
+- cell style
+
+- nested header 支持sort
 - pivotable
 - [ ] 左边和上边的行列指示数字居中  
 - [ ] fab  
@@ -33,6 +41,9 @@ start from [http://localhost:8900](http://localhost:8900)
 - [ ] 折叠
 
 - [ ] undo/redo
+
+
+- [ ] 多人协作
 
 ## remind
 

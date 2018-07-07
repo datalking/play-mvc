@@ -3,6 +3,9 @@ import PropTypes from 'prop-types';
 
 import '../../common/style/pivotable.css';
 
+/**
+ * 表格核心主体部分
+ */
 class Pivotable extends Component {
 
     constructor(props) {

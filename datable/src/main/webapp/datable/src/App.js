@@ -1,8 +1,8 @@
 // import React from 'react';
 import React from './react';
 
-import RibbonMenu from './component/RibbonMenu';
 import TitleBar from './component/TitleBar';
+import RibbonMenu from './component/RibbonMenu';
 import CurrentTextarea from './component/CurrentTextarea';
 import Workbook from './component/Workbook';
 
