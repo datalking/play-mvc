@@ -1,5 +1,4 @@
-// import React from 'react';
-import React from './react';
+import React from 'react';
 
 import TitleBar from './component/TitleBar';
 import RibbonMenu from './component/RibbonMenu';
@@ -8,6 +7,7 @@ import Workbook from './component/Workbook';
 
 import 'font-awesome/css/font-awesome.css';
 import 'bulma/css/bulma.css';
+import 'handsontable/dist/handsontable.full.css'
 
 class App extends React.Component {
 

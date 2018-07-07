@@ -1,5 +1,4 @@
-import React from "../../react";
-// import React from "react";
+import React from "react";
 
 import {Tab, TabList, Tabs, TabPanel} from "../Tab";
 import '../../common/style/react-tabs.css';

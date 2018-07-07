@@ -1,102 +1,25 @@
-import React from "../../react";
-// import React from "react";
-
-import Pivotable from '../Pivotable';
-import globalStyle from '../../common/style/style';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import HotTable from '../HotTable';
 
 class Workbook extends React.Component {
 
-    constructor() {
-        super();
-        this.state = {
-            tableData: [
-                ['City', 'Beijing', 'Shanghai', 'Guangzhou','wuhan'],
-                ['Temperature', '5', '22', '29','19'],
-                ['Weather', 'Windy', 'Sunny', 'Rainy','sunny'],
-            ],
-        };
-    }
-
-    static defaultProps = {
-        enableEdit: true,
-        textarea: '',
-    };
-
-    styling() {
-        const styleThis = {
-            width: '100%',
-            height: 32,
-            // textAlign: 'center',
-            backgroundColor: this.props.enableEdit ? '#fff' : 'aaa',
-            color: '#000',
-            display: 'table',
-            margin: '6px 0 ',
-        };
-        const styleRow = {
-            width: '100%',
-            display: 'table-cell',
-            verticalAlign: 'middle',
-            // overflow: 'hidden',
-        };
-        const sIcon = {
-            border: globalStyle.borderGray,
-            height: 24,
-            float: 'left',
-            marginLeft: '4px',
-
-        };
-        const sInputSpan = {display: 'block', overflow: 'hidden', paddingRight: '4px', paddingLeft: '4px',};
-        const styleInput = {
-            border: globalStyle.borderGray,
-            width: '100%',
-            height: 24,
-
-        };
-        return {
-            styleThis,
-            styleRow,
-            styleInput,
-            sIcon,
-            sInputSpan,
-        }
-    }
-
-
-    handleOpenModalFunc = (e) => {
-        console.log('====handleOpenModalFunc');
-
-        // console.log(e)
-        // console.log(e.target)
-        // console.log(e.target.value)
-        this.setState({
-            showModalFunc: true,
-        });
+    constructor(props) {
+        super(props);
+        this.data = [
+            ["", "Ford", "Volvo", "Toyota", "Honda"],
+            ["2016", 10, 11, 12, 13],
+            ["2017", 20, 11, 14, 13],
+            ["2018", 30, 15, 12, 13]
+        ];
     }
 
     render() {
-
-        const {
-            tableData,
-        } = this.state;
-
-        // const s = this.styling();
-
-
         return (
-            <Pivotable
-                tableData={tableData}
-                width={1920}
-                // height={600}
-                minTableCol={32}
-                minTableRow={100}
-                minCellWidth={96}
-                cellHeight={32}
-                getData={function getData(data) {
-                    console.log(data);
-                }}
-            />
+            <HotTable data={this.data} colHeaders={true} rowHeaders={true} width="800" height="480" stretchH="all"/>
         );
     }
 }
+
 
 export default Workbook;

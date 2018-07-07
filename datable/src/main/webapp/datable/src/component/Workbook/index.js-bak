@@ -1,14 +1,18 @@
 import React from "react";
 
+import Pivotable from '../Pivotable';
 import globalStyle from '../../common/style/style';
-import InsertFunctionModal from "../InsertFunctionModal";
 
-class CurrentTextarea extends React.Component {
+class Workbook extends React.Component {
 
     constructor() {
         super();
         this.state = {
-            showModalFunc: false,
+            tableData: [
+                ['City', 'Beijing', 'Shanghai', 'Guangzhou','wuhan'],
+                ['Temperature', '5', '22', '29','19'],
+                ['Weather', 'Windy', 'Sunny', 'Rainy','sunny'],
+            ],
         };
     }
 
@@ -20,17 +24,18 @@ class CurrentTextarea extends React.Component {
     styling() {
         const styleThis = {
             width: '100%',
-            height: 30,
+            height: 32,
             // textAlign: 'center',
             backgroundColor: this.props.enableEdit ? '#fff' : 'aaa',
             color: '#000',
             display: 'table',
-            margin: '4px 0 ',
+            margin: '6px 0 ',
         };
         const styleRow = {
             width: '100%',
             display: 'table-cell',
             verticalAlign: 'middle',
+            // overflow: 'hidden',
         };
         const sIcon = {
             border: globalStyle.borderGray,
@@ -55,13 +60,6 @@ class CurrentTextarea extends React.Component {
         }
     }
 
-    handleCloseModalFunc = e => {
-        console.log('====handleCloseModalFunc');
-        this.setState({
-            showModalFunc: false,
-        });
-    }
-
 
     handleOpenModalFunc = (e) => {
         console.log('====handleOpenModalFunc');
@@ -76,32 +74,28 @@ class CurrentTextarea extends React.Component {
 
     render() {
 
-        // const {
-        //     title,
-        // } = this.props;
+        const {
+            tableData,
+        } = this.state;
 
-        const s = this.styling();
-        const props4Modal = {
-            showModalFunc: this.state.showModalFunc,
-            handleCloseModalFunc: this.handleCloseModalFunc,
-        };
+        // const s = this.styling();
+
 
         return (
-            <div style={s.styleThis}>
-                <div style={s.styleRow}>
-                    <a className="button" style={s.sIcon} onClick={this.handleOpenModalFunc}>
-                        <span className="icon">
-                          <i className="fa fa-pencil"></i>
-                        </span>
-                    </a>
-                    <span style={s.sInputSpan}>
-                    <input placeholder={'当前选中的单元格的值会出现在这里'} type={'text'} style={s.styleInput}/>
-                    </span>
-                </div>
-                <InsertFunctionModal {...props4Modal} />
-            </div>
+            <Pivotable
+                tableData={tableData}
+                width={1920}
+                // height={600}
+                minTableCol={32}
+                minTableRow={100}
+                minCellWidth={96}
+                cellHeight={32}
+                getData={function getData(data) {
+                    console.log(data);
+                }}
+            />
         );
     }
 }
 
-export default CurrentTextarea;
+export default Workbook;
