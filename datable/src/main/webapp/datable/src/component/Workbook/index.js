@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import HotTable from '../HotTable';
 
 class Workbook extends React.Component {

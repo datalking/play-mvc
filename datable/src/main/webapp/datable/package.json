@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "start": "npm run demo",
-    "demo": "cross-env NODE_ENV=es webpack-dev-server --devtool eval-source-map --progress --color --history-api-fallback --config './webpack.config.demo.js' --mode development",
+    "demo": "webpack-dev-server --devtool eval-source-map --progress --color --history-api-fallback --config './webpack.config.demo.js' --mode development",
     "watch": "webpack --config webpack.config.js --mode development --watch --progress ",
     "build": "webpack --config webpack.config.js --mode development ",
     "build.demo": "webpack --config webpack.config.demo.js --mode development ",
