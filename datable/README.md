@@ -15,7 +15,7 @@
 
 ## demo
 ```sh
-  cd play-mvc/starter-demo
+  cd datable/
   mvn tomcat7:run
 ```
 
@@ -26,13 +26,12 @@ start from [http://localhost:8999](http://localhost:8999)
 
 - [ ] easyexcel不支持date类型的转换，可以借鉴xxl-excel的思想
 
-- [x] add DispatcherServlet 
+- [x] add
 
 ## later
 
 - [ ] WebApplicationInitializer支持order 
-- [ ] 支持 @RequestHeader, @CookieValue, @SessionAttributes 
-- [ ] 内置tomcat切换为外置 
+- [ ] 支持 table as cell 
 
 ## License
 
