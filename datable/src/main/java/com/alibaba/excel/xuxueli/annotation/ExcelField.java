@@ -1,4 +1,4 @@
-package com.xuxueli.poi.excel.annotation;
+package com.alibaba.excel.xuxueli.annotation;
 
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 

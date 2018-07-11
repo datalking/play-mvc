@@ -1,7 +1,7 @@
-package com.xuxueli.poi.excel;
+package com.alibaba.excel.xuxueli;
 
-import com.xuxueli.poi.excel.annotation.ExcelSheet;
-import com.xuxueli.poi.excel.util.FieldReflectionUtil;
+import com.alibaba.excel.xuxueli.annotation.ExcelSheet;
+import com.alibaba.excel.xuxueli.util.FieldReflectionUtil;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.slf4j.Logger;
