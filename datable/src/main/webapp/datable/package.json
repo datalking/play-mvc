@@ -16,11 +16,12 @@
   "license": "MIT",
   "dependencies": {
     "bulma": "^0.7.1",
-    "classnames": "^2.2.5",
-    "connected-react-router": "^4.3.0",
+    "classnames": "^2.2.6",
+    "connected-react-router": "^4.4.1",
     "exenv": "^1.2.2",
     "font-awesome": "^4.7.0",
-    "handsontable": "^4.0.0",
+    "handsontable": "^5.0.1",
+    "jquery": "^3.3.1",
     "prop-types": "^15.6.2",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
@@ -51,7 +52,7 @@
     "transfer-webpack-plugin": "^0.1.4",
     "url-loader": "^1.0.1",
     "webpack": "^4.2.0",
-    "webpack-cli": "^3.0.8",
-    "webpack-dev-server": "^3.1.4"
+    "webpack-cli": "^3.1.0",
+    "webpack-dev-server": "^3.1.5"
   }
 }

@@ -39,7 +39,7 @@ start from [http://localhost:8999](http://localhost:8999)
 - [ ] Gantt Chart
 
 
-- [x] datable初始视图行默认显示64行，列默认显示28列
+- [x] 修改datable初始视图：默认显示64行、28列
 
 ## later
 

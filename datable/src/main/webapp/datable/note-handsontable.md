@@ -1,5 +1,10 @@
 # note-handsontable
 
+## dev-log
+
+- stretchH用于水平均分宽度
+
+
 ## summary
 
 

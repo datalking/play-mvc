@@ -8,26 +8,6 @@ class TitleBar extends React.Component {
         title: '当前文件名',
     };
 
-
-    styling() {
-        const styleThis = {
-            width: '100%',
-            height: 36,
-            // textAlign: 'center',
-            // verticalAlign: 'middle',
-            backgroundColor: globalStyle.xlsSkinGreen,
-            color: '#fff',
-            display: 'table',
-        };
-        const styleTitleText = {
-            lineHeight: '36px',
-        };
-        return {
-            styleThis,
-            styleTitleText,
-        }
-    }
-
     handleSaveCurrentFile = e => {
         console.log('====handleSaveCurrentFile');
     }
@@ -38,31 +18,31 @@ class TitleBar extends React.Component {
             title,
         } = this.props;
 
-        const s = this.styling();
+        const iconMidStyle = {
+            float: 'left',
+            display: 'table-cell',
+            verticalAlign: 'middle',
+        };
+        const titleMidStyle = {
+            float: 'left',
+            textAlign: 'center',
+            width: '84%',
+            display: 'table-cell',
+            verticalAlign: 'middle',
+        };
 
         return (
-            <div style={s.styleThis}>
-                <div style={{
-                    float: 'left',
-                    display: 'table-cell',
-                    verticalAlign: 'middle',
-                }}>
+            <div style={this.props}>
+                <div style={iconMidStyle}>
                 <span className="icon">
                   <i className="fa fa-th"></i>
                 </span>
                     {/*<span className="icon" onClick={this.handleSaveCurrentFile}>*/}
-                  {/*<i className="fa fa-save"></i>*/}
-                {/*</span>*/}
+                    {/*<i className="fa fa-save"></i>*/}
+                    {/*</span>*/}
                 </div>
-                <div style={{
-                    float: 'left',
-                    textAlign: 'center',
-                    width: '84%',
-                    display: 'table-cell',
-                    verticalAlign: 'middle',
-
-                }}>
-                    <span style={s.styleTitleText}>{title}</span>
+                <div style={titleMidStyle}>
+                    <span style={{lineHeight: '36px'}}>{title}</span>
                 </div>
             </div>
         );

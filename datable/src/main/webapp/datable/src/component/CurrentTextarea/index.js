@@ -20,7 +20,7 @@ class CurrentTextarea extends React.Component {
     styling() {
         const styleThis = {
             width: '100%',
-            height: 30,
+            // height: 30,
             // textAlign: 'center',
             backgroundColor: this.props.enableEdit ? '#fff' : 'aaa',
             color: '#000',
@@ -87,7 +87,7 @@ class CurrentTextarea extends React.Component {
         };
 
         return (
-            <div style={s.styleThis}>
+            <div style={{...s.styleThis, height: this.props.height,}}>
                 <div style={s.styleRow}>
                     <a className="button" style={s.sIcon} onClick={this.handleOpenModalFunc}>
                         <span className="icon">

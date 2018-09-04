@@ -17,7 +17,7 @@ class RibbonMenu extends React.Component {
         } = this.props;
 
         return (
-            <Tabs defaultIndex={1}>
+            <Tabs defaultIndex={1} >
                 <TabList>
                     {
                         topMenuList.map(function (item, i) {

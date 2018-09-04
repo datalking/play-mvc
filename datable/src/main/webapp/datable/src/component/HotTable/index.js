@@ -6,6 +6,7 @@ import {SettingsMapper} from './settingsMapper';
  * A Handsontable-ReactJS wrapper.
  */
 export default class HotTable extends React.Component {
+
     constructor() {
         super();
 

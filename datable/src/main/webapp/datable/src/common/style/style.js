@@ -10,6 +10,9 @@ const globalStyle = {
 
     borderGray:'1px solid #e6e7e8',
 
+    headerGray:'#f0f0f0',
+    cellGray:'#e0e0e0',
+
 };
 
 export default globalStyle;

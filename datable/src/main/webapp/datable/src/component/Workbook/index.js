@@ -2,6 +2,8 @@ import React from 'react';
 import HotTable from '../HotTable';
 import {mockWorkbookDefaultData} from "../../util/mock-data";
 
+import globalStyle from '../../common/style/style';
+
 class Workbook extends React.Component {
 
     constructor(props) {
@@ -15,9 +17,41 @@ class Workbook extends React.Component {
         // ];
     }
 
+
     render() {
+
+        const hotContainerStyle = {
+            width: '2400px',
+            height: '640px',
+            overflow: 'hidden',
+        };
+        const hotConf = {
+            data: this.data,
+            colHeaders: true,
+            rowHeaders: true,
+            // stretchH: 'all',
+
+        };
+        const sheetIndicatorStyle = {
+            backgroundColor: globalStyle.headerGray,
+            height: '32px',
+        };
+        const statusBarStyle = {
+            backgroundColor: globalStyle.cellGray,
+            height: '24px',
+        };
+
         return (
-            <HotTable data={this.data} colHeaders={true} rowHeaders={true}  stretchH="all"/>
+            <div>
+                <div style={hotContainerStyle}>
+                    {/*<HotTable data={this.data} colHeaders={true} rowHeaders={true} stretchH="all"/>*/}
+                    <HotTable {...hotConf} />
+                </div>
+
+                <div style={sheetIndicatorStyle}> sheet indicator</div>
+
+                <div style={statusBarStyle}> status bar</div>
+            </div>
         );
     }
 }
