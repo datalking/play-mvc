@@ -46,8 +46,14 @@ start from [http://localhost:8900](http://localhost:8900)
 - [ ] 多人协作
 
 ## remind
-
 - undo与redo如何实现  
+
+- excel
+- chart
+- map
+- etl
+- ecosystem
+
 
 ## License
 

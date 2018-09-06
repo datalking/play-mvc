@@ -7,3 +7,6 @@ package-lock.json
 
 bak/
 tomcat.**
+
+bundle.js
+bundle.css
