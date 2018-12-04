@@ -1,5 +1,5 @@
-var path = require('path');
-var webpack = require('webpack');
+const path = require('path');
+const webpack = require('webpack');
 const FileManagerPlugin = require('filemanager-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 

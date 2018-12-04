@@ -7,7 +7,6 @@ import {createBrowserHistory} from 'history';
 import createSagaMiddleware from 'redux-saga';
 
 import rootReducer from './reducer';
-
 import App from './App';
 // import { AppContainer } from 'react-hot-loader'
 
@@ -16,12 +15,14 @@ const sagaMiddleware = createSagaMiddleware();
 
 // const composeEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const composeEnhancer = compose;
+
 const store = createStore(
-    connectRouter(history)(rootReducer),
+    // connectRouter(history)(rootReducer),
+    rootReducer(history),
     composeEnhancer(
         applyMiddleware(
             routerMiddleware(history),
-            sagaMiddleware
+            sagaMiddleware,
         ),
     ),
 );

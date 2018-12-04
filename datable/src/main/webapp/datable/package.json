@@ -15,23 +15,23 @@
   "author": "uptonking",
   "license": "MIT",
   "dependencies": {
-    "bulma": "^0.7.1",
+    "bulma": "^0.7.2",
     "classnames": "^2.2.6",
-    "connected-react-router": "^4.4.1",
+    "connected-react-router": "^5.0.1",
     "exenv": "^1.2.2",
     "font-awesome": "^4.7.0",
-    "handsontable": "^5.0.1",
+    "handsontable": "^6.2.0",
     "history": "^4.7.2",
     "jquery": "^3.3.1",
     "prop-types": "^15.6.2",
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0",
-    "react-redux": "^5.0.7",
+    "react": "^16.6.0",
+    "react-dom": "^16.6.0",
+    "react-redux": "^5.1.0",
     "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1",
     "redux-saga": "^0.16.0",
-    "redux": "^4.0.0",
-    "warning": "^4.0.1"
+    "redux": "^4.0.1",
+    "warning": "^4.0.2"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",
@@ -52,8 +52,8 @@
     "style-loader": "^0.20.3",
     "transfer-webpack-plugin": "^0.1.4",
     "url-loader": "^1.0.1",
-    "webpack": "^4.2.0",
-    "webpack-cli": "^3.1.0",
-    "webpack-dev-server": "^3.1.5"
+    "webpack": "^4.24.0",
+    "webpack-cli": "^3.1.2",
+    "webpack-dev-server": "^3.1.10"
   }
 }

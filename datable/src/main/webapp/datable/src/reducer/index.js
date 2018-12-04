@@ -1,8 +1,13 @@
-import { combineReducers } from 'redux';
-import counterReducer from './counter';
+import {combineReducers} from 'redux';
+import {connectRouter} from 'connected-react-router'
 
-const rootReducer = combineReducers({
-  count: counterReducer,
+import counterReducer from './counter';
+import workbookReducer from './workbookReducer';
+
+const rootReducer = (history) => combineReducers({
+    router: connectRouter(history),
+    count: counterReducer,
+    workbook: workbookReducer,
 });
 
 export default rootReducer;

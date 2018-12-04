@@ -54,6 +54,7 @@ export default class HotTable extends React.Component {
 
     /**
      * Call the `updateSettings` method for the Handsontable instance.
+     *
      * @param newSettings
      */
     updateHot(newSettings) {

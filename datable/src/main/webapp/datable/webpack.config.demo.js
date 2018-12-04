@@ -1,5 +1,5 @@
-var path = require('path');
-var webpack = require('webpack');
+const path = require('path');
+const webpack = require('webpack');
 const FileManagerPlugin = require('filemanager-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
@@ -43,8 +43,8 @@ module.exports = {
                         loader: 'file-loader',
                         options: {
                             name: '[name].[ext]',
-                            outputPath: 'fonts/',    // where the fonts will go
-                            publicPath: '../'       // override the default path
+                            // outputPath: 'fonts/',    // where the fonts will go
+                            // publicPath: '../'       // override the default path
                         }
                     }]
                 },

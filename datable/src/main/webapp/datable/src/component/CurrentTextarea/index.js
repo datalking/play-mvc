@@ -5,8 +5,8 @@ import InsertFunctionModal from "../InsertFunctionModal";
 
 class CurrentTextarea extends React.Component {
 
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             showModalFunc: false,
         };
