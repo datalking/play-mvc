@@ -1,12 +1,15 @@
 .idea/
 *.iml
+
 target/
 build/
+tomcat.**
+
 node_modules/
 package-lock.json
+yarn.lock
 
 bak/
-tomcat.**
 
 bundle.js
 bundle.css

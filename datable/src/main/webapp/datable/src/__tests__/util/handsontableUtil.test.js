@@ -17,4 +17,4 @@ test('should add 26 props to 1st obj', () => {
 
     expect(addedPropsCount).toBe(26);
 
-})
+});

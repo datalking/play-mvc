@@ -7,7 +7,6 @@ import TitleBar from '../component/TitleBar';
 import RibbonMenu from '../component/RibbonMenu';
 import CurrentTextarea from '../component/CurrentTextarea';
 import HotTable from '../component/HotTable';
-import { mockWorkbookDefaultData } from "../util/mock-data";
 
 import { updateSheetData, updateSheetReadOnly } from "../action/workbookAction";
 
@@ -21,7 +20,7 @@ class Workbook extends React.Component {
     constructor(props) {
         super(props);
 
-        this.data = mockWorkbookDefaultData();
+        // this.data = mockWorkbookDefaultData();
         // this.data = [
         //     ["", "Ford", "Volvo", "Toyota", "Honda"],
         //     ["2016", 10, 11, 12, 13],

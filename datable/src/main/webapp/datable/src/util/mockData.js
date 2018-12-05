@@ -2,7 +2,17 @@
  * 模拟excel的默认数据
  */
 export function mockWorkbookDefaultData(rolN, colN) {
-    export function mockWorkbookDefaultDataArrayOfArray();
+    return mockWorkbookDefaultDataArrayOfArray(rolN, colN);
+}
+
+/**
+ * 模拟excel的默认数据，使用对象数组
+ */
+export function mockWorkbookDefaultDataArrayOfObj(rolN, colN) {
+    // 最终返回的数组
+    let tableArr = [];
+
+
 }
 
 /**
