@@ -50,6 +50,7 @@
     "filemanager-webpack-plugin": "^1.0.26",
     "image-webpack-loader": "^4.2.0",
     "jest": "^23.6.0",
+    "jest-cli": "^23.6.0",
     "node-sass": "^4.8.3",
     "react-test-renderer": "^16.6.3",
     "sass-loader": "^6.0.7",
