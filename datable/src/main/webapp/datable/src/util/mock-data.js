@@ -1,12 +1,18 @@
 /**
- * excel的默认列头
+ * 模拟excel的默认数据
  */
-// export function mockWorkbookDefaultData(rolN,colN) {
-export function mockWorkbookDefaultData() {
+export function mockWorkbookDefaultData(rolN, colN) {
+    export function mockWorkbookDefaultDataArrayOfArray();
+}
+
+/**
+ * 模拟excel的默认数据，使用二维数组
+ */
+export function mockWorkbookDefaultDataArrayOfArray(rolN, colN) {
     // 最终返回的数组
     let tableArr = [];
-    let rowNum = 1000;
-    let colNum = 100;
+    let rowNum = rolN || 1000;
+    let colNum = colN || 100;
 
     if (colNum > (26 * 26)) {
         console.log("原始数据列数过多");

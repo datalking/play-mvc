@@ -1,5 +1,5 @@
 import * as C from '../action/actionConstant';
-import {mockWorkbookDefaultData} from "../util/mock-data";
+import { mockWorkbookDefaultData } from "../util/mock-data";
 
 const initialState = {
     settings: {
@@ -29,12 +29,12 @@ const workbookReducer = (state = initialState, action) => {
             }
 
 
-            const newSettings1 = {...state.settings, data: newData};
-            return {...state, settings: newSettings1};
+            const newSettings1 = { ...state.settings, data: newData };
+            return { ...state, settings: newSettings1 };
 
         case C.UPDATE_SHEET_READ_ONLY:
-            const newSettings2 = {...state.settings, readOnly: action.readOnly};
-            return {...state, settings: newSettings2};
+            const newSettings2 = { ...state.settings, readOnly: action.readOnly };
+            return { ...state, settings: newSettings2 };
 
 
         default:

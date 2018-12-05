@@ -1,6 +1,6 @@
 import React from "react";
 
-import {Tab, TabList, Tabs, TabPanel} from "../Tab";
+import { Tab, TabList, Tabs, TabPanel } from "../Tab";
 import '../../common/style/react-tabs.css';
 
 class RibbonMenu extends React.Component {
@@ -35,31 +35,31 @@ class RibbonMenu extends React.Component {
                             return (
                                 <TabPanel key={i}>
                                     <input id="readOnlyCheck"
-                                           type="checkbox"
-                                           onChange={this.props.toggleReadOnly}
-                                           defaultChecked={readOnlyState}
+                                        type="checkbox"
+                                        onChange={setSheetReadOnly}
+                                        defaultChecked={readOnlyState}
                                     />
                                     <label htmlFor="readOnlyCheck">
-                                        Toggle <code>readOnly</code> for the entire table</label>
-                                </TabPanel>
-                            )
-                                ;
+                                        Toggle <code>readOnly</code>
+                                    </label>
+                                </TabPanel>);
                         }
 
                         return (
                             <TabPanel key={i}>
                                 <a className="button">
                                     <span className="icon is-small">
-                                      <i className="fa fa-bold"></i>
+                                        <i className="fa fa-bold"></i>
                                     </span>
                                 </a>
                                 <a className="button">
                                     <span className="icon is-small">
-                                      <i className="fa fa-italic"></i>
+                                        <i className="fa fa-italic"></i>
                                     </span>
                                 </a>
                             </TabPanel>);
-                    });
+                    }
+                    )
                 }
             </Tabs>
         );

@@ -1,9 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {applyMiddleware, compose, createStore} from 'redux';
-import {Provider} from 'react-redux';
-import {routerMiddleware, connectRouter} from 'connected-react-router';
-import {createBrowserHistory} from 'history';
+import { applyMiddleware, compose, createStore } from 'redux';
+import { Provider } from 'react-redux';
+import { routerMiddleware, connectRouter } from 'connected-react-router';
+import { createBrowserHistory } from 'history';
 import createSagaMiddleware from 'redux-saga';
 
 import rootReducer from './reducer';
@@ -29,6 +29,6 @@ const store = createStore(
 
 ReactDOM.render((
     <Provider store={store}>
-        <App history={history}/>
+        <App history={history} />
     </Provider>
 ), document.getElementById('root'));

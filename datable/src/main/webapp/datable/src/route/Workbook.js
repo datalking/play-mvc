@@ -1,15 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types'
-import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 import TitleBar from '../component/TitleBar';
 import RibbonMenu from '../component/RibbonMenu';
 import CurrentTextarea from '../component/CurrentTextarea';
 import HotTable from '../component/HotTable';
-import {mockWorkbookDefaultData} from "../util/mock-data";
+import { mockWorkbookDefaultData } from "../util/mock-data";
 
-import {updateSheetData, updateSheetReadOnly} from "../action/workbookAction";
+import { updateSheetData, updateSheetReadOnly } from "../action/workbookAction";
 
 import 'handsontable/dist/handsontable.full.css';
 import 'font-awesome/css/font-awesome.css';
@@ -31,7 +31,7 @@ class Workbook extends React.Component {
         this.hotInstanceRef = React.createRef();
     }
 
-    onBeforeHotChange(changes, source) {
+    onBeforeHotChange = (changes, source) => {
         // reduxStore.dispatch({
         //     type: 'updateData',
         //     dataChanges: changes
@@ -43,9 +43,9 @@ class Workbook extends React.Component {
     }
 
     toggleReadOnly = (event) => {
-        console.log('==== 点击了只读checkbox')
-        console.log(event)
-        console.log(event.target.value)
+        // console.log('==== 点击了只读checkbox')
+        // console.log(event)
+        // console.log(event.target.value)
         // reduxStore.dispatch({
         //     type: 'updateReadOnly',
         //     readOnly: event.target.checked
@@ -56,8 +56,8 @@ class Workbook extends React.Component {
 
     render() {
 
-        console.log('====props Workbook');
-        const {stateWorkbook} = this.props;
+        // console.log('====props Workbook');
+        const { stateWorkbook } = this.props;
 
         const titleBarProps = {
             title: '你打开的文件名出现在这里hello',
@@ -69,16 +69,16 @@ class Workbook extends React.Component {
         };
         const ribbonMenuProps = {
             height: '36px',
+            setSheetReadOnly: this.toggleReadOnly,
+            readOnlyState: stateWorkbook.settings.readOnly,
         };
         const currentTextareaProps = {
             height: '30px',
-            setSheetReadOnly: this.toggleReadOnly,
-            readOnlyState: stateWorkbook.settings.readOnly,
         };
 
         // 标题栏36、菜单栏120、公式栏30+8、指示器32、状态栏24
         const hotHeight = window.innerHeight - 36 - 120 - 38 - 32 - 24;
-        console.log('====table高度：', hotHeight);
+        // console.log('====table高度：', hotHeight);
         const hotWidth = window.innerWidth - 12;
         const hotContainerStyle = {
             width: hotWidth,
@@ -107,16 +107,16 @@ class Workbook extends React.Component {
 
         return (
             <div>
-                <TitleBar {...titleBarProps}/>
+                <TitleBar {...titleBarProps} />
 
-                <RibbonMenu {...ribbonMenuProps}/>
+                <RibbonMenu {...ribbonMenuProps} />
 
-                <CurrentTextarea enableEdit={true} {...currentTextareaProps}/>
+                <CurrentTextarea enableEdit={true} {...currentTextareaProps} />
 
                 <div style={hotContainerStyle}>
                     <HotTable ref={this.hotInstanceRef}
-                              beforeChange={this.onBeforeHotChange}
-                              settings={stateWorkbook.settings}/>
+                        beforeChange={this.onBeforeHotChange}
+                        settings={stateWorkbook.settings} />
                 </div>
 
                 <div style={sheetIndicatorStyle}> sheet indicator</div>

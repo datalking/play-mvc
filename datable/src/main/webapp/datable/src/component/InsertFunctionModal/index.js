@@ -85,8 +85,8 @@ class InsertFunctionModal extends React.Component {
 
     render() {
 
-        console.log('====props InsertFunctionModal');
-        console.log(this.props);
+        // console.log('====props InsertFunctionModal');
+        // console.log(this.props);
 
         const {
             showModalFunc,
@@ -102,16 +102,16 @@ class InsertFunctionModal extends React.Component {
 
         return (
             <Modal isOpen={showModalFunc}
-                   onRequestClose={this.handleRequestCloseModalFunc}
-                   ariaHideApp={false}
-                   style={s.sModal}
+                onRequestClose={this.handleRequestCloseModalFunc}
+                ariaHideApp={false}
+                style={s.sModal}
             >
                 {
                     funcType.map(function (item, i) {
                         return <a className="button" key={i} style={s.marginRight24}>{item}</a>
                     })
                 }
-                <hr/>
+                <hr />
                 <div>
                     {
                         funcCommon.map(function (item, i) {
