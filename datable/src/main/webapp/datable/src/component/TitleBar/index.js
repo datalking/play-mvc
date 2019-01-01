@@ -1,6 +1,7 @@
 import React from "react";
 
 import globalStyle from '../../common/style/style';
+import './index.scss';
 
 class TitleBar extends React.Component {
 
@@ -23,17 +24,12 @@ class TitleBar extends React.Component {
             display: 'table-cell',
             verticalAlign: 'middle',
         };
-        const titleMidStyle = {
-            float: 'left',
-            textAlign: 'center',
-            width: '84%',
-            display: 'table-cell',
-            verticalAlign: 'middle',
-        };
 
         return (
             <div style={this.props}>
+
                 <div style={iconMidStyle}>
+
                 <span className="icon">
                   <i className="fa fa-th"></i>
                 </span>
@@ -41,8 +37,9 @@ class TitleBar extends React.Component {
                     {/*<i className="fa fa-save"></i>*/}
                     {/*</span>*/}
                 </div>
-                <div style={titleMidStyle}>
-                    <span style={{lineHeight: '36px'}}>{title}</span>
+
+                <div className='TitleBar__title--center'>
+                    <span className='TitleBar__text'>{title}</span>
                 </div>
             </div>
         );

@@ -1,5 +1,16 @@
 # roadmap 
 
+
+## target 
+- 产品定位
+    - 一站式数据管理与分析工具
+    - 交互式表格
+    - 数据地图
+- 技术定位
+    - ssm后台+react前端
+    - olap for table
+    - cell style to css converter
+    
 ## later
 
 

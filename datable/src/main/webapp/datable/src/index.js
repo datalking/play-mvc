@@ -1,14 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { applyMiddleware, compose, createStore } from 'redux';
-import { Provider } from 'react-redux';
-import { routerMiddleware, connectRouter } from 'connected-react-router';
-import { createBrowserHistory } from 'history';
+import {applyMiddleware, compose, createStore} from 'redux';
+import {Provider} from 'react-redux';
+import {routerMiddleware} from 'connected-react-router';
+import {createBrowserHistory} from 'history';
 import createSagaMiddleware from 'redux-saga';
+// import { AppContainer } from 'react-hot-loader'
 
 import rootReducer from './reducer';
 import App from './App';
-// import { AppContainer } from 'react-hot-loader'
 
 const history = createBrowserHistory();
 const sagaMiddleware = createSagaMiddleware();
@@ -17,7 +17,6 @@ const sagaMiddleware = createSagaMiddleware();
 const composeEnhancer = compose;
 
 const store = createStore(
-    // connectRouter(history)(rootReducer),
     rootReducer(history),
     composeEnhancer(
         applyMiddleware(
@@ -29,6 +28,6 @@ const store = createStore(
 
 ReactDOM.render((
     <Provider store={store}>
-        <App history={history} />
+        <App history={history}/>
     </Provider>
 ), document.getElementById('root'));

@@ -1,14 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types'
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
 
 import TitleBar from '../component/TitleBar';
 import RibbonMenu from '../component/RibbonMenu';
 import CurrentTextarea from '../component/CurrentTextarea';
 import HotTable from '../component/HotTable';
 
-import { updateSheetData, updateSheetReadOnly } from "../action/workbookAction";
+import {updateSheetData, updateSheetReadOnly} from "../action/workbookAction";
 
 import 'handsontable/dist/handsontable.full.css';
 import 'font-awesome/css/font-awesome.css';
@@ -20,21 +20,10 @@ class Workbook extends React.Component {
     constructor(props) {
         super(props);
 
-        // this.data = mockWorkbookDefaultData();
-        // this.data = [
-        //     ["", "Ford", "Volvo", "Toyota", "Honda"],
-        //     ["2016", 10, 11, 12, 13],
-        //     ["2017", 20, 11, 14, 13],
-        //     ["2018", 30, 15, 12, 13]
-        // ];
         this.hotInstanceRef = React.createRef();
     }
 
     onBeforeHotChange = (changes, source) => {
-        // reduxStore.dispatch({
-        //     type: 'updateData',
-        //     dataChanges: changes
-        // });
 
         this.props.actionUpdateSheetData(changes, source);
 
@@ -56,7 +45,7 @@ class Workbook extends React.Component {
     render() {
 
         // console.log('====props Workbook');
-        const { stateWorkbook } = this.props;
+        const {stateWorkbook} = this.props;
 
         const titleBarProps = {
             title: '你打开的文件名出现在这里hello',
@@ -85,15 +74,6 @@ class Workbook extends React.Component {
             overflow: 'hidden',
         };
 
-        const hotSetting = {
-            data: this.data,
-            colHeaders: true,
-            rowHeaders: true,
-            colWidths: 100,
-            // rowHeights: 23,
-            // stretchH: 'all',
-
-        };
         const sheetIndicatorStyle = {
             backgroundColor: globalStyle.headerGray,
             height: '32px',
@@ -114,8 +94,8 @@ class Workbook extends React.Component {
 
                 <div style={hotContainerStyle}>
                     <HotTable ref={this.hotInstanceRef}
-                        beforeChange={this.onBeforeHotChange}
-                        settings={stateWorkbook.settings} />
+                              beforeChange={this.onBeforeHotChange}
+                              settings={stateWorkbook.settings}/>
                 </div>
 
                 <div style={sheetIndicatorStyle}> sheet indicator</div>
@@ -137,12 +117,12 @@ const mapStateToProps = state => ({
     stateWorkbook: state.workbook,
     // search: state.router.location.search,
     // hash: state.router.location.hash,
-})
+});
 
 const mapDispatchToProps = dispatch => ({
     actionUpdateSheetData: bindActionCreators(updateSheetData, dispatch),
     actionUpdateSheetReadOnly: bindActionCreators(updateSheetReadOnly, dispatch),
-})
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(Workbook);
 

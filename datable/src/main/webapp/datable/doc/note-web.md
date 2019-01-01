@@ -7,7 +7,6 @@
         - 会导致handsontable的滚动条显示不出来  
     - outerHeight是整个浏览器窗口的大小，包括窗口标题、工具栏、状态栏等。
     - document.documentElement.clientWidth不包括scrollBar
-    - 
 
 ```
 document.documentElement.clientHeight：不包括整个文档的滚动条，但包括<html>元素的边框
