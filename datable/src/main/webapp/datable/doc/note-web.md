@@ -1,6 +1,11 @@
 # note-web
 
 
+## react
+
+- 组件export时使用装饰器会改变ref
+
+## window
 - html高度问题
     - window.innerWidth包括scrollBar
     - innerHeight是DOM视口的大小，包括内容、边框以及滚动条  
@@ -33,3 +38,9 @@ document.body.clientHeight：不包括整个文档的滚动条，也不包括<ht
           - offsetY：鼠标相对于目标事件的父元素的内边界在y坐标的位置  
           - x：设置或获取鼠标指针位置相对于父文档的y坐标。同clientX  
           - y：设置或获取鼠标指针位置相对于父文档的y坐标。同clientY  
+
+
+## misc
+
+- 渐进式图片  
+JPEG、GIF和PNG这三种图像格式都提供了一种功能，让图像能够更快地显示。图像可以以一种特殊方式存储，显示时先大概显示图像的草图，当文件全部下载后再填充细

@@ -1,0 +1,77 @@
+# note excel
+
+## menu
+- datable menu: 9 main menus
+    - file
+        - open
+        - new
+        - save
+        - export to xlsx/pdf
+        - file info
+        - settings
+            - lang
+    - home
+        - edit
+            - font family/size/bold/italic
+            - copy/cut/paste
+            - format painter
+        - cell
+            - align
+            - merge
+            - number format
+            - insert
+            - delete
+            - format
+        - table style
+        - sort
+        - search
+    - insert
+        - row
+        - column
+        - table
+        - image
+        - shape
+        - function
+        - pivot table
+        - chart
+        - art text
+        - special character
+        - hyperlink
+        - comment
+        - checkbox/dropdown
+    - layout
+        - theme
+        - 
+    - data
+        - filter
+        - duplicate highlight/remove
+        - advanced sort
+        - data validation
+        - group
+        - pivot table
+    - review
+        - new comment
+        - comment navigation
+        - spell check
+        - translate 简繁体
+    - view
+        - reading/edit
+        - grid line
+        - line number
+        - zoom
+        - table in/by table 
+    - extension
+        - store
+        - template chooser
+        - mobile data collection
+        - toc
+        - wikipedia
+        - qr code data import
+        - currency converter
+    - help
+        - hotkeys
+- excel online：file, home, insert, data, review, view 
+- excel-en: file, home, insert, draw, page layout, formulas, data, review, view, pivot/query/map
+- excel-zh: 文件、开始、插入、页面布局、公式、数据、审阅、视图、开发工具、设计
+- wps的菜单：文件、开始、插入、页面布局、公式、数据、审阅、视图
+
