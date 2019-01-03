@@ -1,4 +1,13 @@
 {
+  "File": "文件",
+  "Home": "开始",
+  "Insert": "插入",
+  "Layout": "页面布局",
+  "Data": "数据",
+  "Review": "审阅",
+  "View": "视图",
+  "Extension": "扩展",
+  "Help": "帮助",
   "SIMPLE": "简单的句子",
   "HELLO": "你好, {name}。欢迎来到{where}!",
   "TIP": "这是<span style='color:red'>HTML</span>",

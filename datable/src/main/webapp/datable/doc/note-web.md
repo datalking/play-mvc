@@ -4,6 +4,41 @@
 ## react
 
 - 组件export时使用装饰器会改变ref
+- React 的 props 有两个是私有的：key 和 ref，这两者是不能作为普通props传递给子组件的。
+- ajax
+    ```
+    There is a common misconception that fetching in componentWillMount lets you avoid the first empty rendering state.
+    In practice this was never true because React has always executed render immediately after componentWillMount. 
+    If the data is not available by the time componentWillMount fires, the first render will still show a loading state regardless of where you initiate the fetch.
+     This is why moving the fetch to componentDidMount has no perceptible effect in the vast majority of cases.
+    ```
+
+### features
+
+- 17.0
+    - deprecated: componentWillMount()，componentWillUpdate()，componentWillReceiveProps()
+        - 关于提早发送数据请求，官方鼓励将数据请求部分的代码放在组件的constructor()中，将现有componentWillMount中的代码迁移至componentDidMount即可
+        - new: getSnapshotBeforeUpdate()与componentDidUpdate()一起使用可以取代componentWillUpdate
+        - new: getDerivedStateFromProps()与componentDidUpdate()一起使用可以取代componentWillReceiveProps
+
+- 16.3
+    - new Context API：父组件向嵌套内层子组件传递props
+    - createRef：在编码中提前声明需要获取 Ref
+    - ForwardRef：用于高阶组件传递ref，使包裹的无状态组件可以接收ref作为第二个参数，并且可以传递下去。
+    - StrictMode：用于在开发环境下提醒组件内使用不推荐写法和即将废弃的API，不会被渲染成真实DOM
+
+- 16.0
+    - React Fiber：使得大量的计算可以被拆解分片，异步化
+    - ReactDOM.createPortal：解决modal不需要渲染到parent node的问题
+    - Fragment可以让聚合一个子元素列表，并且不在DOM中增加额外节点。
+    - render()方法支持返回数组或返回单个字符串
+    - ErrorBoundary：componentDidCatch()捕获render()时的错误
+    - react dom/propTypes分离
+    - License to MIT 
+
+## DOM
+
+- <dl><dt><dd> 定义带缩进的列表
 
 ## window
 - html高度问题

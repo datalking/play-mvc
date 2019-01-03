@@ -5,6 +5,7 @@ import {Provider} from 'react-redux';
 import {routerMiddleware} from 'connected-react-router';
 import {createBrowserHistory} from 'history';
 import createSagaMiddleware from 'redux-saga';
+import intl from 'react-intl-universal';
 // import { AppContainer } from 'react-hot-loader'
 
 import rootReducer from './reducer';

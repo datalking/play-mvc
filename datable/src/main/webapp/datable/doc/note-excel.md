@@ -6,10 +6,11 @@
         - open
         - new
         - save
-        - export to xlsx/pdf
+        - export to xlsx/pdf/png
         - file info
         - settings
             - lang
+            - changelog
     - home
         - edit
             - font family/size/bold/italic
@@ -22,9 +23,12 @@
             - insert
             - delete
             - format
+        - current selection
+            - clear
+            - export 
         - table style
         - sort
-        - search
+        - search/replace
     - insert
         - row
         - column
@@ -40,8 +44,10 @@
         - comment
         - checkbox/dropdown
     - layout
-        - theme
-        - 
+        - theme: color
+        - watermark
+        - background image
+        - multi sheet organize:order, align
     - data
         - filter
         - duplicate highlight/remove
@@ -68,6 +74,7 @@
         - wikipedia
         - qr code data import
         - currency converter
+        - json format
     - help
         - hotkeys
 - excel online：file, home, insert, data, review, view 

@@ -1,13 +1,14 @@
 import React from "react";
+import intl from 'react-intl-universal';
 
-import { Tab, TabList, Tabs, TabPanel } from "../Tab";
+import {Tab, TabList, Tabs, TabPanel} from "../Tab";
 import '../../common/style/react-tabs.css';
 
 class RibbonMenu extends React.Component {
 
     static defaultProps = {
-        // topMenuList: ["File", "Home", "Insert", "Data", "Review", "View", "Chart", "Help","More"],
-        topMenuList: ["File", "Home", "Insert", "Data", "Review", "View", "Chart", "Help",],
+        // 默认菜单项，各项功能参考excel
+        topMenuList: ["File", "Home", "Insert", "Data", "Review", "View", "Extension", "Help",],
     };
 
     render() {
@@ -23,7 +24,7 @@ class RibbonMenu extends React.Component {
                 <TabList>
                     {
                         topMenuList.map(function (item, i) {
-                            return <Tab key={i}>{`${item}`}</Tab>
+                            return <Tab key={i}>{`${intl.get(item)}`}</Tab>
                         })
                     }
                 </TabList>
@@ -31,34 +32,34 @@ class RibbonMenu extends React.Component {
                 {
                     topMenuList.map(function (item, i) {
 
-                        if (i === 1) {
+                            if (i === 1) {
+                                return (
+                                    <TabPanel key={i}>
+                                        <input id="readOnlyCheck"
+                                               type="checkbox"
+                                               onChange={setSheetReadOnly}
+                                               defaultChecked={readOnlyState}
+                                        />
+                                        <label htmlFor="readOnlyCheck">
+                                            Toggle <code>readOnly</code>
+                                        </label>
+                                    </TabPanel>);
+                            }
+
                             return (
                                 <TabPanel key={i}>
-                                    <input id="readOnlyCheck"
-                                        type="checkbox"
-                                        onChange={setSheetReadOnly}
-                                        defaultChecked={readOnlyState}
-                                    />
-                                    <label htmlFor="readOnlyCheck">
-                                        Toggle <code>readOnly</code>
-                                    </label>
-                                </TabPanel>);
-                        }
-
-                        return (
-                            <TabPanel key={i}>
-                                <a className="button">
+                                    <a className="button">
                                     <span className="icon is-small">
                                         <i className="fa fa-bold"></i>
                                     </span>
-                                </a>
-                                <a className="button">
+                                    </a>
+                                    <a className="button">
                                     <span className="icon is-small">
                                         <i className="fa fa-italic"></i>
                                     </span>
-                                </a>
-                            </TabPanel>);
-                    }
+                                    </a>
+                                </TabPanel>);
+                        }
                     )
                 }
             </Tabs>

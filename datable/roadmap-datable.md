@@ -20,3 +20,10 @@
 - excel预览图，图表预览
 - copy style from one to another
 - 修改文件前默认保存源文件，24h后再删除源文件，方便回滚
+- 手动保存版本
+
+## feature
+- save table extension for chrome
+
+## NOT TODO
+- 产品不包含页面编辑器，页面的设计只包含图层layer和挂件widget
