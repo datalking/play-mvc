@@ -1,5 +1,5 @@
-import * as C from '../action/actionTypeConstant';
-import {mockWorkbookDefaultData} from "../util/mockData";
+import * as C from '../common/constant/actionTypeConstant';
+import {mockWorkbookDefaultData} from "../mock/mockTableData";
 
 const initialState = {
     settings: {

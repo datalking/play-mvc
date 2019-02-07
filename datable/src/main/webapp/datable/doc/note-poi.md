@@ -1,10 +1,14 @@
 # note poi 
 
 
+## dev tips
+
 - 操作excel图表的3种思路
     - 定义包含图表的excel模板，通过改变数据来改变图表
     - jfreechart + poi ：先生成图表图片，再插入excel，每次修改图表都要重新生成图片插入excel
     - java调用vbs，vbs调用excel的宏。
+- excel的结构   
+    - HSSFWorkbook -> HSSFSheet -> HSSFRow -> HSSFCell
 
 ## Apache POI - HSSF and XSSF Limitations  
  known limitations of the POI HSSF and XSSF APIs:  

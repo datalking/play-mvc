@@ -1,11 +1,25 @@
-.TitleBar__title--center {
+.TitleBar--default {
+  width: 100%;
+  height: 36px;
+  //backgroundColor: globalStyle.xlsSkinGreen,
+  //color: #fff;
+  display: table;
+}
+
+.TitleBar__title--default {
   float: left;
   text-align: center;
-  width: 80%;
+  //width: 80%;
   display: table-cell;
   vertical-align: middle;
 }
 
-.TitleBar__text{
+.TitleBar__text {
   line-height: 36px;
+}
+
+.datableLogo {
+  width: 28px;
+  height: 28px;
+  margin: 2px 12px;
 }

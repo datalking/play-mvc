@@ -12,5 +12,6 @@ fontawesome-**
 
 bak/
 
-bundle.js
-bundle.css
+public/bundle.js
+public/bundle.css
+public/fonts/

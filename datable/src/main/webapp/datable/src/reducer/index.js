@@ -1,10 +1,8 @@
 import {combineReducers} from 'redux';
-import {connectRouter} from 'connected-react-router'
 
 import workbookReducer from './workbookReducer';
 
-const rootReducer = (history) => combineReducers({
-    router: connectRouter(history),
+const rootReducer = combineReducers({
     workbook: workbookReducer,
 });
 

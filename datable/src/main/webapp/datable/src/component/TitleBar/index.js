@@ -1,7 +1,7 @@
 import React from "react";
 
-import globalStyle from '../../common/style/style';
 import './index.scss';
+import datableIconOnly from '../../common/image/datableIconOnly.png';
 
 class TitleBar extends React.Component {
 
@@ -26,19 +26,21 @@ class TitleBar extends React.Component {
         };
 
         return (
-            <div style={this.props}>
+            <div className="TitleBar--default">
+                {/*<div style={this.props}>*/}
 
                 <div style={iconMidStyle}>
 
-                <span className="icon">
-                  <i className="fa fa-th"></i>
-                </span>
+                    {/*<span className="icon">*/}
+                    {/*<i className="fa fa-th"></i>*/}
+                    {/*</span>*/}
+                    <img src={datableIconOnly} alt={"datableIcon"} className="datableLogo"/>
                     {/*<span className="icon" onClick={this.handleSaveCurrentFile}>*/}
                     {/*<i className="fa fa-save"></i>*/}
                     {/*</span>*/}
                 </div>
 
-                <div className='TitleBar__title--center'>
+                <div className='TitleBar__title--default'>
                     <span className='TitleBar__text'>{title}</span>
                 </div>
             </div>

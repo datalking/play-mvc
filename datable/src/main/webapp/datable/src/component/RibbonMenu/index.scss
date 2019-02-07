@@ -1,0 +1,35 @@
+@import "../../common/style/common.scss";
+
+.colorGray {
+  color: $textGray;
+}
+
+.menuHeight {
+  height: 120px;
+}
+
+.tabPanelIcon--default {
+  margin: 0 4px;
+}
+
+//选项卡组件的结构：tabs -> tabList -> tab -> tabPanel
+
+/// override default style
+.react-tabs__tab {
+  display: inline-block;
+  border: 1px solid transparent;
+  border-bottom: none;
+  //bottom: -1px;
+  bottom: 0px;
+  position: relative;
+  list-style: none;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.react-tabs__tab--selected {
+  background: #fff;
+  //border-color: #aaa;
+  color: $seaGreen;
+  //border-radius: 5px 5px 0 0;
+}

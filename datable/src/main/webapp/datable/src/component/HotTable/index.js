@@ -7,8 +7,8 @@ import {SettingsMapper} from './settingsMapper';
  */
 export default class HotTable extends React.Component {
 
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
 
         this.hotInstance = null;
         this.settingsMapper = new SettingsMapper();

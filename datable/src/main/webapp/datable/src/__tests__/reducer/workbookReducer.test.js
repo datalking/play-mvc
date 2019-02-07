@@ -1,6 +1,6 @@
 import wbookReducer from '../../reducer/workbookReducer';
-import * as types from '../../action/actionTypeConstant';
-import {mockWorkbookDefaultData} from "../../util/mockData";
+import * as types from '../../common/constant/actionTypeConstant';
+import {mockWorkbookDefaultData} from "../../mock/mockTableData";
 
 describe('test workbookReducer', () => {
 

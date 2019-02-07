@@ -2,12 +2,10 @@ import React from "react";
 
 import Modal from "../Modal";
 
-import globalStyle from '../../common/style/style';
-
 class InsertFunctionModal extends React.Component {
 
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             funcType: ['Common', 'Math', 'Statistics', 'Datetime'],
             funcCommon: ['Sum', 'Avg', 'Count', 'Max', 'Min'],

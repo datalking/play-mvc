@@ -1,7 +1,7 @@
 import React from "react";
 
-import globalStyle from '../../common/style/style';
 import InsertFunctionModal from "../InsertFunctionModal";
+import globalStyle from '../../common/style/style';
 
 class CurrentTextarea extends React.Component {
 

@@ -1,19 +1,9 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import {ConnectedRouter} from 'connected-react-router';
 
-import routes from './route';
 import LocaleLoader from "./component/LocaleLoader";
+import routes from './route';
 
 class App extends React.Component {
-
-    static propTypes = {
-        history: PropTypes.object,
-    };
-
-    constructor(props) {
-        super(props);
-    }
 
     state = {
         localeLoaded: false
@@ -26,15 +16,11 @@ class App extends React.Component {
     };
 
     render() {
-        const {history} = this.props;
+        // console.log(this.state.localeLoaded)
         return (
             <LocaleLoader load={this.loadLocale}>
                 {
-                    this.state.localeLoaded
-                    &&
-                    (< ConnectedRouter history={history}>
-                        {routes}
-                    </ConnectedRouter>)
+                    this.state.localeLoaded && routes
                 }
             </LocaleLoader>
         )

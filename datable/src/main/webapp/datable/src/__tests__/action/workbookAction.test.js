@@ -1,5 +1,5 @@
 import * as actions from '../../action/workbookAction';
-import * as types from '../../action/actionTypeConstant';
+import * as types from '../../common/constant/actionTypeConstant';
 
 
 describe('call workbookAction', () => {

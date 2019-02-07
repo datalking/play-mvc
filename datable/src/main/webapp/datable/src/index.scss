@@ -1,0 +1,22 @@
+@charset "utf-8";
+
+// import global style variables of this project
+@import "common/style/common.scss";
+
+// Set your brand colors
+//$purple: #7200ff;
+// Update Bulma's global variables
+$primary: $azulVerdeGreen;
+$link: $textGray !default;
+
+// Update some of Bulma's component variables
+$box-padding: 0.75rem;
+
+// Import all Bulma component / element
+@import "../node_modules/bulma/bulma.sass";
+
+// import handsontable style
+@import '../node_modules/handsontable/dist/handsontable.full.css';
+
+// import font icons 导入字体图标
+@import "../node_modules/fork-awesome/css/fork-awesome.css";

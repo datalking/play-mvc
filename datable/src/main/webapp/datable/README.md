@@ -1,17 +1,16 @@
-# datasheet  
-excel-like table experience out of the box  
+# datable  
+interactive table experience out of the box    
 
 ## target
-
-- table ui
-- top 20% of most-used excel operations
+- interactive table experience
+- support top 20 most useful Excel features  
 
 ## dev 
 ```sh
- git clone https://github.com/uptonking/reacting.git
- cd reacting/
- npm install
- npm run build
+ git clone https://github.com/uptonking/play-mvc.git
+ cd play-mvc/datable/src/main/webapp/datable
+ npm i
+ npm run demo
 ```
 
 ## demo
@@ -56,9 +55,28 @@ start from [http://localhost:8900](http://localhost:8900)
 
 
 ## License
-
 [MIT](http://opensource.org/licenses/MIT)
 
 
+## Thanks
+Datable wouldn’t be possible without the code shared by the open source community.     
+- Apache License  
+    - [Spring Framework](https://github.com/spring-projects/spring-framework/)
+- MIT  
+    - [Handsontable Community Edition](https://github.com/handsontable/handsontable/)
+    - [Bulma CSS Framework](https://github.com/jgthms/bulma/)
+    - [fork-awesome font icons](https://github.com/ForkAwesome/Fork-Awesome)
+    - [React](https://github.com/facebook/react)
+    - [React Router](https://github.com/ReactTraining/react-router)
+    - [Redux](https://github.com/reduxjs/redux)
+    - [redux-saga](https://github.com/redux-saga/redux-saga)
+    - [react-virtualized](https://github.com/bvaughn/react-virtualized)
+    - [react-tabs](https://github.com/reactjs/react-tabs)
+    - [react-modal](https://github.com/reactjs/react-modal)
+    - [react-sidebar](https://github.com/balloob/react-sidebar)
+    - [react-sortable-tree](https://github.com/frontend-collective/react-sortable-tree)
+    - [react-dnd](https://github.com/react-dnd/react-dnd)
+- BSD  
+    - [react-intl-universal](https://github.com/alibaba/react-intl-universal)
 
 

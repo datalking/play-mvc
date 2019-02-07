@@ -1,7 +1,7 @@
 import React, {Component, Fragment} from 'react';
 import intl from 'react-intl-universal';
 import PropTypes from 'prop-types';
-import {SUPPORT_LOCALES, locales} from '../../common/constant';
+import {SUPPORT_LOCALES, locales} from '../../common/constant/langTranslationConstant';
 
 export default class LocaleLoader extends Component {
 
@@ -10,10 +10,12 @@ export default class LocaleLoader extends Component {
     };
 
     state = {
-        currentLocale: localStorage.getItem('current_locale') || 'zh-CN'
+        currentLocale: localStorage.getItem('currentLocale') || 'zh-CN'
     };
 
     componentDidMount() {
+        // console.log('==componentDidMount')
+
         this.loadLocales();
     }
 
@@ -28,25 +30,13 @@ export default class LocaleLoader extends Component {
 
     // 切换语言
     handleLocaleChange = value => {
-        localStorage.setItem('current_locale', value);
+        localStorage.setItem('currentLocale', value);
         this.loadLocales(value);
     };
 
     render() {
-        return (
-            <Fragment>
-                {/*<select defaultValue={this.state.currentLocale} onChange={this.handleLocaleChange}>*/}
-                    {/*{*/}
-                        {/*SUPPORT_LOCALES.length && SUPPORT_LOCALES.map(*/}
-                            {/*(item, index) => <option key={index} value={item.value}>{item.name}</option>)*/}
-                    {/*}*/}
-                {/*</select>*/}
-                <div>
-                    {
-                        this.props.children || null
-                    }
-                </div>
-            </Fragment>
-        );
+        // console.log('==props4LocaleLoader', this.props)
+        return this.props.children;
+
     }
 }

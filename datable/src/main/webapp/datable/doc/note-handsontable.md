@@ -1,12 +1,19 @@
 # note-handsontable
 
-## dev-log
+## dev tips
+- rowHeights/colWidths能够设置各行/各列的高度/宽度的默认值，也是最小值
+- stretchH能使表格充满容器宽度，且各列水平均分
+- handsontable大小尺寸
+    - Handsontable by default fills its nearest parent element which has a defined width, height and the CSS overflow property set to hidden.
+    - If there are no height and width settings passed in the configuration, the table will vertically and horizontally fill the entire window (again, or any parent element with defined dimensions and overflow: hidden).
+    - you can change the size dynamically any time after the initialization by using the updateSettings code to update the dimensions.
+    - 参考 https://handsontable.com/blog/articles/2016/3/a-complete-guide-to-changing-size-of-handsontable
+    
+## resources
+- docs
+    - https://handsontable.com/docs
 
-- stretchH用于水平均分宽度
-
-
-## summary
-
+## handsontable docs
 
 - handsontable分离了cell vaule的显示displaying和修改altering，renderer负责displaying，editor负责altering。
     - renderer是function，接受实际值，返回html
@@ -166,3 +173,51 @@ hot1.render();
     - checkbox copy之后是true
     - linux 不能使用ctrl多选
 
+
+## changelog
+
+- 6.2.1-20181212
+    - Updated babel to 7.x
+    - Corrected the CSS property assignment to zero from 0 to '0'
+- 6.2.0-20181114
+    - Added the Korean, Latvian language support
+    - Updated the TypeScript definition file for ColumnSorting, MultiColumnSorting, beforeColumnMove
+    - Refactored the columnSorting plugin to be reusable with the multiColumnSorting plugin
+    - Refactored the multiColumnSorting plugin to use the columnSorting plugin
+- 6.1.0-20181017
+    - Moved the fixedRowsBottom functionality to Handsontable CE
+    - Introduced a new functionality to the Copy/Paste plugin. From version 6.1.0, it supports the text/html data type alongside text/plain
+- 6.0.0-20180927
+    - This release contains changes to the ColumnSorting plugin exclusively
+    - refactored and rewrote parts of the ColumnSorting plugin in order for it to work seamlessly with the new MultiColumnSorting plugin
+    - Added a new plugin - MultiColumnSorting
+    - Added a possibility to disable the action of sorting by clicking on the headers, using the headerAction option
+- 5.0.0-20180711
+    - Refactored the Custom Borders plugin
+        - added new methods such as getBorders, setBorders and clearBorders
+    - Added an ability to disable Byte Order Mark (BOM) while exporting table to the CSV file. 
+- 4.0.0-20180613
+    - Changed the default values for the following configuration options
+        - autoInsertRow (was: true, is: false)
+        - autoWrapCol (was: false, is: true)
+        - autoWrapRow (was: false, is: true)
+    - Updated our number-handling dependency, Numbro to the latest version
+- 3.0.0-20180516
+    - Column Sorting plugin is over the first stage of refactoring
+- 2.0.0-20180411
+    - Rewritten the Search and Custom Borders plugins to ES6.
+    - Added the beforeContextMenuShow hook, triggered within the Context Menu plugin
+    - Added extra parameters for the beforeFilter and afterFilter hooks
+    - The corresponding Handsontable CE version is 2.0.0.
+- 1.18.0-20180314
+    - Removed the mobile editor from the repository. After this version, a standard editor will be used when using mobile devices
+    - Added a cellProperties argument for the beforeValueRender hook.
+- 1.14.0-20170912
+    - Since version 1.14.0, it is required to pass a valid Handsontable Pro license key in the settings object under the licenseKey property
+    - The corresponding Handsontable CE version is 0.34.2.
+- 1.11.0-beta1-20170517
+    - Migration from Traceur to Babel.We're now using Babel to transpile our code.
+- 1.0.0-20160120
+    - Backward incompatible change 
+    - Prevent displaying the dropdown header buttons in higher levels of headers (for example, when using the nested headers plugin).
+    

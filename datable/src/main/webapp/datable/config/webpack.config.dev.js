@@ -5,13 +5,12 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = {
     entry: [
-        // './demo/index.js',
         './src/index.js',
     ],
 
     output: {
-        // path: path.join(__dirname, 'public'),
-        path: __dirname,
+        path: path.join(__dirname, '../public'),
+        // path: __dirname,
         filename: 'bundle.js',
     },
 
@@ -22,15 +21,15 @@ module.exports = {
                     test: /\.(js|jsx)$/,
                     exclude: /node_modules/,
                     use: {
-                        loader: 'babel-loader?babelrc=false&extends=' + path.resolve(__dirname, '../.babelrc')
+                        loader: 'babel-loader',
                     },
                 },
                 {
                     test: /\.s?[ac]ss$/,
                     use: [
                         {loader: MiniCssExtractPlugin.loader, options: {}},
-                        {loader: 'css-loader', options: {url: false, sourceMap: true}},
-                        {loader: 'sass-loader', options: {sourceMap: true}}
+                        {loader: 'css-loader', options: {sourceMap: true}},
+                        {loader: 'sass-loader', options: {sourceMap: true}},
                     ],
                 },
                 {
@@ -39,10 +38,19 @@ module.exports = {
                         loader: 'file-loader',
                         options: {
                             name: '[name].[ext]',
-                            // outputPath: 'fonts/',    // where the fonts will go
-                            // publicPath: '../'       // override the default path
+                            outputPath: 'fonts/',    // where the fonts will go
+                            // publicPath: 'fonts/'       // override the default path
                         }
                     }]
+                },
+                {
+                    test: /\.(png|jpg|jpeg|gif)$/,
+                    use: {
+                        loader: 'url-loader',
+                        options: {
+                            limit: 250000 // Max file size = 250kb
+                        }
+                    }
                 },
             ],
         },
@@ -50,6 +58,7 @@ module.exports = {
     plugins:
         [
             new MiniCssExtractPlugin({
+                path: path.join(__dirname, '../public'),
                 filename: "bundle.css",
             }),
             new webpack.LoaderOptionsPlugin({
@@ -90,6 +99,7 @@ module.exports = {
         {
             contentBase: path.join(__dirname, '../public'),
             port: 8900,
+            publicPath: '/',
             // 设置自动刷新的方式，inline会在entry添加新入口，会在控制台显示reload状态，iframe会在页面header显示reload状态
             inline: true,
             // 启动热更新
@@ -99,7 +109,6 @@ module.exports = {
                 warnings: true,
                 errors: true
             },
-            publicPath: '/',
             watchContentBase: true,
         }
 
