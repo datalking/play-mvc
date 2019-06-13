@@ -5,6 +5,16 @@ java笔记
 
 - (String)obj 与 obj.toString() 的区别
 - java8 接口 静态方法 原理
+- 表面上看，split比index + subString要简单很多，但大数据处理时后者性能是前者的将近15倍
+- java读取xml时，当前元素结束>之后，下一行元素<之前，是一个空白Node
+
+
+## java 并发
+
+- 使用场景
+    - countdownlatch 多接口并发调用
+    - Fork join做过并行计算
+    - atomicinteger 并发下载数量限制
 
 ## java web
 

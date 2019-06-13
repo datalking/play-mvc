@@ -8,7 +8,7 @@
     - 数据地图
 - 技术定位
     - ssm后台+react前端
-    - olap for table
+    - olap from table
     - poi easy chart lib
     - cell style to css converter
     

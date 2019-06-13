@@ -56,7 +56,7 @@ class Workbook extends React.Component {
         // 标题栏36、菜单栏120、公式栏30+8、指示器32、状态栏24
         const hotHeight = window.innerHeight - 36 - 120 - 38 - 32 - 24;
         // console.log('====table高度：', hotHeight);
-        const hotWidth = window.innerWidth - 12;
+        const hotWidth = window.innerWidth - 12-16;
         const hotContainerStyle = {
             width: hotWidth,
             height: hotHeight,

@@ -27,6 +27,44 @@
     
 ## dev tips
 
+- js对象的属性
+    - writable
+    - enumerable
+    - configurable
+
+- js闭包
+    - 「函数」和「函数内部能访问到的变量」（也叫环境）的总和，就是一个闭包
+        - https://zhuanlan.zhihu.com/p/22486908
+    - 将外部作用域中的局部变量封闭起来的函数对象称为闭包。被封闭起来的变量与封闭它的函数对象有相同的生命周期。
+    - 返回函数的函数
+    - 能读取函数内部的变量
+    - 应用场景
+        - 保护函数内的变量安全：如迭代器、生成器
+    　　- 在内存中维持变量：如果缓存数据、柯里化
+    - 闭包的特点很鲜明，闭包内，变量无法释放，无法被直接访问；闭包可以被延迟执行
+
+- 函数中的 this
+    - this的指向是由它所在函数调用的上下文决定的，而不是由它所在函数定义的上下文决定的
+    - 由于函数可以在不同的运行环境执行，所以需要有一种机制，能够在函数体内部获得当前的运行环境（context）。所以，this就出现了，它的设计目的就是在函数体内部，指代函数当前的运行环境。
+    - 例子
+    ```
+    var name = "The Window";
+　　var object = {
+　　　　name : "My Object",
+　　　　getNameFunc : function(){
+            console.log(this.name); // my object
+　　　　　　return function(){
+                console.log(this.name); // the window
+　　　　　　　　return this.name;
+　　　　　　};
+　　　　}
+　　};
+　　const v=object.getNameFunc()();
+    console.log(v); // the window
+    ```
+    - object.getnameFunc() 返回的匿名闭包函数被全局变量所引用，其中的this指向全局变量，当执行时打印The Window 。
+    - 闭包的两个作用：一个是可以读取函数内部的变量，另一个就是让这些变量的值始终保持在内存中。
+
 - js equals
     - `==`：等同，比较运算符，两边值类型不同的时候，先进行类型转换，再比较；
     - `===`：恒等，严格比较运算符，不做类型转换，类型不同就是不等；
@@ -37,6 +75,9 @@
 	- 扩展运算符支持遍历数组
 	- 扩展运算符 is A proposal, not standardized, Literal, not dynamic.
 		- 动态示例 `options = Object.assign.apply(Object, [{}].concat(sources))`
+
+- core-js
+    - core-js是babel-polyfill的底层依赖，用ES3实现了大部分的ES2017原生标准库
 
 - HTTP cookies
 	- An HTTP cookie (web cookie, browser cookie) is a small piece of data that a server sends to the user's web browser. 

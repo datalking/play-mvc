@@ -1823,8 +1823,8 @@ function Example() {
 
 ## changelog
 
-https://github.com/facebook/react/blob/master/CHANGELOG.md       
-https://reactjs.org/versions     
+https://github.com/facebook/react/blob/master/CHANGELOG.md         
+https://reactjs.org/versions      
 
 - 16.7.0-20181219
 	- deprecated: componentWillMount()，componentWillUpdate()，componentWillReceiveProps()

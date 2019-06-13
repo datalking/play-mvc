@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "start": "npm run demo",
-    "demo": "webpack-dev-server --devtool eval-source-map --progress --color --history-api-fallback --config './config/webpack.config.dev.js' --mode development",
+    "demo": "webpack-dev-server --devtool eval-source-map --progress --color --history-api-fallback --config ./config/webpack.config.dev.js --mode development",
     "watch": "webpack --config ./config/webpack.config.dev.js --mode development --watch --progress ",
     "build": "webpack --config ./config/webpack.config.prod.js --mode development --progress ",
     "test": "jest"

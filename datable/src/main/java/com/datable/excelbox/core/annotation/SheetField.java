@@ -1,0 +1,35 @@
+package com.datable.excelbox.core.annotation;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+/**
+ * @author jinyaoo
+ */
+@Target(ElementType.FIELD)
+@Retention(RetentionPolicy.RUNTIME)
+@Inherited
+public @interface SheetField {
+
+    /**
+     * 列标题名，支持嵌套表头
+     * 默认会使用模型对象的属性名
+     */
+    String[] value() default {""};
+
+    /**
+     * 列的顺序，从1开始
+     * 读取解析时可用可不用，用于生成sheet时指定顺序
+     */
+    int order() default 99999;
+
+    /**
+     * 列字段类型
+     */
+    Class<?> filedClazz() default Object.class;
+
+
+}

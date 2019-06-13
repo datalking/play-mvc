@@ -8,7 +8,15 @@
     - If there are no height and width settings passed in the configuration, the table will vertically and horizontally fill the entire window (again, or any parent element with defined dimensions and overflow: hidden).
     - you can change the size dynamically any time after the initialization by using the updateSettings code to update the dimensions.
     - 参考 https://handsontable.com/blog/articles/2016/3/a-complete-guide-to-changing-size-of-handsontable
-    
+
+## faq
+
+- Walkontable is the return value of many methods but not mentioned in the docs
+    - Walkontable is for internal use only. 
+    - It used to be a separate library, but now it is included to HOT repository and it's core functionality is to render HTML table.
+- Currently the best way to style Handsontable is to use custom renderers.
+- Links/click events from custom renderers not working 
+
 ## resources
 - docs
     - https://handsontable.com/docs
@@ -175,8 +183,25 @@ hot1.render();
 
 
 ## changelog
-
-- 6.2.1-20181212
+- 7.0.0-20190306
+    - Starting with version 7.0.0, there is only one Handsontable, as Handsontable Pro has been merged with Handsontable Community Edition.
+    - Handsontable is now "source-available" instead of "open source". The MIT license has been replaced with custom, free for non-commercial license.
+    - Removed the deprecated selectCellByProp method
+    - Added the possibility to declare the table’s width/height using relative values (%, vh, vw, rem, em).
+        - https://github.com/handsontable/handsontable/issues/5749
+    - Added the beforeTrimRows and beforeUntrimRows
+    - Refactored the following classes to ES6 
+        - BaseEditor
+        - AutocompleteEditor
+        - HandsontableEditor
+        - SelectEditor
+        - TextEditor
+        - Walkontable -> Event
+        - EditorManager
+        - MultiMap
+        - TableView
+        - DataMap
+- 6.2.2-20181219
     - Updated babel to 7.x
     - Corrected the CSS property assignment to zero from 0 to '0'
 - 6.2.0-20181114

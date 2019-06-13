@@ -2,14 +2,15 @@
 
 ## 约定
 
-- [ ] 对在线excel的某些操作不会保存，未说明的操作都不会保存
-     - Binding rows with headers 后移动行，不会保存修改
-     - Hiding columns和Hiding rows不会保存
-     
-- [ ] 对在线excel的某些操作一定会保存
-    - 数据修改编辑
-    - moving rows和columns
-    - 默认保存row和column的size
+- [ ] 对datable在线表格的修改操作默认不会保存，只会保存这里声明过的操作
+    - 会保存
+        - 单元格数据编辑
+        - moving rows和columns
+        - 默认保存row和column的size
+   - 不会保存
+        - Binding rows with headers 后移动行，不会保存修改
+        - Hiding columns和Hiding rows不会保存
+        - **其他未声明的操作** 不会保存修改
 
 - [ ] 默认仅支持列级别的数据验证，不支持单元格级别的验证
 
@@ -29,6 +30,7 @@
 ## faq
 
 - Column summary 交互如何设计
+    - 列的右侧图标菜单
 
 - 表格中空值如何存储
 
