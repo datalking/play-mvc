@@ -7,15 +7,21 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * 用于标注模型类属性与表中列关系的注解
+ *
  * @author jinyaoo
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface SheetField {
+    /**
+     * 简单列名
+     */
+    String title() default "";
 
     /**
-     * 列标题名，支持嵌套表头
+     * 列名，支持嵌套表头
      * 默认会使用模型对象的属性名
      */
     String[] value() default {""};
@@ -26,10 +32,9 @@ public @interface SheetField {
      */
     int order() default 99999;
 
-    /**
-     * 列字段类型
-     */
-    Class<?> filedClazz() default Object.class;
-
+//    /**
+//     * 列字段类型
+//     */
+//    Class<?> filedClazz() default Object.class;
 
 }

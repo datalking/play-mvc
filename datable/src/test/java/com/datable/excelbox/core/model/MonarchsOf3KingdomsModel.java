@@ -5,8 +5,8 @@ import com.datable.excelbox.core.annotation.SheetField;
 
 public class MonarchsOf3KingdomsModel {
 
-    @SheetField(order = 1)
-    private String monarchName;
+    @SheetField(order = 4)
+    private String note;
 
     @SheetField(order = 2)
     private String bigEventInCareer;
@@ -14,8 +14,8 @@ public class MonarchsOf3KingdomsModel {
     @SheetField(order = 3)
     private String title;
 
-    @SheetField(order = 4)
-    private String note;
+    @SheetField(order = 1)
+    private String monarchName;
 
     public String getMonarchName() {
         return monarchName;

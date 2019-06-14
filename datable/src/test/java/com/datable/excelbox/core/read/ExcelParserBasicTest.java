@@ -11,6 +11,8 @@ import org.junit.Test;
 import java.io.InputStream;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+
 /**
  * excel解析器 基本功能测试
  *
@@ -43,8 +45,10 @@ public class ExcelParserBasicTest extends BaseTest {
 
         ExcelParser parser = new ExcelFactory().createParser(in);
 
-        List<List<Object>> strList = parser.readAsListOfObject(MonarchsOf3KingdomsModel.class);
+        List<MonarchsOf3KingdomsModel> objList = parser.readAsListOfObject(MonarchsOf3KingdomsModel.class);
 
+        System.out.println(objList.get(0));
+        assertEquals(8, objList.size());
     }
 
 
@@ -60,6 +64,21 @@ public class ExcelParserBasicTest extends BaseTest {
         List<List<String>> strList = parser.readAsListOfString();
 
         prettyPrintListListString(strList, xlsFileName);
+    }
+
+    @Test
+    public void readXlsAsListOfObject() {
+
+        String xlsFile = BaseTest.SAMPLE_XLS_LOCAL_PATH;
+        String xlsFileName = StrUtil.getFileNameFromPath(xlsFile);
+        InputStream in = FileUtil.getResourceAsInputStream(xlsFile);
+
+        ExcelParser parser = new ExcelFactory().createParser(in);
+
+        List<MonarchsOf3KingdomsModel> objList = parser.readAsListOfObject(MonarchsOf3KingdomsModel.class);
+
+        System.out.println(objList.get(0));
+        assertEquals(8, objList.size());
     }
 
 

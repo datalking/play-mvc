@@ -2,6 +2,8 @@ package com.datable.excelbox.core.util;
 
 import com.datable.excelbox.core.constant.NameConstant;
 import org.apache.poi.poifs.filesystem.FileMagic;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DateUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,7 +13,7 @@ import java.io.InputStream;
  *
  * @author jinyaoo
  */
-public class POIBasedUtil {
+public final class POIBasedUtil {
 
     /**
      * 获取excel文件的真实类型，即判断是03格式还是07格式
@@ -39,6 +41,36 @@ public class POIBasedUtil {
         }
 
         return null;
+    }
+
+    public static String getCellValueAsString(Cell cell) {
+        String cellValStr = "";
+
+        switch (cell.getCellTypeEnum()) {
+            case STRING:
+                cellValStr = cell.getRichStringCellValue().getString();
+                break;
+            case NUMERIC:
+                if (DateUtil.isCellDateFormatted(cell)) {
+                    cellValStr = cell.getDateCellValue().toString();
+                } else {
+                    cellValStr = String.valueOf(cell.getNumericCellValue());
+                }
+                break;
+            case BOOLEAN:
+                cellValStr = String.valueOf(cell.getBooleanCellValue());
+                break;
+            case FORMULA:
+                cellValStr = cell.getCellFormula();
+                break;
+            case BLANK:
+                cellValStr = "";
+                break;
+            default:
+                cellValStr = "";
+        }
+
+        return cellValStr;
     }
 
 }

@@ -71,7 +71,8 @@ public abstract class ExcelParser {
      * 读excel，有模型映射，内容保存为java bean对象
      */
     public abstract <T> List<T> readAsListOfObject();
-    public abstract <T> List<T> readAsListOfObject(Class<?> clazz);
+
+    public abstract <T> List<T> readAsListOfObject(Class<T> clazz);
 
 //    /**
 //     * 读excel，为了和jackson的接口兼容
