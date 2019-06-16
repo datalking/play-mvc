@@ -1,5 +1,7 @@
 package com.datable.excelbox.core.support;
 
+import com.datable.excelbox.core.util.SheetDataUtil;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +26,13 @@ public class SheetHeader {
      * 顺序索引基于0
      */
     private Map<Integer, SheetHeaderColumn> headerColumnMap = new HashMap<>();
+
+    public SheetHeader() {
+    }
+
+    public SheetHeader(Class<?> headerClazz) {
+        this.headerClazz = headerClazz;
+    }
 
     public Class<?> getHeaderClazz() {
         return headerClazz;

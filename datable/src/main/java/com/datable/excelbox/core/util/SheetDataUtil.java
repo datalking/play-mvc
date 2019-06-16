@@ -5,6 +5,8 @@ import com.datable.excelbox.core.support.SheetHeaderColumn;
 import com.datable.excelbox.core.support.SheetHeader;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -139,6 +141,13 @@ public final class SheetDataUtil {
         }
     }
 
+    /**
+     * 根据表中一行数据创建相应的对象
+     *
+     * @param row         基于poi的一行
+     * @param sheetHeader 表头信息
+     * @return 代表一行数据的对象
+     */
     public static Object createRowObjectFromRowData(Row row, SheetHeader sheetHeader) {
 
         int cellIndexLast = row.getLastCellNum();
@@ -170,5 +179,68 @@ public final class SheetDataUtil {
 
         return rowObj;
     }
+
+    /**
+     * 将list中的数据创建一张表sheet
+     *
+     * @param list         建表用的数据
+     * @param workbook     写入数据的excel
+     * @param sheetName    表名
+     * @param headerRowNum 表头行数
+     */
+    public static void createOneSheetFormList(List<?> list, Workbook workbook, String sheetName, int headerRowNum) {
+        Sheet sheet = workbook.createSheet(sheetName);
+        // 若没有表头，则生成空excel
+        if (headerRowNum == 0) {
+            // 若没有数据
+            if (list.size() == 0) {
+                return;
+            }
+        }
+
+        // todo 列表中无数据
+        Class headerClazz = list.get(0).getClass();
+        SheetHeader sheetHeader = getSheetHeaderFromAnnotatedClass(headerClazz);
+        Map<Integer, SheetHeaderColumn> colMap = sheetHeader.getHeaderColumnMap();
+
+        // 若有表头，则创建表头行
+        if (headerRowNum > 0) {
+            Row row0 = sheet.createRow(0);
+            for (int j = 0; j < colMap.size(); j++) {
+                // todo 测试大于128无缓存的key是否匹配
+                String colName = colMap.get(j).getTitle();
+                // 若注解中不包含列名或列名为空字符串，则默认使用模型类属性名作为列名
+                if (colName == null || colName.equals("")) {
+                    colName = colMap.get(j).getField().getName();
+                }
+                row0.createCell(j).setCellValue(colName);
+            }
+        }
+        // 将每个对象分别写入一行
+        for (int i = 0; i < list.size(); i++) {
+            Object curObj = list.get(i);
+            Row row;
+            if (headerRowNum > 0) {
+                row = sheet.createRow(i + 1);
+            } else {
+                row = sheet.createRow(i);
+            }
+            for (int j = 0; j < colMap.size(); j++) {
+                Field f = colMap.get(j).getField();
+//                String colFieldName = f.getName();
+                Object colObj = null;
+                f.setAccessible(true);
+                try {
+                    colObj = f.get(curObj);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+                row.createCell(j).setCellValue(colObj.toString());
+            }
+
+        }
+
+    }
+
 
 }

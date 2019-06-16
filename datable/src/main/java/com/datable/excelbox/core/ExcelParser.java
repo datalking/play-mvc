@@ -19,7 +19,7 @@ public abstract class ExcelParser {
 
 
     protected ExcelParser(int features) {
-        features = features;
+        this.features = features;
     }
 
     /**

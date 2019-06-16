@@ -16,7 +16,7 @@ import static org.junit.Assert.assertNull;
  * @version 1.0
  * @since <pre>May 26, 2019</pre>
  */
-public class POIBasedUtilTest {
+public final class POIBasedUtilTest {
 
     private String basePath = "excel4test/blank/";
     private String xlsx01 = basePath + "blankWorkbook.xlsx";

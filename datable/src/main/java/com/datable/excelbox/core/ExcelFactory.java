@@ -6,6 +6,7 @@ import com.datable.excelbox.core.parser.DOMBasedExcelParser;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -17,10 +18,10 @@ import java.io.OutputStream;
 public class ExcelFactory {
 
     protected final static int DEFAULT_PARSER_FEATURE_FLAGS = ExcelParser.Feature.collectDefaults();
-//    protected final static int DEFAULT_GENERATOR_FEATURE_FLAGS = ExcelGenerator.Feature.collectDefaults();
+    protected final static int DEFAULT_GENERATOR_FEATURE_FLAGS = ExcelGenerator.Feature.collectDefaults();
 
     protected int parserFeatures = DEFAULT_PARSER_FEATURE_FLAGS;
-//    protected int generatorFeatures = DEFAULT_GENERATOR_FEATURE_FLAGS;
+    protected int generatorFeatures = DEFAULT_GENERATOR_FEATURE_FLAGS;
 
     public final ExcelFactory configure(ExcelParser.Feature f, boolean state) {
         return state ? enable(f) : disable(f);
@@ -66,8 +67,13 @@ public class ExcelFactory {
 
 
     public ExcelGenerator createGenerator(String outputExcelPath) {
-
-        return null;
+        OutputStream out  = null;
+        try {
+            out = new FileOutputStream(outputExcelPath);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return createGenerator(out);
     }
 
     public ExcelGenerator createGenerator(File file) {
@@ -77,7 +83,7 @@ public class ExcelFactory {
 
     public ExcelGenerator createGenerator(OutputStream out) {
 
-        return null;
+        return new DOMBasedExcelGenerator(out, generatorFeatures);
     }
 
 }

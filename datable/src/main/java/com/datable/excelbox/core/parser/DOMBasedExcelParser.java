@@ -1,12 +1,10 @@
 package com.datable.excelbox.core.parser;
 
-import com.datable.excelbox.core.support.SheetHeaderColumn;
 import com.datable.excelbox.core.support.SheetHeader;
 import com.datable.excelbox.core.util.POIBasedUtil;
 import com.datable.excelbox.core.util.SheetDataUtil;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -15,9 +13,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 以DOM/Usermodel方式读取解析Excel
@@ -41,6 +37,11 @@ public class DOMBasedExcelParser extends ParserBase {
         }
 
     }
+
+    public DOMBasedExcelParser(InputStream inputStream) {
+        this(inputStream, 9999);
+    }
+
 
     /**
      * 读取excel指定sheet的指定行范围的数据，返回字符串列表

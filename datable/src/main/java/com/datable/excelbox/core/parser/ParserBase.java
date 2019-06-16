@@ -7,7 +7,6 @@ import com.datable.excelbox.core.ExcelParser;
  */
 public abstract class ParserBase extends ExcelParser {
 
-
     public ParserBase(int parserFeatures) {
         super(parserFeatures);
     }

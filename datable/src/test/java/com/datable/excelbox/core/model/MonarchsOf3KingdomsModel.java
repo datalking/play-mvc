@@ -1,8 +1,11 @@
 package com.datable.excelbox.core.model;
 
-
 import com.datable.excelbox.core.annotation.SheetField;
 
+/**
+ * 用于测试的简单模型类
+ * 所有属性均为字符串
+ */
 public class MonarchsOf3KingdomsModel {
 
     @SheetField(order = 4)
@@ -16,6 +19,13 @@ public class MonarchsOf3KingdomsModel {
 
     @SheetField(order = 1)
     private String monarchName;
+
+    public MonarchsOf3KingdomsModel(String monarchName, String bigEventInCareer, String title, String note) {
+        this.monarchName = monarchName;
+        this.bigEventInCareer = bigEventInCareer;
+        this.title = title;
+        this.note = note;
+    }
 
     public String getMonarchName() {
         return monarchName;
