@@ -30,13 +30,13 @@ public final class SheetDataUtil {
      * @param data 输入数据
      * @return 列数相等的表格数据
      */
-    public static List<List<String>> matrixDataToSameColumn(List<List<String>> data) {
+    public static List<List<String>> updateAllRowsToMaxColumnCount(List<List<String>> data) {
 
         if (data == null || data.size() == 0) {
             return null;
         }
 
-        int maxColNum = getMaxColNum(data);
+        int maxColNum = getMaxColumnCount(data);
 
         int rowNum = data.size();
         for (int i = 0; i < rowNum; i++) {
@@ -55,10 +55,11 @@ public final class SheetDataUtil {
 
     /**
      * 获取表格数据的最大列数
+     *
      * @param data 字符串列表
      * @return 所有行中最大的列数
      */
-    public static int getMaxColNum(List<List<String>> data) {
+    public static int getMaxColumnCount(List<List<String>> data) {
         int rowNum = data.size();
         int maxColNum = 0;
         for (int i = 0; i < rowNum; i++) {
@@ -77,7 +78,7 @@ public final class SheetDataUtil {
      * @param headerClazz 该sheet数据对应的模型类
      * @return 表头对象
      */
-    public static SheetHeader getSheetHeaderFromAnnotatedClass(Class<?> headerClazz) {
+    public static SheetHeader createSheetHeaderFromAnnotatedClass(Class<?> headerClazz) {
         SheetHeader sheetHeader = new SheetHeader();
         sheetHeader.setHeaderClazz(headerClazz);
 
@@ -154,7 +155,7 @@ public final class SheetDataUtil {
         int cellIndexLast = row.getLastCellNum();
         Object rowObj = null;
         try {
-            // 代表当前行数据的对象
+            // 代表当前行数据的对象 todo 当模型类只存在有参构造函数时会出现异常
             rowObj = sheetHeader.getHeaderClazz().newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
@@ -189,22 +190,19 @@ public final class SheetDataUtil {
      * @param sheetName    表名
      * @param headerRowNum 表头行数
      */
-    public static void createOneSheetFormList(List<?> list, Workbook workbook, String sheetName, int headerRowNum) {
+    public static void createOneSheetFromList(List<?> list, Workbook workbook, String sheetName, int headerRowNum, SheetHeader sheetHeader) {
         Sheet sheet = workbook.createSheet(sheetName);
-        // 若没有表头，则生成空excel
+        // 若没有表头
         if (headerRowNum == 0) {
-            // 若没有数据
+            // 若没有数据，则生成空excel
             if (list.size() == 0) {
                 return;
             }
         }
 
-        // todo 列表中无数据
-        Class headerClazz = list.get(0).getClass();
-        SheetHeader sheetHeader = getSheetHeaderFromAnnotatedClass(headerClazz);
         Map<Integer, SheetHeaderColumn> colMap = sheetHeader.getHeaderColumnMap();
 
-        // 若有表头，则创建表头行
+        // 若有表头，则先创建表头行
         if (headerRowNum > 0) {
             Row row0 = sheet.createRow(0);
             for (int j = 0; j < colMap.size(); j++) {
@@ -217,7 +215,8 @@ public final class SheetDataUtil {
                 row0.createCell(j).setCellValue(colName);
             }
         }
-        // 将每个对象分别写入一行
+
+        /// 然后将列表中每个对象分别写入一行
         for (int i = 0; i < list.size(); i++) {
             Object curObj = list.get(i);
             Row row;
@@ -226,6 +225,8 @@ public final class SheetDataUtil {
             } else {
                 row = sheet.createRow(i);
             }
+
+            /// 遍历行对象所有属性，属性值都读取为字符串写入单元格
             for (int j = 0; j < colMap.size(); j++) {
                 Field f = colMap.get(j).getField();
 //                String colFieldName = f.getName();
@@ -238,7 +239,6 @@ public final class SheetDataUtil {
                 }
                 row.createCell(j).setCellValue(colObj.toString());
             }
-
         }
 
     }

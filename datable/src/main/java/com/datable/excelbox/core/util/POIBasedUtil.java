@@ -43,6 +43,12 @@ public final class POIBasedUtil {
         return null;
     }
 
+    /**
+     * 读取单元格数据为字符串
+     *
+     * @param cell 基于poi的单元格
+     * @return 单元格内容字符串
+     */
     public static String getCellValueAsString(Cell cell) {
         String cellValStr = "";
 
@@ -61,6 +67,7 @@ public final class POIBasedUtil {
                 cellValStr = String.valueOf(cell.getBooleanCellValue());
                 break;
             case FORMULA:
+                // todo 公式计算
                 cellValStr = cell.getCellFormula();
                 break;
             case BLANK:

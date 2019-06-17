@@ -80,10 +80,12 @@ public abstract class ExcelGenerator {
      *
      * @param data 对象列表
      */
-    public abstract void writeListOfObjectAsExcel(List<?> data);
+    public abstract <T> void writeListOfObjectAsExcel(List<T> data, Class<T> clazz);
+
+//    public abstract void writeListOfObjectAsExcel(List<?> data);
 
     /**
-     * 将list中的数据导出excel，有模型映射，有模板
+     * 将list中的数据导出excel，有模型映射，有预定义模板
      */
     public abstract void writeListDataAsExcelFromTemplateFile(List<?> data, String outputPath);
 

@@ -94,7 +94,7 @@ public class DOMBasedExcelParser extends ParserBase {
         }
 
 
-        SheetDataUtil.matrixDataToSameColumn(resultList);
+        SheetDataUtil.updateAllRowsToMaxColumnCount(resultList);
 
         return resultList;
     }
@@ -140,7 +140,7 @@ public class DOMBasedExcelParser extends ParserBase {
         }
 
         // 根据模型类确定属性与sheet列的映射关系
-        SheetHeader sheetHeader = SheetDataUtil.getSheetHeaderFromAnnotatedClass(clazz);
+        SheetHeader sheetHeader = SheetDataUtil.createSheetHeaderFromAnnotatedClass(clazz);
         // 一般是表头行
         Row headerRow = sheet.getRow(startRowIndex);
         // 若order不存在，则根据表中列名重排序
