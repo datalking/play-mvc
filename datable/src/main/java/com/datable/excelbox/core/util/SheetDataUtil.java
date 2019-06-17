@@ -55,6 +55,8 @@ public final class SheetDataUtil {
 
     /**
      * 获取表格数据的最大列数
+     * @param data 字符串列表
+     * @return 所有行中最大的列数
      */
     public static int getMaxColNum(List<List<String>> data) {
         int rowNum = data.size();
@@ -116,7 +118,6 @@ public final class SheetDataUtil {
      *
      * @param headerRow 表头行
      * @param sHeader   表头信息
-     * @return 重排序后的表头信息
      */
     public static void sortSheetHeaderColumnByTitle(Row headerRow, SheetHeader sHeader) {
 

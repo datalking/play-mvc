@@ -32,9 +32,8 @@ public @interface SheetField {
      */
     int order() default 99999;
 
-//    /**
-//     * 列字段类型
-//     */
-//    Class<?> filedClazz() default Object.class;
-
+    /**
+     * 用来声明列字段的格式，如日期格式
+     */
+    String format() default "";
 }

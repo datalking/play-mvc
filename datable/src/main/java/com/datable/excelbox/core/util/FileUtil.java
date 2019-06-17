@@ -10,6 +10,8 @@ import java.io.InputStream;
 public final class FileUtil {
     /**
      * 根据文件路径返回文件输入流
+     *
+     * @param fileName 文件路径
      */
     public static InputStream getResourceAsInputStream(String fileName) {
 

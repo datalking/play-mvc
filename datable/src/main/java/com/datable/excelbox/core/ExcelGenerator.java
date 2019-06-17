@@ -48,7 +48,6 @@ public abstract class ExcelGenerator {
             return flags;
         }
 
-
         public boolean enabledByDefault() {
             return defaultState;
         }
@@ -60,19 +59,31 @@ public abstract class ExcelGenerator {
     }
 
     /**
-     * 将数据导出excel，无excel模板，无模型映射
+     * 将数据导出excel，无模型映射，无预定义模板
+     *
+     * @param data       字符串列表
+     * @param outputPath 输出的excel的绝对路径
      */
-    public abstract void writeListOfStringAsExcel(List<?> data, String outputPath);
+    public abstract void writeListOfStringAsExcel(List<List<String>> data, String outputPath);
 
     /**
-     * 将数据导出excel，无excel模板，有模型映射
+     * 将数据导出excel，有模型映射，无预定义模板
+     *
+     * @param data       对象列表
+     * @param outputPath 输出的excel的绝对路径
      */
     public abstract void writeListOfObjectAsExcel(List<?> data, String outputPath);
 
+    /**
+     * 将数据导出excel，有模型映射，无预定义模板
+     * 输出路径通过factory的参数设置
+     *
+     * @param data 对象列表
+     */
     public abstract void writeListOfObjectAsExcel(List<?> data);
 
     /**
-     * 将list类型的数据导出excel，有模板，有类型映射
+     * 将list中的数据导出excel，有模型映射，有模板
      */
     public abstract void writeListDataAsExcelFromTemplateFile(List<?> data, String outputPath);
 

@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * 基于apache poi提供的api的常用方法
+ * 基于apache poi提供的api创建的常用方法
  *
  * @author jinyaoo
  */

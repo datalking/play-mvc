@@ -12,7 +12,14 @@ import java.util.List;
  */
 public final class TypeUtil {
 
-
+    /**
+     * 将字符串转换成指定类型的对象
+     * 支持的目标类型有 int,long,float,double,boolean,date
+     *
+     * @param str   字符串
+     * @param clazz 目标类型
+     * @return 目标类型的对象
+     */
     public static Object convertStrToTargetClassObj(String str, Class<?> clazz) {
 
         if (str == null || str.equals("")) {

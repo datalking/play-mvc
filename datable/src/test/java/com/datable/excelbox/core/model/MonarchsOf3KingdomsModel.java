@@ -20,6 +20,9 @@ public class MonarchsOf3KingdomsModel {
     @SheetField(order = 1)
     private String monarchName;
 
+    public MonarchsOf3KingdomsModel() {
+    }
+
     public MonarchsOf3KingdomsModel(String monarchName, String bigEventInCareer, String title, String note) {
         this.monarchName = monarchName;
         this.bigEventInCareer = bigEventInCareer;

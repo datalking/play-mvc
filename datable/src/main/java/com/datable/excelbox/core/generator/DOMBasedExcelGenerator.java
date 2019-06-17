@@ -27,7 +27,7 @@ public class DOMBasedExcelGenerator extends GeneratorBase {
     }
 
     @Override
-    public void writeListOfStringAsExcel(List<?> data, String outputPath) {
+    public void writeListOfStringAsExcel(List<List<String>> data, String outputPath) {
 
     }
 
