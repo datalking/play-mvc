@@ -61,10 +61,17 @@ public abstract class ExcelGenerator {
     /**
      * 将数据导出excel，无模型映射，无预定义模板
      *
-     * @param data       字符串列表
-     * @param outputPath 输出的excel的绝对路径
+     * @param data        字符串列表
+     * @param headerClazz 包含@SheetField注解的模型类，用来提供表头信息，值为null时无表头
      */
-    public abstract void writeListOfStringAsExcel(List<List<String>> data, String outputPath);
+    public abstract void writeListOfStringAsExcel(List<List<String>> data, Class<?> headerClazz);
+
+    /**
+     * 将数据导出excel，无模型映射，无预定义模板，无表头
+     *
+     * @param data 字符串二维列表
+     */
+    public abstract void writeListOfStringAsExcel(List<List<String>> data);
 
     /**
      * 将数据导出excel，有模型映射，无预定义模板

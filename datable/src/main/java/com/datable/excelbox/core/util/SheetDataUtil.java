@@ -82,6 +82,10 @@ public final class SheetDataUtil {
         SheetHeader sheetHeader = new SheetHeader();
         sheetHeader.setHeaderClazz(headerClazz);
 
+        if (headerClazz == null) {
+            return sheetHeader;
+        }
+
         /// 获取模型类的所有字段
         List<Field> fieldList = new ArrayList<>();
         for (Class c = headerClazz; c != Object.class; c = c.getSuperclass()) {
@@ -185,15 +189,17 @@ public final class SheetDataUtil {
     /**
      * 将list中的数据创建一张表sheet
      *
-     * @param list         建表用的数据
-     * @param workbook     写入数据的excel
-     * @param sheetName    表名
-     * @param headerRowNum 表头行数
+     * @param list           建表用的数据
+     * @param workbook       写入数据的excel
+     * @param sheetName      表名
+     * @param headerRowCount 表头行数
      */
-    public static void createOneSheetFromList(List<?> list, Workbook workbook, String sheetName, int headerRowNum, SheetHeader sheetHeader) {
+    public static void createSheetFromListData(List<?> list, Workbook workbook,
+                                               String sheetName, int headerRowCount,
+                                               SheetHeader sheetHeader) {
         Sheet sheet = workbook.createSheet(sheetName);
         // 若没有表头
-        if (headerRowNum == 0) {
+        if (headerRowCount == 0) {
             // 若没有数据，则生成空excel
             if (list.size() == 0) {
                 return;
@@ -203,7 +209,7 @@ public final class SheetDataUtil {
         Map<Integer, SheetHeaderColumn> colMap = sheetHeader.getHeaderColumnMap();
 
         // 若有表头，则先创建表头行
-        if (headerRowNum > 0) {
+        if (headerRowCount > 0) {
             Row row0 = sheet.createRow(0);
             for (int j = 0; j < colMap.size(); j++) {
                 // todo 测试大于128无缓存的key是否匹配
@@ -220,27 +226,56 @@ public final class SheetDataUtil {
         for (int i = 0; i < list.size(); i++) {
             Object curObj = list.get(i);
             Row row;
-            if (headerRowNum > 0) {
+            if (headerRowCount > 0) {
                 row = sheet.createRow(i + 1);
             } else {
                 row = sheet.createRow(i);
             }
 
-            /// 遍历行对象所有属性，属性值都读取为字符串写入单元格
-            for (int j = 0; j < colMap.size(); j++) {
-                Field f = colMap.get(j).getField();
-//                String colFieldName = f.getName();
-                Object colObj = null;
-                f.setAccessible(true);
-                try {
-                    colObj = f.get(curObj);
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-                row.createCell(j).setCellValue(colObj.toString());
+            // 若该行的数据是list，则将list中各元素写入单元格
+            if (List.class.isAssignableFrom(list.get(0).getClass())) {
+                createRowFromListString(curObj, row, colMap);
+            } else {
+                //若该行的数据不是list，则将该对象各属性写入单元格
+                createRowFromObject(curObj, row, colMap);
             }
+
+
         }
 
+    }
+
+    public static void createRowFromObject(Object curObj, Row row,
+                                           Map<Integer, SheetHeaderColumn> colMap) {
+        /// 遍历该对象所有属性，属性值都读取为字符串写入单元格
+        for (int j = 0; j < colMap.size(); j++) {
+            Field f = colMap.get(j).getField();
+//                String colFieldName = f.getName();
+            Object colObj = null;
+            f.setAccessible(true);
+            try {
+                colObj = f.get(curObj);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+            row.createCell(j).setCellValue(colObj.toString());
+        }
+    }
+
+    public static void createRowFromListString(Object curObj, Row row,
+                                               Map<Integer, SheetHeaderColumn> colMap) {
+        // 当前行的数据列表
+        List<String> strList = (List<String>) curObj;
+        // 若表头映射关系存在，则
+//        if (colMap.size() > 0) {
+//            for (int i = 0; i < colMap.size(); i++) {
+//                row.createCell(i).setCellValue(strList.get(i));
+//            }
+//        } else {
+        for (int i = 0; i < strList.size(); i++) {
+            row.createCell(i).setCellValue(strList.get(i));
+        }
+//        }
     }
 
 

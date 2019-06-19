@@ -16,7 +16,7 @@ public final class FileUtil {
     public static InputStream getResourceAsInputStream(String fileName) {
 
 //        return Thread.currentThread().getContextClassLoader().getResourceAsStream(fileName);
-        return FileUtil.class.getClassLoader().getResourceAsStream(fileName);
+            return FileUtil.class.getClassLoader().getResourceAsStream(fileName);
     }
 
 }

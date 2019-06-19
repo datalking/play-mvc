@@ -19,7 +19,9 @@ public class DOMBasedExcelGenerator extends GeneratorBase {
      * 输出的excel内存中对应的Workbook对象
      */
     private Workbook workbook;
-
+    /**
+     * 输出excel对应的输出流
+     */
     private OutputStream outputStream;
 
     public DOMBasedExcelGenerator(OutputStream out, int features) {
@@ -28,8 +30,42 @@ public class DOMBasedExcelGenerator extends GeneratorBase {
     }
 
     @Override
-    public void writeListOfStringAsExcel(List<List<String>> data, String outputPath) {
+    public void writeListOfStringAsExcel(List<List<String>> data, Class<?> headerClazz) {
+        if (data == null) {
+            throw new RuntimeException("data parameter for writeListOfObjectAsExcel() cannot be null.");
+        }
+        int headerRowCount = 1;
+        String excelType = "xlsx";
+        String sheetName = "Sheet1";
+        OutputStream out;
 
+        if (excelType.equals("xls")) {
+            workbook = new HSSFWorkbook();
+        } else {
+            workbook = new XSSFWorkbook();
+        }
+
+        if (headerClazz == null) {
+            //todo 通过其他参数创建表头信息
+            headerRowCount = 0;
+        }
+
+        // 创建表头信息
+        SheetHeader sheetHeader = SheetDataUtil.createSheetHeaderFromAnnotatedClass(headerClazz);
+        // 根据表头信息创建sheet
+        SheetDataUtil.createSheetFromListData(data, workbook, sheetName, headerRowCount, sheetHeader);
+        try {
+            workbook.write(outputStream);
+            outputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
+    public void writeListOfStringAsExcel(List<List<String>> data) {
+        writeListOfStringAsExcel(data, null);
     }
 
     @Override
@@ -65,7 +101,7 @@ public class DOMBasedExcelGenerator extends GeneratorBase {
         // 创建表头信息
         SheetHeader sheetHeader = SheetDataUtil.createSheetHeaderFromAnnotatedClass(headerClazz);
         // 根据表头信息创建sheet
-        SheetDataUtil.createOneSheetFromList(data, workbook, sheetName, headerRowCount, sheetHeader);
+        SheetDataUtil.createSheetFromListData(data, workbook, sheetName, headerRowCount, sheetHeader);
         try {
             workbook.write(outputStream);
             outputStream.close();
