@@ -1,7 +1,7 @@
 {
   "name": "datable",
   "version": "1.0.0",
-  "description": "interactive table experience out of the box",
+  "description": "A handy data table to pivot your data.",
   "private": true,
   "main": "index.js",
   "scripts": {

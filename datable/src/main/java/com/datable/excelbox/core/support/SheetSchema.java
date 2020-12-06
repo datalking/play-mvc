@@ -10,7 +10,7 @@ import java.util.Map;
  *
  * @author jinyaoo
  */
-public class SheetInfo {
+public class SheetSchema {
     /**
      * 当前sheet名称
      */

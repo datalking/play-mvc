@@ -2,8 +2,17 @@
 
 ## todo  
 
-- SqlSessionFactoryBean的BD的autowireMode设置为3
-- [ ] cglib实现aop 
+- [ ] mybatis daoMapper实例创建时需要注入SqlSessionFactory
+- [ ] 测试 @PathVariable 多个路径参数
+- [ ] 支持 @Service
+- [ ] 支持 Redirect 
+- [ ] 支持 文件上传 MultipartResolver 
+- [ ] 静态资源处理
+- [ ] ajax.jsp的jquery换成本地静态资源
+- [ ] 支持内置tomcat直接启动mvc应用 
+- [ ] servlet和filter支持 `async` 处理
+
+- [ ] SqlSessionFactoryBean的BD的autowireMode设置为3
 - [ ] @Order 注解控制配置类的加载顺序
 - [ ] aop织入顺序 @Order  注解支持
 - [ ] getBean By class   
@@ -13,6 +22,12 @@
 - [ ] xml中同名bean抛出异常   
 - [ ] 处理AOP中的循环依赖   
 
+- [x] 处理applyPropertyValues()时传入对象到set方法，如传入 SqlSessionFactory到dao
+- [x] 支持 @PathVariable
+- [x] 支持 @RequestParam 
+- [x] 支持 @ResponseBody 
+- [x] 扫描 DelegatingWebMvcConfiguration中的bean
+- [x] add DispatcherServlet 
 - [x] jdk动态代理实现aop 
 - [x] 支持BeanPostProcessor   
 - [x] 支持@ComponentScan配置basePackages
@@ -31,8 +46,14 @@
 
 ## later
 
+- [ ] WebApplicationInitializer支持order 
+- [ ] 支持 @RequestHeader, @CookieValue, @SessionAttributes 
+- [ ] 内置tomcat切换为外置 
+
+
 - [ ] mybatis与spring纯注解整合   
 - [ ] spring-jdbc原理  
+- [ ] cglib实现aop 
 
 - [ ] bean销毁的声明周期   
 - [ ] BeanAware接口   
@@ -59,5 +80,8 @@
 @ImportResource("classpath:/bookstore/config/spring-beans.xml")
   public class ApplicationContextConfig { }
 ```   
+
+## discuss
+
 - [ ] 迁移到以注解为主的使用方式
 - [ ] 没有处理桥接方法 findBridgedMethod()

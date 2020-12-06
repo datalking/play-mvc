@@ -1,12 +1,13 @@
 # play-mvc   
->基于servlet的mvc框架   
+>基于java servlet开发的mvc框架   
 
 ## target
+- 精简spring的源码，使用方式与spring mvc相同
 - 基于mvc快速开发rest服务
 - 基于mvc快速开发webapp
-- 使用方式与spring mvc相同
 
 ## overview
+- 精简了spring的源码[spring-framework](https://github.com/spring-projects/spring-framework)和[spring-boot](https://github.com/spring-projects/spring-boot) 
 - 推荐使用纯注解、零配置文件的方式，目前实现的xml功能非常有限
 - 视图模板仅支持jsp，无计划支持jsf、velocity、freemarker等   
 - 支持以下注解
@@ -25,7 +26,6 @@
     - 不支持构造注入与方法注入，仅支持属性注入
     - ...
     
-- 源码参考了[spring-framework](https://github.com/spring-projects/spring-framework)和[spring-boot](https://github.com/spring-projects/spring-boot) 
 
 ## dev 
 ```sh
@@ -42,34 +42,9 @@
 
 start from [http://localhost:8999](http://localhost:8999)
 
-## todo
-
-
-- [ ] mybatis daoMapper实例创建时需要注入SqlSessionFactory
-- [ ] 测试 @PathVariable 多个路径参数
-- [ ] 支持 @Service
-- [ ] 支持 Redirect 
-- [ ] 支持 文件上传 MultipartResolver 
-- [ ] 静态资源处理
-- [ ] ajax.jsp的jquery换成本地静态资源
-- [ ] 支持内置tomcat直接启动mvc应用 
-- [ ] servlet和filter支持 `async` 处理
-
-- [x] 处理applyPropertyValues()时传入对象到set方法，如传入 SqlSessionFactory到dao
-- [x] 支持 @PathVariable
-- [x] 支持 @RequestParam 
-- [x] 支持 @ResponseBody 
-- [x] 扫描 DelegatingWebMvcConfiguration中的bean
-- [x] add DispatcherServlet 
-
-## later
-
-- [ ] WebApplicationInitializer支持order 
-- [ ] 支持 @RequestHeader, @CookieValue, @SessionAttributes 
-- [ ] 内置tomcat切换为外置 
+## usage
 
 ## License
-
 [MIT](http://opensource.org/licenses/MIT)
 
 

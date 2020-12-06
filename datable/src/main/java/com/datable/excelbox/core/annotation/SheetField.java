@@ -7,7 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 用于标注模型类属性与表中列关系的注解
+ * 用于标注 bean模型类属性 与 excel表中列 的关系的注解
  *
  * @author jinyaoo
  */
